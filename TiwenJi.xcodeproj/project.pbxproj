@@ -1,0 +1,536 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3B4B91E51C8FB831002C1855 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B4B91E41C8FB831002C1855 /* main.m */; };
+		3B4B91E81C8FB831002C1855 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B4B91E71C8FB831002C1855 /* AppDelegate.m */; };
+		3B4B91EB1C8FB831002C1855 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B4B91EA1C8FB831002C1855 /* ViewController.m */; };
+		3B4B91EE1C8FB831002C1855 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B4B91EC1C8FB831002C1855 /* Main.storyboard */; };
+		3B4B91F11C8FB831002C1855 /* TiwenJi.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B4B91EF1C8FB831002C1855 /* TiwenJi.xcdatamodeld */; };
+		3B4B91F31C8FB831002C1855 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B4B91F21C8FB831002C1855 /* Assets.xcassets */; };
+		3B4B91F61C8FB831002C1855 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B4B91F41C8FB831002C1855 /* LaunchScreen.storyboard */; };
+		3B4B92011C8FB831002C1855 /* TiwenJiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B4B92001C8FB831002C1855 /* TiwenJiTests.m */; };
+		3B4B920C1C8FB831002C1855 /* TiwenJiUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B4B920B1C8FB831002C1855 /* TiwenJiUITests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3B4B91FD1C8FB831002C1855 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B4B91D81C8FB831002C1855 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B4B91DF1C8FB831002C1855;
+			remoteInfo = TiwenJi;
+		};
+		3B4B92081C8FB831002C1855 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B4B91D81C8FB831002C1855 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B4B91DF1C8FB831002C1855;
+			remoteInfo = TiwenJi;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3B4B91E01C8FB831002C1855 /* TiwenJi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TiwenJi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B4B91E41C8FB831002C1855 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3B4B91E61C8FB831002C1855 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		3B4B91E71C8FB831002C1855 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		3B4B91E91C8FB831002C1855 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		3B4B91EA1C8FB831002C1855 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		3B4B91ED1C8FB831002C1855 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3B4B91F01C8FB831002C1855 /* TiwenJi.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TiwenJi.xcdatamodel; sourceTree = "<group>"; };
+		3B4B91F21C8FB831002C1855 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3B4B91F51C8FB831002C1855 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3B4B91F71C8FB831002C1855 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3B4B91FC1C8FB831002C1855 /* TiwenJiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TiwenJiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B4B92001C8FB831002C1855 /* TiwenJiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TiwenJiTests.m; sourceTree = "<group>"; };
+		3B4B92021C8FB831002C1855 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3B4B92071C8FB831002C1855 /* TiwenJiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TiwenJiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B4B920B1C8FB831002C1855 /* TiwenJiUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TiwenJiUITests.m; sourceTree = "<group>"; };
+		3B4B920D1C8FB831002C1855 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3B4B91DD1C8FB831002C1855 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B4B91F91C8FB831002C1855 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B4B92041C8FB831002C1855 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3B4B91D71C8FB831002C1855 = {
+			isa = PBXGroup;
+			children = (
+				3B4B91E21C8FB831002C1855 /* TiwenJi */,
+				3B4B91FF1C8FB831002C1855 /* TiwenJiTests */,
+				3B4B920A1C8FB831002C1855 /* TiwenJiUITests */,
+				3B4B91E11C8FB831002C1855 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3B4B91E11C8FB831002C1855 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3B4B91E01C8FB831002C1855 /* TiwenJi.app */,
+				3B4B91FC1C8FB831002C1855 /* TiwenJiTests.xctest */,
+				3B4B92071C8FB831002C1855 /* TiwenJiUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3B4B91E21C8FB831002C1855 /* TiwenJi */ = {
+			isa = PBXGroup;
+			children = (
+				3B4B91E61C8FB831002C1855 /* AppDelegate.h */,
+				3B4B91E71C8FB831002C1855 /* AppDelegate.m */,
+				3B4B91E91C8FB831002C1855 /* ViewController.h */,
+				3B4B91EA1C8FB831002C1855 /* ViewController.m */,
+				3B4B91EC1C8FB831002C1855 /* Main.storyboard */,
+				3B4B91F21C8FB831002C1855 /* Assets.xcassets */,
+				3B4B91F41C8FB831002C1855 /* LaunchScreen.storyboard */,
+				3B4B91F71C8FB831002C1855 /* Info.plist */,
+				3B4B91EF1C8FB831002C1855 /* TiwenJi.xcdatamodeld */,
+				3B4B91E31C8FB831002C1855 /* Supporting Files */,
+			);
+			path = TiwenJi;
+			sourceTree = "<group>";
+		};
+		3B4B91E31C8FB831002C1855 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3B4B91E41C8FB831002C1855 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3B4B91FF1C8FB831002C1855 /* TiwenJiTests */ = {
+			isa = PBXGroup;
+			children = (
+				3B4B92001C8FB831002C1855 /* TiwenJiTests.m */,
+				3B4B92021C8FB831002C1855 /* Info.plist */,
+			);
+			path = TiwenJiTests;
+			sourceTree = "<group>";
+		};
+		3B4B920A1C8FB831002C1855 /* TiwenJiUITests */ = {
+			isa = PBXGroup;
+			children = (
+				3B4B920B1C8FB831002C1855 /* TiwenJiUITests.m */,
+				3B4B920D1C8FB831002C1855 /* Info.plist */,
+			);
+			path = TiwenJiUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3B4B91DF1C8FB831002C1855 /* TiwenJi */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B4B92101C8FB831002C1855 /* Build configuration list for PBXNativeTarget "TiwenJi" */;
+			buildPhases = (
+				3B4B91DC1C8FB831002C1855 /* Sources */,
+				3B4B91DD1C8FB831002C1855 /* Frameworks */,
+				3B4B91DE1C8FB831002C1855 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TiwenJi;
+			productName = TiwenJi;
+			productReference = 3B4B91E01C8FB831002C1855 /* TiwenJi.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3B4B91FB1C8FB831002C1855 /* TiwenJiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B4B92131C8FB831002C1855 /* Build configuration list for PBXNativeTarget "TiwenJiTests" */;
+			buildPhases = (
+				3B4B91F81C8FB831002C1855 /* Sources */,
+				3B4B91F91C8FB831002C1855 /* Frameworks */,
+				3B4B91FA1C8FB831002C1855 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B4B91FE1C8FB831002C1855 /* PBXTargetDependency */,
+			);
+			name = TiwenJiTests;
+			productName = TiwenJiTests;
+			productReference = 3B4B91FC1C8FB831002C1855 /* TiwenJiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3B4B92061C8FB831002C1855 /* TiwenJiUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B4B92161C8FB831002C1855 /* Build configuration list for PBXNativeTarget "TiwenJiUITests" */;
+			buildPhases = (
+				3B4B92031C8FB831002C1855 /* Sources */,
+				3B4B92041C8FB831002C1855 /* Frameworks */,
+				3B4B92051C8FB831002C1855 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B4B92091C8FB831002C1855 /* PBXTargetDependency */,
+			);
+			name = TiwenJiUITests;
+			productName = TiwenJiUITests;
+			productReference = 3B4B92071C8FB831002C1855 /* TiwenJiUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3B4B91D81C8FB831002C1855 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = Manridy.Bobo.com;
+				TargetAttributes = {
+					3B4B91DF1C8FB831002C1855 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+					3B4B91FB1C8FB831002C1855 = {
+						CreatedOnToolsVersion = 7.2.1;
+						TestTargetID = 3B4B91DF1C8FB831002C1855;
+					};
+					3B4B92061C8FB831002C1855 = {
+						CreatedOnToolsVersion = 7.2.1;
+						TestTargetID = 3B4B91DF1C8FB831002C1855;
+					};
+				};
+			};
+			buildConfigurationList = 3B4B91DB1C8FB831002C1855 /* Build configuration list for PBXProject "TiwenJi" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3B4B91D71C8FB831002C1855;
+			productRefGroup = 3B4B91E11C8FB831002C1855 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3B4B91DF1C8FB831002C1855 /* TiwenJi */,
+				3B4B91FB1C8FB831002C1855 /* TiwenJiTests */,
+				3B4B92061C8FB831002C1855 /* TiwenJiUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3B4B91DE1C8FB831002C1855 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B4B91F61C8FB831002C1855 /* LaunchScreen.storyboard in Resources */,
+				3B4B91F31C8FB831002C1855 /* Assets.xcassets in Resources */,
+				3B4B91EE1C8FB831002C1855 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B4B91FA1C8FB831002C1855 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B4B92051C8FB831002C1855 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3B4B91DC1C8FB831002C1855 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B4B91EB1C8FB831002C1855 /* ViewController.m in Sources */,
+				3B4B91E81C8FB831002C1855 /* AppDelegate.m in Sources */,
+				3B4B91F11C8FB831002C1855 /* TiwenJi.xcdatamodeld in Sources */,
+				3B4B91E51C8FB831002C1855 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B4B91F81C8FB831002C1855 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B4B92011C8FB831002C1855 /* TiwenJiTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B4B92031C8FB831002C1855 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B4B920C1C8FB831002C1855 /* TiwenJiUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3B4B91FE1C8FB831002C1855 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B4B91DF1C8FB831002C1855 /* TiwenJi */;
+			targetProxy = 3B4B91FD1C8FB831002C1855 /* PBXContainerItemProxy */;
+		};
+		3B4B92091C8FB831002C1855 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B4B91DF1C8FB831002C1855 /* TiwenJi */;
+			targetProxy = 3B4B92081C8FB831002C1855 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		3B4B91EC1C8FB831002C1855 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3B4B91ED1C8FB831002C1855 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		3B4B91F41C8FB831002C1855 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3B4B91F51C8FB831002C1855 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3B4B920E1C8FB831002C1855 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		3B4B920F1C8FB831002C1855 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3B4B92111C8FB831002C1855 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = TiwenJi/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Bobo.TiwenJi;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3B4B92121C8FB831002C1855 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = TiwenJi/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Bobo.TiwenJi;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		3B4B92141C8FB831002C1855 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = TiwenJiTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Bobo.TiwenJiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TiwenJi.app/TiwenJi";
+			};
+			name = Debug;
+		};
+		3B4B92151C8FB831002C1855 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = TiwenJiTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Bobo.TiwenJiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TiwenJi.app/TiwenJi";
+			};
+			name = Release;
+		};
+		3B4B92171C8FB831002C1855 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = TiwenJiUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Bobo.TiwenJiUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = TiwenJi;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		3B4B92181C8FB831002C1855 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = TiwenJiUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Bobo.TiwenJiUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = TiwenJi;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3B4B91DB1C8FB831002C1855 /* Build configuration list for PBXProject "TiwenJi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B4B920E1C8FB831002C1855 /* Debug */,
+				3B4B920F1C8FB831002C1855 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3B4B92101C8FB831002C1855 /* Build configuration list for PBXNativeTarget "TiwenJi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B4B92111C8FB831002C1855 /* Debug */,
+				3B4B92121C8FB831002C1855 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3B4B92131C8FB831002C1855 /* Build configuration list for PBXNativeTarget "TiwenJiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B4B92141C8FB831002C1855 /* Debug */,
+				3B4B92151C8FB831002C1855 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3B4B92161C8FB831002C1855 /* Build configuration list for PBXNativeTarget "TiwenJiUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B4B92171C8FB831002C1855 /* Debug */,
+				3B4B92181C8FB831002C1855 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		3B4B91EF1C8FB831002C1855 /* TiwenJi.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3B4B91F01C8FB831002C1855 /* TiwenJi.xcdatamodel */,
+			);
+			currentVersion = 3B4B91F01C8FB831002C1855 /* TiwenJi.xcdatamodel */;
+			path = TiwenJi.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 3B4B91D81C8FB831002C1855 /* Project object */;
+}
