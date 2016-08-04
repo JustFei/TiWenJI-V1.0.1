@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "oneViewController.h"
+
 
 @interface AppDelegate ()
 
@@ -14,9 +16,20 @@
 
 @implementation AppDelegate
 
+//+ (BOOL)allowsAnyHTTPSCertificateForHost:(NSString *)host
+//{
+//    return YES;
+//}
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    self.window.backgroundColor=[UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    
+    [[UITabBarItem appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithRed:40.0/255 green:72.0/255 blue:101.0/255 alpha:1]} forState:UIControlStateNormal];
+    [[UITabBarItem appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor]} forState:UIControlStateSelected];
+    
     return YES;
 }
 

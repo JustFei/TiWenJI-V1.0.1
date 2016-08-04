@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="testViewController">
+            <connections>
+                <outlet property="String" destination="Lo3-Pz-om0" id="GFB-LO-2X7"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="217" height="112"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Asg-h5-xVF">
+                    <rect key="frame" x="163" y="74" width="46" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="46" id="2uk-YH-eFZ"/>
+                        <constraint firstAttribute="height" constant="30" id="GML-vs-hk7"/>
+                    </constraints>
+                    <state key="normal" title="取消"/>
+                    <connections>
+                        <action selector="cancle:" destination="-1" eventType="touchUpInside" id="vMZ-3e-C5U"/>
+                    </connections>
+                </button>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Lo3-Pz-om0">
+                    <rect key="frame" x="8" y="8" width="201" height="30"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                    <connections>
+                        <action selector="exit:" destination="-1" eventType="editingDidEndOnExit" id="bTL-IH-k7V"/>
+                    </connections>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8YO-gd-S17">
+                    <rect key="frame" x="8" y="74" width="46" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="G3W-Rw-Lan"/>
+                        <constraint firstAttribute="width" constant="46" id="y86-u3-7e6"/>
+                    </constraints>
+                    <state key="normal" title="确定"/>
+                    <connections>
+                        <action selector="ok:" destination="-1" eventType="touchUpInside" id="RFV-pO-lZO"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="8YO-gd-S17" secondAttribute="bottom" constant="8" id="7ni-xc-fSr"/>
+                <constraint firstAttribute="trailing" secondItem="Asg-h5-xVF" secondAttribute="trailing" constant="8" id="A5g-dP-i2X"/>
+                <constraint firstItem="Lo3-Pz-om0" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="8" id="dSQ-dt-12L"/>
+                <constraint firstAttribute="bottom" secondItem="Asg-h5-xVF" secondAttribute="bottom" constant="8" id="mdw-OT-kBE"/>
+                <constraint firstAttribute="trailing" secondItem="Lo3-Pz-om0" secondAttribute="trailing" constant="8" id="n8O-Mh-TRu"/>
+                <constraint firstItem="8YO-gd-S17" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="rpb-gT-5kf"/>
+                <constraint firstItem="Lo3-Pz-om0" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="va5-NA-mp6"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-118.5" y="154"/>
+        </view>
+    </objects>
+</document>

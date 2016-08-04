@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="baojingPopViewController">
+            <connections>
+                <outlet property="pick1" destination="v9j-EF-tpq" id="ENC-29-Xfg"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="266" height="208"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background_all.png" translatesAutoresizingMaskIntoConstraints="NO" id="yVN-cE-lyU">
+                    <rect key="frame" x="0.0" y="0.0" width="266" height="208"/>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UCB-XM-flY">
+                    <rect key="frame" x="137" y="170" width="121" height="30"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <state key="normal" title="确认"/>
+                    <connections>
+                        <action selector="OK:" destination="-1" eventType="touchUpInside" id="2ZQ-Wn-ebg"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="euF-Pb-xFc">
+                    <rect key="frame" x="8" y="170" width="121" height="30"/>
+                    <color key="backgroundColor" red="0.76631156570000003" green="0.74162371220000001" blue="0.82192764399999996" alpha="1" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="取消"/>
+                    <connections>
+                        <action selector="quxiao:" destination="-1" eventType="touchUpInside" id="C4W-YJ-0cR"/>
+                    </connections>
+                </button>
+                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v9j-EF-tpq">
+                    <rect key="frame" x="48" y="8" width="170" height="157"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="170" id="bdn-9x-NEY"/>
+                    </constraints>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="pbX-uX-yUf"/>
+                        <outlet property="delegate" destination="-1" id="QGs-UH-brv"/>
+                    </connections>
+                </pickerView>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="yVN-cE-lyU" secondAttribute="trailing" id="2xS-yF-DND"/>
+                <constraint firstItem="euF-Pb-xFc" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="7nq-py-O7t"/>
+                <constraint firstItem="yVN-cE-lyU" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="8DK-zX-13n"/>
+                <constraint firstItem="yVN-cE-lyU" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Imt-Kg-EC0"/>
+                <constraint firstItem="UCB-XM-flY" firstAttribute="top" secondItem="yVN-cE-lyU" secondAttribute="bottom" id="Lxk-hF-8dd"/>
+                <constraint firstAttribute="bottom" secondItem="euF-Pb-xFc" secondAttribute="bottom" constant="8" id="MjX-lN-iKU"/>
+                <constraint firstItem="UCB-XM-flY" firstAttribute="leading" secondItem="euF-Pb-xFc" secondAttribute="trailing" constant="8" id="UYf-FD-JDW"/>
+                <constraint firstItem="UCB-XM-flY" firstAttribute="leading" secondItem="euF-Pb-xFc" secondAttribute="trailing" constant="8" id="XXC-h4-FyU"/>
+                <constraint firstAttribute="trailing" secondItem="UCB-XM-flY" secondAttribute="trailing" constant="8" id="Xnw-wF-tgy"/>
+                <constraint firstItem="v9j-EF-tpq" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="8" id="eXe-Ip-UiZ"/>
+                <constraint firstAttribute="bottom" secondItem="yVN-cE-lyU" secondAttribute="bottom" id="iWL-8d-WBJ"/>
+                <constraint firstItem="euF-Pb-xFc" firstAttribute="top" secondItem="v9j-EF-tpq" secondAttribute="bottom" constant="5" id="kx3-xt-lZY"/>
+                <constraint firstItem="v9j-EF-tpq" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="m55-g6-AhQ"/>
+                <constraint firstAttribute="bottom" secondItem="UCB-XM-flY" secondAttribute="bottom" constant="8" id="nwU-cD-YM5"/>
+                <constraint firstItem="UCB-XM-flY" firstAttribute="width" secondItem="euF-Pb-xFc" secondAttribute="width" id="r1a-55-XlT"/>
+                <constraint firstAttribute="bottom" secondItem="v9j-EF-tpq" secondAttribute="bottom" constant="43" id="y90-YY-6o0"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="kx3-xt-lZY"/>
+                    <exclude reference="Lxk-hF-8dd"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="179" y="-34"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="background_all.png" width="720" height="1230"/>
+    </resources>
+</document>

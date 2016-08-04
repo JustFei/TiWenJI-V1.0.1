@@ -1,0 +1,528 @@
+//
+//  twoViewController.m
+//  Newthermometer
+//
+//  Created by 莫福见 on 16/2/22.
+//  Copyright © 2016年 Manridy.Bobo.com. All rights reserved.
+//
+
+#import "twoViewController.h"
+#import "JAYColor.h"
+#import  "JAYChart.h"
+#import "SVProgressHUD.h"
+#define twoViewControllerdefine @"twoViewController"
+#import "Test.h"
+#import "MCLineChartView.h"
+#import "AppDelegate.h"
+#import "THDatePickerViewController.h"
+
+
+
+@interface twoViewController () <MCLineChartViewDataSource, MCLineChartViewDelegate>{
+    BabyBluetooth*baby;
+    NSMutableArray*timeArray;
+    
+    
+}
+@property (nonatomic, retain) NSDate * curDate;
+@property (nonatomic, retain) NSDateFormatter * formatter;
+@property (nonatomic, retain) NSDateFormatter * formatter2;
+@property(nonatomic,strong)CBPeripheral*twoPeripheral;
+@property(nonatomic,strong)CBCharacteristic*twoviewCharacteristic;
+@property(nonatomic ,strong)AppDelegate*myappdelegate;
+@property(nonatomic,strong)NSMutableArray*riqi;
+@property(nonatomic,strong)NSMutableArray*wd;
+@property (strong, nonatomic) MCLineChartView *lineChartView;
+@property (strong, nonatomic) NSArray *titles;
+@property (strong, nonatomic) NSMutableArray *dataSource;
+@property (strong, nonatomic) NSMutableArray*today;
+@property (strong, nonatomic)NSString*zuida;
+@property(nonatomic,assign)int zhongjian;
+
+@end
+
+@implementation twoViewController
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    timeArray=[[NSMutableArray alloc]init];
+    NSLog(@"viewDidLoad");
+    _zuida=@"20";
+    self.curDate = [NSDate date];
+    self.formatter = [[NSDateFormatter alloc] init];
+    [_formatter setDateFormat:@"YYYYMMdd"];
+    self.formatter2 = [[NSDateFormatter alloc] init];
+    [_formatter2 setDateFormat:@"YYYY-MM-dd"];
+    
+    self.myappdelegate=[UIApplication sharedApplication].delegate;
+    baby=[BabyBluetooth shareBabyBluetooth];
+    //[self babyDelegate];
+    
+    
+    _dataSource=[NSMutableArray arrayWithCapacity:24];
+    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
+    
+    _titles = @[@"01:00", @"02:00", @"03:00",@"04:00",@"05:00",@"06:00",@"07:00",@"08:00",@"09:00",@"10:00",@"11:00",@"012:00",@"13:00",@"14:00",@"15:00",@"16:00",@"17:00",@"18:00",@"19:00",@"20:00",@"21:00",@"22:00",@"23:00",@"24:00"];
+    
+    
+    _lineChartView = [[MCLineChartView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height*0.5-50, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height*0.5)];
+    _lineChartView.dotRadius = 3;
+    _lineChartView.oppositeY = NO;
+    _lineChartView.dataSource = self;
+    _lineChartView.delegate = self;
+    _lineChartView.minValue = @0;
+    _lineChartView.maxValue = @43;
+    _lineChartView.solidDot = YES;
+    _lineChartView.numberOfYAxis = 11;
+    _lineChartView.colorOfXAxis = [UIColor whiteColor];
+    _lineChartView.colorOfXText = [UIColor whiteColor];
+    _lineChartView.colorOfYAxis = [UIColor whiteColor];
+    _lineChartView.colorOfYText = [UIColor whiteColor];
+    
+    [self.view addSubview:_lineChartView];
+    
+    [_lineChartView reloadDataWithAnimate:NO];
+    NSLog(@"viewDidLoad");
+    self.curDate = [NSDate date];
+    self.formatter = [[NSDateFormatter alloc] init];
+    [_formatter setDateFormat:@"YYYYMMdd"];
+    
+    _today=[[NSMutableArray alloc]init];
+    _zhongjian=_today.count*0.5;
+    [self coredatachaozao];
+}
+-(void)coredatachaozao{
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    NSSortDescriptor*sort=[[NSSortDescriptor alloc]initWithKey:@"shijian" ascending:YES];
+    NSArray *sortDescriptors = [[NSArray alloc]
+                                initWithObjects:sort, nil];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    NSError * requestError = nil;
+    NSArray * shuzu = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
+    //NSLog(@"shuzu=%@",shuzu);
+    for (Test*pp in shuzu) {
+        NSLog( @"pp.shijian=%@",pp.shijian);
+        if (![_today containsObject:[pp.shijian substringToIndex:8]]) {
+            [_today addObject:[pp.shijian substringToIndex:8]];
+        }
+        
+    }
+    NSLog(@"_today=%@",_today);
+    
+}
+
+
+- (NSUInteger)numberOfLinesInLineChartView:(MCLineChartView *)lineChartView {
+    return 1;
+}
+
+- (NSUInteger)lineChartView:(MCLineChartView *)lineChartView lineCountAtLineNumber:(NSInteger)number {
+    return [_dataSource count];
+}
+
+- (id)lineChartView:(MCLineChartView *)lineChartView valueAtLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
+    return _dataSource[index];
+}
+
+- (NSString *)lineChartView:(MCLineChartView *)lineChartView titleAtLineNumber:(NSInteger)number {
+    return _titles[number];
+}
+
+- (UIColor *)lineChartView:(MCLineChartView *)lineChartView lineColorWithLineNumber:(NSInteger)lineNumber {
+    if (lineNumber == 0) {
+        return [UIColor colorWithRed:0/255.0 green:207/255.0 blue:187/255.0 alpha:1.0];
+    } else if (lineNumber == 1) {
+        return [UIColor lightGrayColor];
+    } else if (lineNumber == 2) {
+        return [UIColor redColor];
+    } else {
+        return [UIColor yellowColor];
+    }
+}
+
+- (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
+    
+    return [NSString stringWithFormat:@"%@°C", _dataSource[index]];
+    
+    
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    
+ NSLog(@"viewWillAppear");
+    NSDate *date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"YYYYMMdd"];
+    NSString *string_day_time = [formatter stringFromDate:date] ;
+    
+    [self chazhao:string_day_time];
+    
+    
+}
+-(void)chazhao:(NSString*)string{
+    NSString*string_day_time=string;
+    
+    _dataSource=nil;
+    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
+    _zuida=@"0°C";
+    
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"])
+    {
+        
+        NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
+        [fetchRequest setEntity:entity];
+        NSPredicate * agePre = [NSPredicate predicateWithFormat:@"name like[cd] %@",[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]];
+        [fetchRequest setPredicate:agePre];
+        NSError * requestError = nil;
+        NSArray * persons = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
+        if ([persons count]>0)
+        {
+            for (Test*pp in persons)
+                
+            {
+//                NSLog(@"pp.shijian=%@ pp.wendu=%@",pp.shijian,pp.wendu);
+//                [timeArray  addObject:[pp.shijian substringToIndex:8]];
+               
+                
+                
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"00"]]) {
+                    [_dataSource replaceObjectAtIndex:24 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"01"]]) {
+                    [_dataSource replaceObjectAtIndex:0 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"02"]]) {
+                    [_dataSource replaceObjectAtIndex:1 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"03"]]) {
+                    [_dataSource replaceObjectAtIndex:2 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"04"]]) {
+                    [_dataSource replaceObjectAtIndex:3 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"05"]]) {
+                    [_dataSource replaceObjectAtIndex:4 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"06"]]) {
+                    [_dataSource replaceObjectAtIndex:5 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"07"]]) {
+                    [_dataSource replaceObjectAtIndex:6 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"08"]]) {
+                    [_dataSource replaceObjectAtIndex:7 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"09"]]) {
+                    [_dataSource replaceObjectAtIndex:8 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"10"]]) {
+                    [_dataSource replaceObjectAtIndex:9 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"11"]]) {
+                    [_dataSource replaceObjectAtIndex:10 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"12"]]) {
+                    [_dataSource replaceObjectAtIndex:11 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"13"]]) {
+                    [_dataSource replaceObjectAtIndex:12 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"14"]]) {
+                    [_dataSource replaceObjectAtIndex:13 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"15"]]) {
+                    [_dataSource replaceObjectAtIndex:14 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"16"]]) {
+                    [_dataSource replaceObjectAtIndex:15 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"17"]]) {
+                    [_dataSource replaceObjectAtIndex:16 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"18"]]) {
+                    [_dataSource replaceObjectAtIndex:17 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"19"]]) {
+                    [_dataSource replaceObjectAtIndex:18 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"20"]]) {
+                    [_dataSource replaceObjectAtIndex:19 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"21"]]) {
+                    [_dataSource replaceObjectAtIndex:20 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"22"]]) {
+                    [_dataSource replaceObjectAtIndex:21 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"23"]]) {
+                    [_dataSource replaceObjectAtIndex:22 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+                }
+                
+                
+            }
+        }
+   
+        [_lineChartView reloadData];
+        [_lineChartView reloadDataWithAnimate:NO];
+        for (NSString*p in _dataSource) {
+            if( [_zuida floatValue]<[p floatValue]){
+                _zuida=p;
+            }
+            
+        }
+        self.labelText.text=_zuida;
+        
+      
+        
+    }
+    else
+    {
+        NSLog(@"没有数据");
+        
+    }
+}
+- (IBAction)todayButtonAction:(id)sender {
+    [self.todayButton setTitle:@"今天" forState:0];
+  
+    NSDate *date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"YYYYMMdd"];
+    NSString *string_day_time = [formatter stringFromDate:date] ;
+    
+    [self chazhao:string_day_time];
+}
+- (IBAction)zuo:(id)sender {
+    if (_today.count>0)
+    {
+        
+    
+            self.youButton.enabled=YES;
+        
+            _zhongjian--;
+            if (_zhongjian>=0)
+            {
+                NSString*yesr=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(0,4)];
+                NSString*month=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(4,2)];
+                NSString*day=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(6,2)];;
+                NSLog(@"%@-%@-%@",yesr,month,day);
+                NSString*dstr=[[[[yesr stringByAppendingString:@"-"] stringByAppendingString:month] stringByAppendingString:@"-"] stringByAppendingString:day];
+            
+                [self.todayButton setTitle:dstr forState:0];
+                    [self chazhao:[_today objectAtIndex:_zhongjian]];
+                if (_zhongjian==0)
+                    {
+                        [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
+                        self.zuoButton.enabled=NO;
+                        
+                    }
+            }
+    }
+    else{
+        [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"没有历史数据"];
+    }
+    
+}
+- (IBAction)you:(id)sender {
+    if (_today.count>0)
+    {
+        
+        self.zuoButton.enabled=YES;
+        _zhongjian++;
+        if (_zhongjian<_today.count)
+        {
+            NSString*yesr=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(0,4)];
+            NSString*month=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(4,2)];
+            NSString*day=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(6,2)];;
+            NSLog(@"%@-%@-%@",yesr,month,day);
+            NSString*dstr=[[[[yesr stringByAppendingString:@"-"] stringByAppendingString:month] stringByAppendingString:@"-"] stringByAppendingString:day];
+            [self.todayButton setTitle:dstr forState:0];
+              [self chazhao:[_today objectAtIndex:_zhongjian]];
+            if (_zhongjian==_today.count-1)
+            {
+               [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
+                self.youButton.enabled=NO;
+                
+            }
+        }
+    }
+    else
+    {
+        [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"没有历史数据"];
+    }
+}
+
+//
+//-(void)tworeloaddataforbulettoh{
+//    
+//    baby.having(self.twoPeripheral).and.channel(twoViewControllerdefine).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+//    
+//}
+//-(void)babyDelegate{
+//    
+//    __weak typeof(self) weakSelf = self;
+//    
+//    
+//    //设置扫描到设备的委托
+//    
+//    [baby setBlockOnDiscoverToPeripheralsAtChannel:twoViewControllerdefine block:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
+//        
+//    }];
+//    
+//    [baby setBlockOnConnectedAtChannel:twoViewControllerdefine block:^(CBCentralManager *central, CBPeripheral *peripheral) {
+//        NSLog(@"two连接成功");
+//        
+//        
+//        
+//    }];
+//    
+//    [baby setBlockOnDiscoverCharacteristicsAtChannel:twoViewControllerdefine block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
+//        //weakSelf.viewCharacteristic=[service.characteristics objectAtIndex:0];
+//        //NSLog(@"===viewCharacteristic:%@",service.characteristics);
+//        //插入row到tableview
+//        [weakSelf insertRowToTableView:service];
+//        
+//    }];
+//    
+//    
+//    [baby setBlockOnDidWriteValueForCharacteristicAtChannel:twoViewControllerdefine block:^(CBCharacteristic *characteristic, NSError *error) {
+//        NSLog(@"two写入成功");
+//        
+//    }];
+//    [baby setBlockOnDidUpdateNotificationStateForCharacteristicAtChannel:twoViewControllerdefine block:^(CBCharacteristic *characteristic, NSError *error) {
+//        [weakSelf insertReadValues:characteristic];
+//        
+//    }];
+//    
+//    
+//}
+//#pragma mark 已连接的CBCharacteristic
+//-(void)insertRowToTableView:(CBService *)service{
+//    NSLog(@"[twoview.characteristics objectAtIndex:0]==%@",[service.characteristics objectAtIndex:0]);
+//    NSLog(@"[twoview.characteristics objectAtIndex:1]==%@",[service.characteristics lastObject]);
+//    self.twoviewCharacteristic=[service.characteristics objectAtIndex:0];
+//    [self setnotificationison];
+//    [self huoquwendu];
+//}
+//-(void)huoquwendu{
+//    unsigned char sendStr1[16];
+//    
+//    sendStr1[0] = 0xFC;
+//    sendStr1[1] = 0x06;
+//    sendStr1[2] = 0x00;
+//    sendStr1[3] = 0x00;
+//    sendStr1[4] = 0x00;
+//    sendStr1[5] = 0x00;
+//    sendStr1[6] = 0x00;
+//    sendStr1[7] = 0x00;
+//    sendStr1[8] = 0x00;
+//    sendStr1[9] = 0x00;
+//    sendStr1[10] = 0x00;
+//    sendStr1[11] = 0x00;
+//    sendStr1[12] = 0x00;
+//    sendStr1[13] = 0x00;
+//    sendStr1[14] = 0x00;
+//    sendStr1[15] = 0x00;
+//    
+//    
+//    
+//    
+//    NSData *data = [NSData dataWithBytes:sendStr1 length:16];
+//    [self.twoPeripheral writeValue:data forCharacteristic:self.twoviewCharacteristic type:CBCharacteristicWriteWithResponse];
+//    
+//
+//    
+//}
+//#pragma mark  设置通知
+//-(void)setnotificationison{
+//    
+//    
+//    [baby notify:self.twoPeripheral
+//  characteristic:self.twoviewCharacteristic
+//           block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
+//               NSLog(@"设置通知success");
+//               [self insertReadValues:characteristics];
+//               
+//           }];
+//}
+//-(void)insertReadValues:(CBCharacteristic *)characteristics{
+//    NSLog(@"characteristics.value=%@",characteristics.value);
+//    
+//}
+
+
+//}
+-(void)updateViewConstraints{
+    [super updateViewConstraints];
+    self.imageH.constant=[UIScreen mainScreen].bounds.size.height*0.28;
+    self.imageW.constant=[UIScreen mainScreen].bounds.size.height*0.28;
+    self.labelH.constant=[UIScreen mainScreen].bounds.size.height*0.28;
+    self.labelW.constant=[UIScreen mainScreen].bounds.size.height*0.28;
+    self.label2H.constant=[UIScreen mainScreen].bounds.size.height*0.28;
+    self.label2W.constant=[UIScreen mainScreen].bounds.size.height*0.3*0.5;
+}
+- (IBAction)gotoDateView:(id)sender {
+    if(!self.datePicker)
+        self.datePicker = [THDatePickerViewController datePicker];
+    self.datePicker.date = self.curDate;
+    self.datePicker.delegate = self;
+    [self.datePicker setAllowClearDate:NO];
+    [self.datePicker setAutoCloseOnSelectDate:YES];
+    [self.datePicker setSelectedBackgroundColor:[UIColor colorWithRed:125/255.0 green:208/255.0 blue:0/255.0 alpha:1.0]];
+    [self.datePicker setCurrentDateColor:[UIColor colorWithRed:242/255.0 green:121/255.0 blue:53/255.0 alpha:1.0]];
+    [self.datePicker setSelectedBackgroundColor:[UIColor colorWithRed:125/255.0 green:208/255.0 blue:0/255.0 alpha:1.0]];
+    [self.datePicker setCurrentDateColor:[UIColor colorWithRed:242/255.0 green:121/255.0 blue:53/255.0 alpha:1.0]];
+    
+    [self.datePicker setDateHasItemsCallback:^BOOL(NSDate *date) {
+        __weak typeof(self) weakSelf = self;
+        
+      
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyyMMdd"];
+        NSString *strDate = [dateFormatter stringFromDate:date];
+      
+        return [weakSelf.today containsObject:strDate];
+        
+    }];
+ 
+    [self presentSemiViewController:self.datePicker withOptions:@{
+                                                                  KNSemiModalOptionKeys.pushParentBack    : @(NO),
+                                                                  KNSemiModalOptionKeys.animationDuration : @(1.0),
+                                                                  KNSemiModalOptionKeys.shadowOpacity     : @(0.3),
+                                                                  }];
+    
+    
+    
+}
+-(void)datePickerDonePressed:(THDatePickerViewController *)datePicker{
+    self.curDate = datePicker.date;
+     NSLog(@"%@",[_formatter stringFromDate:_curDate]);
+    [_todayButton setTitle:[_formatter2 stringFromDate:_curDate] forState:0];
+    [self chazhao:[_formatter stringFromDate:_curDate]];
+   
+    
+    [self dismissSemiModalView];
+}
+
+-(void)datePickerCancelPressed:(THDatePickerViewController *)datePicker{
+    //[self.datePicker slideDownAndOut];
+    [self dismissSemiModalView];
+}
+
+
+
+
+
+@end
