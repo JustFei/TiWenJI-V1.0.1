@@ -150,7 +150,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="background_all.png" translatesAutoresizingMaskIntoConstraints="NO" id="thr-S1-Qsc">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background_all.png" translatesAutoresizingMaskIntoConstraints="NO" id="thr-S1-Qsc">
                                 <rect key="frame" x="0.0" y="20" width="720" height="531"/>
                                 <color key="backgroundColor" red="0.15802095810574251" green="0.28131840945820291" blue="0.39465974506578949" alpha="1" colorSpace="calibratedRGB"/>
                             </imageView>

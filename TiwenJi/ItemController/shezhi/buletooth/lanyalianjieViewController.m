@@ -114,6 +114,8 @@
 -(void)babyDelegate{
     
     __weak typeof(self) weakSelf = self;
+    __weak typeof(baby) weakBaby = baby;
+    
     [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
         if (central.state == CBCentralManagerStatePoweredOn) {
                     }
@@ -147,11 +149,6 @@
         weakSelf.duankaiSwitch.enabled=YES;
         [weakSelf.duankaiSwitch setOn:YES];
         
-   
-
- 
-        
-        
     }];
     
     [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
@@ -175,7 +172,12 @@
        
         weakSelf.duankaiSwitch.enabled=NO;
         [weakSelf.duankaiSwitch setOn:NO];
-     
+        
+        //断开连接后，在连接条件回复后，可连接
+        if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
+            [weakBaby.centralManager connectPeripheral:peripheral options:nil];
+//            [weakSelf reloadDataBluetooth];
+        }
     }];
     
 }
@@ -355,13 +357,17 @@
    
     NSLog(@"indexPath.row=%ld",(long)indexPath.row);
     self.bluetoothPeripheral=[peripherals objectAtIndex:indexPath.row];
-    baby.having([peripherals objectAtIndex:indexPath.row]).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     
-    
+    [self reloadDataBluetooth];
     
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 60;
+}
+
+- (void)reloadDataBluetooth
+{
+    baby.having(self.bluetoothPeripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
 

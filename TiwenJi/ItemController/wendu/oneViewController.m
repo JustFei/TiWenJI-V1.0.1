@@ -176,36 +176,24 @@
     
     
 }
+
+
 -(void)lianjie{
     NSArray*arry=[babycao findConnectedPeripherals];
     NSLog(@" findConnectedPeripherals=%@",arry);
     if (arry.count>0)
     {
-        
-        
-        
         for (CBPeripheral*per in arry)
         {
             self.Peripheral=per;
-        
-            
         }
         
-            [self reloaddataforbulettoh];
-        
-        
-
+        [self reloaddataforbulettoh];
     }
     else
     {
-        
         [self.wenbutton setTitle:@"扫描设备" forState:0];
-     
-        
     }
-
-    
-    
 }
 
 /**
@@ -227,12 +215,23 @@
     NSLog(@"体温计设备名称 == %@",self.Peripheral.name);
     
     //这里判断再次连接的蓝牙设备是否是启动app后连接的设备，如果是，则连接，不是就继续搜索
-    if ([[self.Peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults]stringForKey:@"identifier"]]) {
-        babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
-    }
+    babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     
 //    babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
+
+//- (void)chonglianmethod
+//{
+//    NSLog(@"这里是断开后重新连接蓝牙设备的方法");
+//    
+//    babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.scanForPeripherals().connectToPeripherals
+//    
+//    //findConnectPerpherals 是获取当前连接的设备信息
+////    NSArray *peripheralArray = [babycao findConnectedPeripherals];
+////    NSLog(@"%@",peripheralArray);
+//    
+//    
+//}
 
 
 #pragma mark - 蓝牙连接代理模块
@@ -240,9 +239,13 @@
     
     __weak typeof(self) weakSelf = self;
     
-    //成功连接设备的委托
+    __weak typeof(babycao) weakbaby = babycao;
+    
+    //找到设备的委托
     [babycao setBlockOnDiscoverToPeripheralsAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
-        NSLog(@"%@",peripheral);
+        NSLog(@"找到设备，名称 == %@",peripheral);
+        
+        [weakSelf reloaddataforbulettoh];
         
     }];
     
@@ -252,20 +255,65 @@
 //    //设置扫描到设备的委托
 //    [babycao setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
 //        
-//        NSLog(@"------------%@",peripheral.name);
-//        if ([[peripheral.identifier UUIDString]isEqualToString:@"22A8135D-D3FA-3E11-FA58-85E9CA886C9C"]) {
-//            NSLog(@"%@",peripheral.name);
-//            
-//        }
+//        NSLog(@"------------%@",peripheral.identifier);
+////        if ([[peripheral.identifier UUIDString]isEqualToString:@"22A8135D-D3FA-3E11-FA58-85E9CA886C9C"]) {
+////            NSLog(@"%@",peripheral.name);
+////            
+////        }
 //        
-//       
+//        NSString *peripheralID = [[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"];
+//        NSLog(@"存储在本地的蓝牙id == %@", peripheralID);
+//        
+//        
+//            if ([[peripheral.identifier UUIDString] isEqualToString: peripheralID] ) {
+//                
+//                weakSelf.Peripheral = peripheral;
+//                
+//                babycao.having(weakSelf.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+//            }
 //    }];
 
    
     
     //连接成功的时候回调
     [babycao setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
-        NSLog(@"one连接成功-%@",peripheral.name);
+        NSLog(@"成功连接设备，名称== %@",peripheral.name);
+        
+//        weakbaby.having(weakSelf.Peripheral).and.channel(channelOnPeropheralView).then.discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+    
+    }];
+    
+    //断开连接时候的回调
+    [babycao setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
+        NSLog(@"设备断开");
+        
+        //温度按钮设置为扫描设备的文本
+        [weakSelf.wenbutton setTitle:@"扫描设备" forState:0];
+        
+        //关闭掉获取温度的定时器
+        [weakSelf.reconnectTimer invalidate];
+        weakSelf.reconnectTimer = nil;
+        
+        NSLog(@"重连设备名称 == %@", peripheral.name);
+        
+        //断开连接后，在连接条件回复后，可连接
+        if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
+            [weakbaby.centralManager connectPeripheral:peripheral options:nil];
+            [weakSelf reloaddataforbulettoh];
+        }
+
+        //开启重连的定时器
+//        if (![weakSelf.chongliangTimer isValid]) {
+//            weakSelf.chongliangTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(chonglianmethod) userInfo:nil repeats:YES];
+//        }
+        
+    }];
+    
+    //查找到特征值的时候的回调
+    [babycao setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
+        NSLog(@"查找到特征值 特征值为== %@", service.characteristics[1]);
+        
+        [weakSelf insertRowToTableView:service];
         
         if (![weakSelf.reconnectTimer isValid]) {
             weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
@@ -273,27 +321,8 @@
         
         [weakSelf.chongliangTimer invalidate];
         weakSelf.chongliangTimer=nil;
-    }];
-    
-    //断开连接时候的回调
-    [babycao setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
-        NSLog(@"oneduankai");
         
-         [weakSelf.wenbutton setTitle:@"扫描设备" forState:0];
         
-        [weakSelf.reconnectTimer invalidate];
-        weakSelf.reconnectTimer = nil;
-        
-        if (![weakSelf.chongliangTimer isValid]) {
-            weakSelf.chongliangTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(chonglian) userInfo:nil repeats:YES];
-        }
-        
-    }];
-    
-    //查找到特征值的时候的回调
-    [babycao setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        NSLog(@"------");
-        [weakSelf insertRowToTableView:service];
         
     }];
     
@@ -305,8 +334,11 @@
     
     //characteristic订阅状态改变的block
     [babycao setBlockOnDidUpdateNotificationStateForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
-        [weakSelf insertReadValues:characteristic];
+        NSLog(@"订阅特征状态");
         
+        if (characteristic.value) {
+            [weakSelf insertReadValues:characteristic];
+        }
     }];
     
     
@@ -316,7 +348,7 @@
 
 -(void)insertRowToTableView:(CBService *)service{
     NSLog(@"11111111111111");
-    NSLog(@"service.characteristics===%@",service.characteristics);
+    NSLog(@"连接到CBC，设置通知，特征===%@",service.characteristics);
 
     self.viewCharacteristic=[service.characteristics objectAtIndex:0];
     NSLog(@"uuid===%@",self.viewCharacteristic.UUID.UUIDString);
@@ -349,16 +381,20 @@
    
   
     NSData *data = [NSData dataWithBytes:sendStr length:16];
+    
+    //写characteristic
     [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
 
     
-    NSLog(@"获取温度进行时。。。。。。");
+    NSLog(@"特征写入成功，为 == %@", data);
     
 }
+
+
 #pragma mark  设置通知
 -(void)setnotificationison{
     
-       NSLog(@"22222222222222");
+       NSLog(@"设置通知");
     [babycao notify:self.Peripheral
   characteristic:self.viewCharacteristic
            block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
@@ -375,55 +411,60 @@
     
     if ([self.viewCharacteristic.value bytes]!=nil) {
         const unsigned char *hexBytesLight = [self.viewCharacteristic.value bytes];
-       
-        NSString *battery = [NSString stringWithFormat:@"%02x", hexBytesLight[13]];
-        NSString *battery2 = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
         
-        _wen=[_chuli pass:battery xiaoshu:battery2];
-        [self.wenbutton setTitle:[_wen stringByAppendingString:@"°C"]forState:0];
+        NSString *Str1 = [NSString stringWithFormat:@"%02x", hexBytesLight[0]];
         
-        if ([_wen floatValue]>[_wendu floatValue]) {
-            _wendu=_wen;
-        }
-        NSLog(@"最大的温度=%@",_wendu);
-        
-        //取得当前时间，x轴
-      NSDate* nowDate = [[NSDate alloc]init];
-     
-        NSTimeInterval nowTimeInterval = [nowDate timeIntervalSince1970] * 1000;
-     
-        //随机温度，y轴
-        float temperature =[_wen floatValue];
-        if (temperature!=0) {
+        //如果获取到的值的第一个字节是不是“04”，如果是，就对数值进行操作，不是就舍去
+        if ([Str1 isEqualToString:@"04"]) {
             
-            //温度低于30度就不显示在折线图上
-            if (temperature<30) {
-                NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
-                [jsStr appendFormat:@"updateData(%f,%d)",nowTimeInterval,30];
+            NSString *battery = [NSString stringWithFormat:@"%02x", hexBytesLight[13]];
+            NSString *battery2 = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
+            
+            _wen=[_chuli pass:battery xiaoshu:battery2];
+            [self.wenbutton setTitle:[_wen stringByAppendingString:@"°C"]forState:0];
+            
+            NSLog(@"获取到的温度值== %@",_wen);
+            
+            if ([_wen floatValue]>[_wendu floatValue]) {
+                _wendu=_wen;
+            }
+            NSLog(@"最大的温度=%@",_wendu);
+            
+            //取得当前时间，x轴
+            NSDate* nowDate = [[NSDate alloc]init];
+            
+            NSTimeInterval nowTimeInterval = [nowDate timeIntervalSince1970] * 1000;
+            
+            //随机温度，y轴
+            float temperature =[_wen floatValue];
+            if (temperature!=0) {
                 
-                [_webview stringByEvaluatingJavaScriptFromString:jsStr];
+                //温度低于30度就不显示在折线图上
+                if (temperature<30) {
+                    NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
+                    [jsStr appendFormat:@"updateData(%f,%d)",nowTimeInterval,30];
+                    
+                    [_webview stringByEvaluatingJavaScriptFromString:jsStr];
+                }
+                else{
+                    NSLog(@"temperature=%0.2f",temperature);
+                    NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
+                    [jsStr appendFormat:@"updateData(%f,%0.2f)",nowTimeInterval,temperature];
+                    
+                    [_webview stringByEvaluatingJavaScriptFromString:jsStr];
+                }
+                
+            }
+            
+            if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]==nil) {
+                NSLog(@"用户为空");
+                
             }
             else{
-                NSLog(@"temperature=%0.2f",temperature);
-                NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
-                [jsStr appendFormat:@"updateData(%f,%0.2f)",nowTimeInterval,temperature];
-                
-                [_webview stringByEvaluatingJavaScriptFromString:jsStr];
+                [self saveCoreData2];
             }
-          
         }
-        
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]==nil) {
-            NSLog(@"用户为空");
-            
-        }
-        else{
-        [self saveCoreData2];
-        
-        }
-        
     }
-    
 }
 -(void)Gbaojing{
     
@@ -444,13 +485,57 @@
                 self.passSenderdelegate=secondDetailViewController;
                 [self.passSenderdelegate passSender:[[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"] stringByAppendingString:@" 当前温度为"] Wendu:[_wen stringByAppendingString:@"°C"]];
                 
+#warning 高温警报代码
+//                这里做高温报警处理
+//                设置高温一秒后push
+                NSDate *pushDate =  [NSDate dateWithTimeIntervalSinceNow:1];
+                
+                UILocalNotification *notification = [[UILocalNotification alloc] init];
+                
+                if (notification != nil) {
+                    // 设置推送时间
+                    
+                    notification.fireDate = pushDate;
+                    
+                    // 设置时区
+                    
+                    notification.timeZone = [NSTimeZone defaultTimeZone];
+                    
+                    // 设置重复间隔
+                    notification.repeatInterval = kCFCalendarUnitDay;
+                    
+                    // 推送声音
+                    
+                    notification.soundName = UILocalNotificationDefaultSoundName;
+                    
+                    // 推送内容
+                    
+                    notification.alertBody = @"高温警报";
+                    
+                    //显示在icon上的红色圈中的数子
+                    
+                    notification.applicationIconBadgeNumber = 1;
+                    
+                    //设置userinfo 方便在之后需要撤销的时候使用
+                    
+                    NSDictionary *info = [NSDictionary dictionaryWithObject:@"gaowen"forKey:@"key"];
+                    
+                    notification.userInfo = info;
+                    
+                    //添加推送到UIApplication
+                    
+                    UIApplication *app = [UIApplication sharedApplication];
+                    
+                    [app scheduleLocalNotification:notification];
+                    
+                }
                 
                     NSLog(@"温度高于报警温度  开始报警");
-                    
+                
                     if ([_user boolForKey:@"GZswitch"]) {
                    
                             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-                         
+                        
                     }
                     if ([_user boolForKey:@"GLswitch"]) {
                         
@@ -478,18 +563,65 @@
     {
           NSLog(@"Dyes");
        
-        
+        //防止初始温度获取不到值的情况下，造成体温警报
+        if (_wen == NULL) {
+            return;
+        }
         if ([_wen floatValue]<[[_user objectForKey:@"diwenLabel"]floatValue])
         {
-            
             dwViewController=nil;
             dwViewController=[[diwenbaojingView alloc]initWithNibName:@"diwenbaojingView" bundle:nil];
             dwViewController.delegate=self;
-//            [self presentPopupViewController:dwViewController animationType:MJPopupViewAnimationFade];
+            NSLog(@"低温警报时的温度为 == %@",_wen);
+            [self presentPopupViewController:dwViewController animationType:MJPopupViewAnimationFade];
             
             self.passSenderdelegate=dwViewController;
             [self.passSenderdelegate passSender:[[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"] stringByAppendingString:@" 当前温度为"] Wendu:[_wen stringByAppendingString:@"°C"]];
            
+#warning 低温警报代码
+            //这里做高温报警处理
+            //设置低温一秒后push
+            NSDate *pushDate =  [NSDate dateWithTimeIntervalSinceNow:1];
+            
+            UILocalNotification *notification = [[UILocalNotification alloc] init];
+            
+            if (notification != nil) {
+                // 设置推送时间
+                
+                notification.fireDate = pushDate;
+                
+                // 设置时区
+                
+                notification.timeZone = [NSTimeZone defaultTimeZone];
+                
+                // 设置重复间隔
+                notification.repeatInterval = kCFCalendarUnitDay;
+                
+                // 推送声音
+                
+                notification.soundName = UILocalNotificationDefaultSoundName;
+                
+                // 推送内容
+                
+                notification.alertBody = @"低温警报！";
+                
+                //显示在icon上的红色圈中的数子
+                
+                notification.applicationIconBadgeNumber = 1;
+                
+                //设置userinfo 方便在之后需要撤销的时候使用
+                
+                NSDictionary *info = [NSDictionary dictionaryWithObject:@"diwen"forKey:@"key1"];
+                
+                notification.userInfo = info;
+                
+                //添加推送到UIApplication
+                
+                UIApplication *app = [UIApplication sharedApplication];
+                
+                [app scheduleLocalNotification:notification];
+                
+            }
 
             NSLog(@"温度低于低温报警温度  开始报警");
             

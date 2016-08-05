@@ -11,10 +11,13 @@
 
 #import "ViewController.h"
 #import "oneViewController.h"
+
 @protocol dwbjViewPopupDelegate;
+
 @interface diwenbaojingView : ViewController<onepassButtonSenderDelegate>
 @property (assign, nonatomic) id <dwbjViewPopupDelegate>delegate;
 @end
+
 @protocol dwbjViewPopupDelegate<NSObject>
 @optional
 - (void)dwcancelButtonClicked:(ViewController*)secondDetailViewController;

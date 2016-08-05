@@ -209,15 +209,15 @@
     
     if (buttonIndex==0)
     {
-        TabBarViewController*vc=[[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"TabBarViewController"];
         
-        [self presentViewController:vc animated:YES completion:^{}];
     }
     else
     {
-    
              baby.having(self.qidongperipheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     }
+    TabBarViewController*vc=[[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"TabBarViewController"];
+    
+    [self presentViewController:vc animated:YES completion:^{}];
     
 }
 
