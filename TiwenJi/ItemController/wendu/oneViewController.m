@@ -50,7 +50,7 @@
 @property(nonatomic ,assign)int Ddaojishi;
 @property(nonatomic ,assign)int xianshidaojishiTime;
 @property(nonatomic ,strong)NSUserDefaults*user;
-@property(nonatomic ,strong) wenduchuli*chuli;
+@property(nonatomic ,strong) wenduchuli *wenduchuli;
 @property(nonatomic ,strong)NSString*wen;
 
 
@@ -67,7 +67,7 @@
     [super viewDidLoad];
     self.myappdelegate2=[UIApplication sharedApplication].delegate;
     _xianshidaojishiTime=15;
-    _chuli=[[wenduchuli alloc]init];
+    _wenduchuli=[[wenduchuli alloc]init];
     _mutableArrsy=[[NSMutableArray alloc]init];
    
      babycao=[BabyBluetooth shareBabyBluetooth];
@@ -86,28 +86,14 @@
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
     [_webview loadRequest:request];
     
-    
     _user=[NSUserDefaults standardUserDefaults];
     _wendu=@"19.00";
-    
-   
-   
-    
-    
     
     _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
      _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
     
-  
-   
     //[self time];
     
-    
-    
-
-    
-   
-   
 }
 
 #pragma mark - 高低温报警
@@ -278,8 +264,6 @@
     //连接成功的时候回调
     [babycao setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         NSLog(@"成功连接设备，名称== %@",peripheral.name);
-        
-//        weakbaby.having(weakSelf.Peripheral).and.channel(channelOnPeropheralView).then.discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     
     }];
     
@@ -288,7 +272,13 @@
         NSLog(@"设备断开");
         
         //温度按钮设置为扫描设备的文本
-        [weakSelf.wenbutton setTitle:@"扫描设备" forState:0];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            if (weakSelf.Peripheral.state == 0) {
+                [weakSelf.wenbutton setTitle:@"扫描设备" forState:0];
+            }
+            
+        });
         
         //关闭掉获取温度的定时器
         [weakSelf.reconnectTimer invalidate];
@@ -301,35 +291,51 @@
             [weakbaby.centralManager connectPeripheral:peripheral options:nil];
             [weakSelf reloaddataforbulettoh];
         }
-
-        //开启重连的定时器
-//        if (![weakSelf.chongliangTimer isValid]) {
-//            weakSelf.chongliangTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(chonglianmethod) userInfo:nil repeats:YES];
-//        }
         
     }];
     
     //查找到特征值的时候的回调
     [babycao setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        NSLog(@"查找到特征值 特征值为== %@", service.characteristics[1]);
+        NSLog(@"查找到特征值 特征值为== %@", service.characteristics[0]);
         
         [weakSelf insertRowToTableView:service];
         
         if (![weakSelf.reconnectTimer isValid]) {
-            weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+            weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:3 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
         }
         
         [weakSelf.chongliangTimer invalidate];
         weakSelf.chongliangTimer=nil;
         
-        
-        
     }];
     
+//    [babycao setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
+//        [weakSelf insertRowToTableView:service];
+//        
+//        if (![weakSelf.reconnectTimer isValid]) {
+//            weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+//        }
+//        
+//        [weakSelf.chongliangTimer invalidate];
+//        weakSelf.chongliangTimer=nil;
+//    }];
     
+    
+    [babycao setBlockOnDidWriteValueForCharacteristic:^(CBCharacteristic *characteristic, NSError *error) {
+        if (error) {
+            NSLog(@"特征写入失败，原因为== %@",[error localizedDescription]);
+        }else {
+            NSLog(@"特征值写入成功");
+        }
+    }];
+    
+    //特征写入成功的委托
     [babycao setBlockOnDidWriteValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
-      
-        
+        if (error) {
+            NSLog(@"特征值写入失败，原因是==%@",[error localizedDescription]);
+        }else {
+        NSLog(@"特征值写入成功");
+        }
     }];
     
     //characteristic订阅状态改变的block
@@ -351,7 +357,7 @@
     NSLog(@"连接到CBC，设置通知，特征===%@",service.characteristics);
 
     self.viewCharacteristic=[service.characteristics objectAtIndex:0];
-    NSLog(@"uuid===%@",self.viewCharacteristic.UUID.UUIDString);
+    NSLog(@"uuid===%@",self.viewCharacteristic);
     [self setnotificationison];
     
 }
@@ -382,11 +388,12 @@
   
     NSData *data = [NSData dataWithBytes:sendStr length:16];
     
+    NSLog(@"特征写入前为 == %@", self.viewCharacteristic);
+    
     //写characteristic
     [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
 
-    
-    NSLog(@"特征写入成功，为 == %@", data);
+    NSLog(@"特征写后为 == %@", self.viewCharacteristic);
     
 }
 
@@ -420,7 +427,7 @@
             NSString *battery = [NSString stringWithFormat:@"%02x", hexBytesLight[13]];
             NSString *battery2 = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
             
-            _wen=[_chuli pass:battery xiaoshu:battery2];
+            _wen=[_wenduchuli pass:battery xiaoshu:battery2];
             [self.wenbutton setTitle:[_wen stringByAppendingString:@"°C"]forState:0];
             
             NSLog(@"获取到的温度值== %@",_wen);

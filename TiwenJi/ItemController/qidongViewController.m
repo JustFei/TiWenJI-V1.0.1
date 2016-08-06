@@ -38,23 +38,22 @@
     //设置扫描到设备的委托
     __weak typeof(self) weakSelf = self;
     [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
-        //NSLog(@"%@",[peripheral.identifier UUIDString]);
-        
+        NSLog(@"%@",peripheral.name);
         
         [weakSelf insertCBPeripheral:peripheral ];
     }];
     //连接设备成功的委托
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
-        
-    
-        
-    
+        NSLog(@"成功连接了设备%@",peripheral.name);
         
     }];
     
+    [baby setBlockOnFailToConnect:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
+        NSLog(@"连接上次设备失败");
+        [weakSelf presentToMian];
+    }];
     
-    
-    
+    //设置查找到Characteristics的block
     [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
          [weakSelf insertRowToTableView:service];
     }];
@@ -125,7 +124,14 @@
     
     TabBarViewController*vc=[[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"TabBarViewController"];
     
+    //延迟3秒推送到主界面
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [self presentViewController:vc animated:YES completion:^{}];
+//    });
+    
+    
     [self presentViewController:vc animated:YES completion:^{}];
+    
     
 }
 -(void)huoqudianliang{
@@ -193,11 +199,12 @@
         else
         {
               NSLog(@"没有使用过的设备");
-  
+
+            [self presentToMian];
             
-            TabBarViewController*vc=[[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"TabBarViewController"];
-            
-            [self presentViewController:vc animated:YES completion:^{}];
+//            TabBarViewController*vc=[[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"TabBarViewController"];
+//            
+//            [self presentViewController:vc animated:YES completion:^{}];
         }
        
     }
@@ -209,16 +216,19 @@
     
     if (buttonIndex==0)
     {
-        
+        //不连接上次设备，直接跳转
+        [self presentToMian];
     }
     else
     {
              baby.having(self.qidongperipheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     }
+}
+
+- (void)presentToMian
+{
     TabBarViewController*vc=[[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"TabBarViewController"];
-    
     [self presentViewController:vc animated:YES completion:^{}];
-    
 }
 
 @end

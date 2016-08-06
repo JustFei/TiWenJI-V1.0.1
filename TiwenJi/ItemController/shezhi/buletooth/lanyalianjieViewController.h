@@ -10,6 +10,9 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "BabyBluetooth.h"
 
+//回调到oneViewController的时候修改扫描按钮的title和状态，但是现在不能回调
+typedef void(^LanYaLianJieWaitingForDataCallBack)(void);
+
 @interface lanyalianjieViewController : ViewController
 @property (weak, nonatomic) IBOutlet UIImageView *beaconView;
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
@@ -20,6 +23,8 @@
 
 @property (weak, nonatomic) IBOutlet UISwitch *duankaiSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *dianlianglabel;
+
+- (void)setLanYaLianJieWaitingForDataCallBack:(LanYaLianJieWaitingForDataCallBack)callback;
 
 @end
 

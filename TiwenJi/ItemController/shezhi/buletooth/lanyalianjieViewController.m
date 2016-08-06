@@ -19,12 +19,14 @@
     NSMutableArray *peripheralsAD;
     NSTimer*layerTimer;
 
-   
+    LanYaLianJieWaitingForDataCallBack _lanYaLianJieWaitingForDataCallBack;
 }
 
 @property (nonatomic, weak) PulsingHaloLayer *halo;
 @property(nonatomic,strong)CBCharacteristic*bluetoothviewCharacteristic;
 @property(nonatomic,strong)CBPeripheral*bluetoothPeripheral;
+
+
 
 @end
 
@@ -42,8 +44,6 @@
     layerTimer = [NSTimer timerWithTimeInterval:8 target:self selector:@selector(stoplayer) userInfo:nil repeats:NO];
         [layerTimer setFireDate: [[NSDate date]dateByAddingTimeInterval:8]];
     [[NSRunLoop currentRunLoop] addTimer:layerTimer forMode:NSRunLoopCommonModes];
-    
-    
     
 }
 
@@ -86,9 +86,6 @@
         [self.duankaiSwitch setOn:NO];
         self.duankaiSwitch.enabled=NO;
     }
-   
-    
-    
 }
 
 -(void)startlayer{
@@ -108,6 +105,11 @@
 -(void)stoplayer{
      [self.halo removeFromSuperlayer];
     
+}
+
+- (void)setLanYaLianJieWaitingForDataCallBack:(LanYaLianJieWaitingForDataCallBack)callback
+{
+    _lanYaLianJieWaitingForDataCallBack = callback;
 }
 
 #pragma mark - 蓝牙连接委托
@@ -149,12 +151,12 @@
         weakSelf.duankaiSwitch.enabled=YES;
         [weakSelf.duankaiSwitch setOn:YES];
         
+//        [weakSelf dismissViewControllerAnimated:YES completion:nil];
+        
     }];
     
-    [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-
-   
-       
+    [baby setBlockOnDidWriteValueForCharacteristic:^(CBCharacteristic *characteristic, NSError *error) {
+        NSLog(@"温度特征值写入成功");
     }];
     
    //设置查找到Characteristics的block
@@ -261,6 +263,12 @@
     if ([characteristics.value bytes]!=nil) {
         const unsigned char *hexBytesLight = [characteristics.value bytes];
         //NSLog(@"------------======------%@",[NSString stringWithFormat:@"%02x", hexBytesLight[14]]);
+        
+        NSString *Str1 = [NSString stringWithFormat:@"%02x", hexBytesLight[0]];
+        
+        //如果获取到的值的第一个字节是不是“07”，如果是，就对数值进行操作，不是就舍去
+        if ([Str1 isEqualToString:@"07"]) {
+        
         if (![[NSString stringWithFormat:@"%02x", hexBytesLight[14]] isEqualToString:@"00"]) {
             NSLog(@"berbarbaerb===%@",[NSString stringWithFormat:@"%02x", hexBytesLight[14]]);
             NSString*dianliang=[NSString stringWithFormat:@"%02x", hexBytesLight[14]];
@@ -292,10 +300,11 @@
                 NSLog(@"电量是：%d",qian);
                 self.dianlianglabel.text=[NSString stringWithFormat:@"%d",qian];
                 
+                [self dismissViewControllerAnimated:YES completion:nil];
                 
             }
         }
-    
+        }
     }
 
 }
