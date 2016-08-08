@@ -21,9 +21,8 @@
 @interface twoViewController () <MCLineChartViewDataSource, MCLineChartViewDelegate>{
     BabyBluetooth*baby;
     NSMutableArray*timeArray;
-    
-    
 }
+
 @property (nonatomic, retain) NSDate * curDate;
 @property (nonatomic, retain) NSDateFormatter * formatter;
 @property (nonatomic, retain) NSDateFormatter * formatter2;
@@ -33,9 +32,15 @@
 @property(nonatomic,strong)NSMutableArray*riqi;
 @property(nonatomic,strong)NSMutableArray*wd;
 @property (strong, nonatomic) MCLineChartView *lineChartView;
+
+//横轴坐标显示
 @property (strong, nonatomic) NSArray *titles;
+
+//数据源
 @property (strong, nonatomic) NSMutableArray *dataSource;
+//有温度的天数的数组，直到今天为止
 @property (strong, nonatomic) NSMutableArray*today;
+//最大温度
 @property (strong, nonatomic)NSString*zuida;
 @property(nonatomic,assign)int zhongjian;
 
@@ -72,7 +77,7 @@
     _titles = @[@"01:00", @"02:00", @"03:00",@"04:00",@"05:00",@"06:00",@"07:00",@"08:00",@"09:00",@"10:00",@"11:00",@"012:00",@"13:00",@"14:00",@"15:00",@"16:00",@"17:00",@"18:00",@"19:00",@"20:00",@"21:00",@"22:00",@"23:00",@"24:00"];
     
     
-    _lineChartView = [[MCLineChartView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height*0.5-50, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height*0.5)];
+    _lineChartView = [[MCLineChartView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height*0.5 - 20, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height*0.5 - 30)];
     _lineChartView.dotRadius = 3;
     _lineChartView.oppositeY = NO;
     _lineChartView.dataSource = self;
@@ -95,7 +100,6 @@
     [_formatter setDateFormat:@"YYYYMMdd"];
     
     _today=[[NSMutableArray alloc]init];
-    _zhongjian=_today.count*0.5;
     [self coredatachaozao];
 }
 -(void)coredatachaozao{
@@ -109,6 +113,8 @@
     NSError * requestError = nil;
     NSArray * shuzu = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
     //NSLog(@"shuzu=%@",shuzu);
+    
+    //判断日期是否和shijian中的前八个是否存在于today中，如果不存在，就添加该日期
     for (Test*pp in shuzu) {
         NSLog( @"pp.shijian=%@",pp.shijian);
         if (![_today containsObject:[pp.shijian substringToIndex:8]]) {
@@ -118,25 +124,31 @@
     }
     NSLog(@"_today=%@",_today);
     
+    _zhongjian=_today.count -1;
+    
 }
 
-
+//在折线图视图的行数
 - (NSUInteger)numberOfLinesInLineChartView:(MCLineChartView *)lineChartView {
     return 1;
 }
 
+//24个小时，x坐标数量
 - (NSUInteger)lineChartView:(MCLineChartView *)lineChartView lineCountAtLineNumber:(NSInteger)number {
     return [_dataSource count];
 }
 
+//每个坐标的值
 - (id)lineChartView:(MCLineChartView *)lineChartView valueAtLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
     return _dataSource[index];
 }
 
+//横坐标的坐标值：时间
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView titleAtLineNumber:(NSInteger)number {
     return _titles[number];
 }
 
+//折线颜色
 - (UIColor *)lineChartView:(MCLineChartView *)lineChartView lineColorWithLineNumber:(NSInteger)lineNumber {
     if (lineNumber == 0) {
         return [UIColor colorWithRed:0/255.0 green:207/255.0 blue:187/255.0 alpha:1.0];
@@ -149,6 +161,7 @@
     }
 }
 
+//折线上点的提示框的值
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
     
     return [NSString stringWithFormat:@"%@°C", _dataSource[index]];
@@ -165,9 +178,9 @@
     NSString *string_day_time = [formatter stringFromDate:date] ;
     
     [self chazhao:string_day_time];
-    
-    
 }
+
+//查找数据
 -(void)chazhao:(NSString*)string{
     NSString*string_day_time=string;
     
@@ -175,16 +188,24 @@
     _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
     _zuida=@"0°C";
     
+    //从沙盒中获取到最大温度，可换成从数据库获取来的温度数据
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"])
     {
-        
+        //CoreData请求命令集
         NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+        //实体描述，即表明为Test，
         NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
+        //给这个命令指定一个表：Test
         [fetchRequest setEntity:entity];
+        //谓词
         NSPredicate * agePre = [NSPredicate predicateWithFormat:@"name like[cd] %@",[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]];
+        //给命令具体执行内容，内容为查找，查找 name为沙盒中存储的suername
         [fetchRequest setPredicate:agePre];
         NSError * requestError = nil;
+        //执行这个命令，获得结果persons
         NSArray * persons = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
+        NSLog(@"persons == %@, count = %lu",persons ,(unsigned long)persons.count);
+        
         if ([persons count]>0)
         {
             for (Test*pp in persons)
@@ -192,9 +213,8 @@
             {
 //                NSLog(@"pp.shijian=%@ pp.wendu=%@",pp.shijian,pp.wendu);
 //                [timeArray  addObject:[pp.shijian substringToIndex:8]];
-               
                 
-                
+                //将person的历史温度数据放到dataSource数据源中
                 if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"00"]]) {
                     [_dataSource replaceObjectAtIndex:24 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
                 }if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"01"]]) {
@@ -275,13 +295,15 @@
             }
         }
    
+        //刷新图表数据
         [_lineChartView reloadData];
         [_lineChartView reloadDataWithAnimate:NO];
+        
+        //获取到最大温度
         for (NSString*p in _dataSource) {
             if( [_zuida floatValue]<[p floatValue]){
                 _zuida=p;
             }
-            
         }
         self.labelText.text=_zuida;
         
@@ -294,6 +316,8 @@
         
     }
 }
+
+//今天的按钮事件
 - (IBAction)todayButtonAction:(id)sender {
     [self.todayButton setTitle:@"今天" forState:0];
   
@@ -304,14 +328,17 @@
     
     [self chazhao:string_day_time];
 }
+
+//前一天的数据
 - (IBAction)zuo:(id)sender {
     if (_today.count>0)
     {
         
-    
             self.youButton.enabled=YES;
         
+        NSLog(@"11111%d",_zhongjian);
             _zhongjian--;
+        NSLog(@"22222%d",_zhongjian);
             if (_zhongjian>=0)
             {
                 NSString*yesr=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(0,4)];
@@ -322,12 +349,11 @@
             
                 [self.todayButton setTitle:dstr forState:0];
                     [self chazhao:[_today objectAtIndex:_zhongjian]];
-                if (_zhongjian==0)
-                    {
-                        [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
-                        self.zuoButton.enabled=NO;
-                        
-                    }
+                NSLog(@"33333%d",_zhongjian);
+            }else if (_zhongjian<0){
+                _zhongjian ++;
+                [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
+                self.zuoButton.enabled=NO;
             }
     }
     else{
@@ -335,11 +361,14 @@
     }
     
 }
+
+//后一天的数据
 - (IBAction)you:(id)sender {
     if (_today.count>0)
     {
         
         self.zuoButton.enabled=YES;
+        NSLog(@"%d",_zhongjian);
         _zhongjian++;
         if (_zhongjian<_today.count)
         {
@@ -350,12 +379,14 @@
             NSString*dstr=[[[[yesr stringByAppendingString:@"-"] stringByAppendingString:month] stringByAppendingString:@"-"] stringByAppendingString:day];
             [self.todayButton setTitle:dstr forState:0];
               [self chazhao:[_today objectAtIndex:_zhongjian]];
-            if (_zhongjian==_today.count-1)
-            {
-               [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
-                self.youButton.enabled=NO;
-                
-            }
+            NSLog(@"%d",_zhongjian);
+            
+        }else if (_zhongjian==_today.count)
+        {
+            _zhongjian --;
+            [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
+            self.youButton.enabled=NO;
+            
         }
     }
     else

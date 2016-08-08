@@ -234,33 +234,7 @@
         [weakSelf reloaddataforbulettoh];
         
     }];
-    
-    
-    
-    
-//    //设置扫描到设备的委托
-//    [babycao setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
-//        
-//        NSLog(@"------------%@",peripheral.identifier);
-////        if ([[peripheral.identifier UUIDString]isEqualToString:@"22A8135D-D3FA-3E11-FA58-85E9CA886C9C"]) {
-////            NSLog(@"%@",peripheral.name);
-////            
-////        }
-//        
-//        NSString *peripheralID = [[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"];
-//        NSLog(@"存储在本地的蓝牙id == %@", peripheralID);
-//        
-//        
-//            if ([[peripheral.identifier UUIDString] isEqualToString: peripheralID] ) {
-//                
-//                weakSelf.Peripheral = peripheral;
-//                
-//                babycao.having(weakSelf.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
-//            }
-//    }];
 
-   
-    
     //连接成功的时候回调
     [babycao setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         NSLog(@"成功连接设备，名称== %@",peripheral.name);
@@ -274,6 +248,7 @@
         //温度按钮设置为扫描设备的文本
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
+#warning 十秒后不会显示扫描设备
             if (weakSelf.Peripheral.state == 0) {
                 [weakSelf.wenbutton setTitle:@"扫描设备" forState:0];
             }
@@ -301,7 +276,15 @@
         [weakSelf insertRowToTableView:service];
         
         if (![weakSelf.reconnectTimer isValid]) {
+            //前30秒，每三秒钟获取一次数据
             weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:3 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+            //30秒后，每十秒钟获取一次温度
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(30 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.reconnectTimer invalidate];
+                weakSelf.reconnectTimer=nil;
+                weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:15 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+            });
+            
         }
         
         [weakSelf.chongliangTimer invalidate];
@@ -509,28 +492,23 @@
                     notification.timeZone = [NSTimeZone defaultTimeZone];
                     
                     // 设置重复间隔
-                    notification.repeatInterval = kCFCalendarUnitDay;
+                    //notification.repeatInterval = kCFCalendarUnitDay;
                     
                     // 推送声音
-                    
                     notification.soundName = UILocalNotificationDefaultSoundName;
                     
                     // 推送内容
-                    
                     notification.alertBody = @"高温警报";
                     
                     //显示在icon上的红色圈中的数子
-                    
                     notification.applicationIconBadgeNumber = 1;
                     
                     //设置userinfo 方便在之后需要撤销的时候使用
-                    
                     NSDictionary *info = [NSDictionary dictionaryWithObject:@"gaowen"forKey:@"key"];
                     
                     notification.userInfo = info;
                     
                     //添加推送到UIApplication
-                    
                     UIApplication *app = [UIApplication sharedApplication];
                     
                     [app scheduleLocalNotification:notification];
@@ -602,14 +580,12 @@
                 notification.timeZone = [NSTimeZone defaultTimeZone];
                 
                 // 设置重复间隔
-                notification.repeatInterval = kCFCalendarUnitDay;
+                //notification.repeatInterval = kCFCalendarUnitDay;
                 
                 // 推送声音
-                
                 notification.soundName = UILocalNotificationDefaultSoundName;
                 
                 // 推送内容
-                
                 notification.alertBody = @"低温警报！";
                 
                 //显示在icon上的红色圈中的数子
@@ -710,7 +686,7 @@
 }
 
 
-
+//将最高温存储到数据库当中
 -(void)saveCoreData2{
     NSDate *date = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -738,8 +714,6 @@
         }
         else
         {
-            
-            
             // 创建实体
             Test * newPerson = [NSEntityDescription insertNewObjectForEntityForName:@"Test" inManagedObjectContext:self.myappdelegate2.managedObjectContext];
             // 赋值

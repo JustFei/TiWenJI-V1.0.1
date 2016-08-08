@@ -211,6 +211,7 @@
     [self setnotificationison];
 }
 
+//获取温度
 -(void)huoqudianliang{
     
     unsigned char sendStr[16];
@@ -232,15 +233,105 @@
     sendStr[14] = 0x00;
     sendStr[15] = 0x00;
     
+    NSData *data = [NSData dataWithBytes:sendStr length:16];
+    [self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
+}
+
+//设置时间
+- (void)setTime
+{
+    unsigned char sendStr[16];
+    
+    sendStr[0] = 0xFC;
+    sendStr[1] = 0x00;//设置时间标识为00
+    sendStr[2] = 0x00;//YY
+    sendStr[3] = 0x00;//MM
+    sendStr[4] = 0x08;//DD
+    sendStr[5] = 0x17;//hh
+    sendStr[6] = 0x34;//mm
+    sendStr[7] = 0x12;//ss
+    sendStr[8] = 0x00;
+    sendStr[9] = 0x00;
+    sendStr[10] = 0x00;
+    sendStr[11] = 0x00;
+    sendStr[12] = 0x00;
+    sendStr[13] = 0x00;
+    sendStr[14] = 0x00;
+    sendStr[15] = 0x00;
+    
+    NSDate *today = [NSDate date];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString* s1 = [df stringFromDate:today];
+    NSDate* date = [df dateFromString:s1];
+    //转换时间格式
+    NSDateFormatter*df2 = [[NSDateFormatter alloc]init];//格式化
+    [df2 setDateFormat:@"yyyyMMddHHmmss"];
+    //改为中国时区
+    [df2 setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"zh_CN"]];
+    NSString *todayStr =[df2 stringFromDate:date];
+    
+    NSString *sendString = [NSString stringWithFormat:@"FC00%@0000000000000000",[todayStr substringWithRange:NSMakeRange(2, 12)]];
+    NSLog(@"%@",sendString);
+    
+    NSString *yy = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(2, 2)]];
+    sendStr[2] = (char)yy.intValue;
+    NSString *MM = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(4, 2)]];
+    sendStr[3] = (char)MM.intValue;
+    NSString *dd = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(6, 2)]];
+    sendStr[4] = (char)dd.intValue;
+    NSString *hh = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(8, 2)]];
+    sendStr[5] = (char)hh.intValue;
+    NSString *mm = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(10, 2)]];
+    sendStr[6] = (char)mm.intValue;
+    NSString *ss = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(12, 2)]];
+    sendStr[7] = (char)ss.intValue;
+    
+    //根据当前时间来设置写入特征值还不会
+//    NSInteger YY = [sendString substringWithRange:NSMakeRange(4, 2)].integerValue;
+//    NSInteger MM = [sendString substringWithRange:NSMakeRange(6, 2)].integerValue;
+//    NSInteger DD = [sendString substringWithRange:NSMakeRange(8, 2)].integerValue;
+//    NSInteger hh = [sendString substringWithRange:NSMakeRange(10, 2)].integerValue;
+//    NSInteger mm = [sendString substringWithRange:NSMakeRange(12, 2)].integerValue;
+//    NSInteger ss = [sendString substringWithRange:NSMakeRange(14, 2)].integerValue;
+//    NSLog(@"数字命令 == yy:%ld,MM:%ld,dd:%ld,hh:%ld,mm:%ld,ss:%ld",YY,MM,DD,hh,mm,ss);
+//    sendStr[2] = YY;
+//    sendStr[3] = MM;
+//    sendStr[4] = DD;
+//    sendStr[5] = hh;
+//    sendStr[6] = mm;
+//    sendStr[7] = ss;
+    
+//    NSDate *nowDate = [NSDate date];
+//    NSDateFormatter *datefomat = [[NSDateFormatter alloc] init];
+//    [datefomat setDateFormat:@"yyyy"];
+//    int yyyy = [[datefomat stringFromDate:nowDate] intValue];
+//    yyyy = yyyy % 100;
+//    [datefomat setDateFormat:@"MM"];
+//    int MM = [[datefomat stringFromDate:nowDate] intValue];
+//    [datefomat setDateFormat:@"dd"];
+//    int DD = [[datefomat stringFromDate:nowDate] intValue];
+//    [datefomat setDateFormat:@"hh"];
+//    int hh = [[datefomat stringFromDate:nowDate] intValue];
+//    [datefomat setDateFormat:@"mm"];
+//    int mm = [[datefomat stringFromDate:nowDate] intValue];
+//    [datefomat setDateFormat:@"ss"];
+//    int ss = [[datefomat stringFromDate:nowDate] intValue];
+//    sendStr[2] = yyyy;
+//    sendStr[3] = MM;
+//    sendStr[4] = DD;
+//    sendStr[5] = hh;
+//    sendStr[6] = mm;
+//    sendStr[7] = ss;
+    
+//    NSLog(@"数字命令 ==yyyy:%d, MM:%d,dd:%d,hh:%d,mm:%d,ss:%d",yyyy,MM,DD,hh,mm,ss);
+    
     
     
     
     NSData *data = [NSData dataWithBytes:sendStr length:16];
+    [data bytes];
     [self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
-    
-    
-    
-    
 }
 
 #pragma mark  设置通知
@@ -255,6 +346,7 @@
                   
               }];
     [self huoqudianliang];
+    [self setTime];
 }
 
 #pragma mark - 通过特征返回的值计算出电量
@@ -269,41 +361,46 @@
         //如果获取到的值的第一个字节是不是“07”，如果是，就对数值进行操作，不是就舍去
         if ([Str1 isEqualToString:@"07"]) {
         
-        if (![[NSString stringWithFormat:@"%02x", hexBytesLight[14]] isEqualToString:@"00"]) {
-            NSLog(@"berbarbaerb===%@",[NSString stringWithFormat:@"%02x", hexBytesLight[14]]);
-            NSString*dianliang=[NSString stringWithFormat:@"%02x", hexBytesLight[14]];
-            
-            for(int i=0;i<dianliang.length;i++)
-            {
-                /// 两位16进制数转化后的10进制数
+            if (![[NSString stringWithFormat:@"%02x", hexBytesLight[14]] isEqualToString:@"00"]) {
+                NSLog(@"berbarbaerb===%@",[NSString stringWithFormat:@"%02x", hexBytesLight[14]]);
+                NSString*dianliang=[NSString stringWithFormat:@"%02x", hexBytesLight[14]];
                 
-                unichar hex_char1 = [dianliang characterAtIndex:i]; ////两位16进制数中的第一位(高位*16)
-                int int_ch1;
-                if(hex_char1 >= '0' && hex_char1 <='9')
-                    int_ch1 = (hex_char1-48)*16;   //// 0 的Ascll - 48
-                else if(hex_char1 >= 'A' && hex_char1 <='F')
-                    int_ch1 = (hex_char1-55)*16; //// A 的Ascll - 65
-                else
-                    int_ch1 = (hex_char1-87)*16; //// a 的Ascll - 97
-                i++;
-                
-                unichar hex_char2 = [dianliang characterAtIndex:i]; ///两位16进制数中的第二位(低位)
-                int int_ch2;
-                if(hex_char2 >= '0' && hex_char2 <='9')
-                    int_ch2 = (hex_char2-48); //// 0 的Ascll - 48
-                else if(hex_char1 >= 'A' && hex_char1 <='F')
-                    int_ch2 = hex_char2-55; //// A 的Ascll - 65
-                else
-                    int_ch2 = hex_char2-87; //// a 的Ascll - 97
-                
-             int qian= int_ch1+int_ch2;
-                NSLog(@"电量是：%d",qian);
-                self.dianlianglabel.text=[NSString stringWithFormat:@"%d",qian];
-                
-                [self dismissViewControllerAnimated:YES completion:nil];
-                
+                for(int i=0;i<dianliang.length;i++)
+                {
+                    /// 两位16进制数转化后的10进制数
+                    
+                    unichar hex_char1 = [dianliang characterAtIndex:i]; ////两位16进制数中的第一位(高位*16)
+                    int int_ch1;
+                    if(hex_char1 >= '0' && hex_char1 <='9')
+                        int_ch1 = (hex_char1-48)*16;   //// 0 的Ascll - 48
+                    else if(hex_char1 >= 'A' && hex_char1 <='F')
+                        int_ch1 = (hex_char1-55)*16; //// A 的Ascll - 65
+                    else
+                        int_ch1 = (hex_char1-87)*16; //// a 的Ascll - 97
+                    i++;
+                    
+                    unichar hex_char2 = [dianliang characterAtIndex:i]; ///两位16进制数中的第二位(低位)
+                    int int_ch2;
+                    if(hex_char2 >= '0' && hex_char2 <='9')
+                        int_ch2 = (hex_char2-48); //// 0 的Ascll - 48
+                    else if(hex_char1 >= 'A' && hex_char1 <='F')
+                        int_ch2 = hex_char2-55; //// A 的Ascll - 65
+                    else
+                        int_ch2 = hex_char2-87; //// a 的Ascll - 97
+                    
+                    int qian= int_ch1+int_ch2;
+                    NSLog(@"电量是：%d",qian);
+                    self.dianlianglabel.text=[NSString stringWithFormat:@"%d",qian];
+                    
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                    
+                }
             }
         }
+        if ([Str1 isEqualToString:@"00"]) {
+            NSLog(@"时间设置成功，时间为 == %s",hexBytesLight);
+        }else if ([Str1 isEqualToString:@"80"]) {
+            NSLog(@"时间设置失败，失败校验为 == %s",hexBytesLight);
         }
     }
 
