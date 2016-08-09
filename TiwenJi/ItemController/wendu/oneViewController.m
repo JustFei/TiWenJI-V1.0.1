@@ -240,18 +240,13 @@
         
         //还没有连接上，就会被执行，所以获取不到历史数据
         //断开连接后，在连接条件回复后，可连接
+        NSString *historyID = [[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"];
+        NSLog(@"上次连接的设备id == %@",historyID);
         if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
             [weakbaby.centralManager connectPeripheral:peripheral options:nil];
             
-            //当设备状态处于连接状态时，就获取断开时数据
-            if (weakSelf.Peripheral.state == 2) {
-                
-                //先获取断开时产生的数据
-                [weakSelf getDataAtDisconnect];
-            }
-
             //在完成历史数据加载后，再重新加载数据
-            //[weakSelf reloaddataforbulettoh];
+            [weakSelf reloaddataforbulettoh];
         }
         
     }];
@@ -479,13 +474,80 @@
                 [self saveCoreData2];
             }
         }
+        //获取设备上在断开连接期间保存的数据个数
         if ([Str1 isEqualToString:@"05"]) {
-            NSString *battery = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
-            NSString *battery2 = [NSString stringWithFormat:@"%02x", hexBytesLight[15]];
+            NSString *battery = [NSString stringWithFormat:@"%02x", hexBytesLight[13]];
+            NSString *battery2 = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
+            NSString *sumHistory = [NSString stringWithFormat:@"%@%@",battery,battery2];
             
-            NSLog(@"设备上保存了%@数据",[NSString stringWithFormat:@"%@%@",battery,battery2]);
+            NSString * temp10 = [NSString stringWithFormat:@"%lu",strtoul([sumHistory UTF8String],0,16)];
+            NSLog(@"历史温度记录 10进制 %@",temp10);
+            //转成数字
+            int cycleNumber = [temp10 intValue];
+            NSLog(@"记录数字 ：%d",cycleNumber);
+            
+            //000c 条数据，
+            NSLog(@"设备上保存了%ld数据",(long)[sumHistory integerValue]);
+            
+            
+            //如果有历史温度，就保存到数据库中，（后期如果可以，就展示在当前温度界面）
+            if ([temp10 integerValue] > 0) {
+                //获取历史温度
+                [self gitHistoryT];
+            }
+        }
+        
+        //获取每一个历史记录
+        if ([Str1 isEqualToString:@"06"]) {
+            NSString *battery = [NSString stringWithFormat:@"%02x", hexBytesLight[13]];
+            NSString *battery2 = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
+            
+            _wen=[_wenduchuli pass:battery xiaoshu:battery2];
+            
+            if ([_wen floatValue]>[_wendu floatValue]) {
+                _wendu=_wen;
+            }
+            NSLog(@"最大的温度=%@",_wendu);
+            
+            if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]==nil) {
+                NSLog(@"用户为空");
+                
+            }
+            else{
+                [self saveCoreData2];
+            }
         }
     }
+}
+
+- (void)gitHistoryT
+{
+    unsigned char sendStr[16];
+    
+    sendStr[0] = 0xFC;
+    sendStr[1] = 0x06;
+    sendStr[2] = 0x00;
+    sendStr[3] = 0x00;
+    sendStr[4] = 0x00;
+    sendStr[5] = 0x00;
+    sendStr[6] = 0x00;
+    sendStr[7] = 0x00;
+    sendStr[8] = 0x00;
+    sendStr[9] = 0x00;
+    sendStr[10] = 0x00;
+    sendStr[11] = 0x00;
+    sendStr[12] = 0x00;
+    sendStr[13] = 0x00;
+    sendStr[14] = 0x00;
+    sendStr[15] = 0x00;
+    
+    
+    
+    
+    NSData *data = [NSData dataWithBytes:sendStr length:16];
+    
+    //写characteristic
+    [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
 }
 
 //处理时间
@@ -738,7 +800,7 @@
 }
 
 
-//将最高温存储到数据库当中
+//将最高温存储到数据库当中(将时间作为参数传入进来，按照设备上的时间进行存储)
 -(void)saveCoreData2{
     
     NSDate *date = [NSDate date];

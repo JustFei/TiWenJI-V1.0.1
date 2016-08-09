@@ -431,8 +431,16 @@
     [self refreshdata];
     
     [self.tableview reloadData];
-
+    
+    UIAlertView *saveSuccessView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"保存成功" delegate:self cancelButtonTitle:@"完成" otherButtonTitles:nil, nil];
+    [saveSuccessView show];
 }
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 -(void)updateuser:(WenduData*)user{
     
     [self.datasuore removeAllObjects];

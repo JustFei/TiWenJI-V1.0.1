@@ -247,9 +247,9 @@
     sendStr[2] = 0x16;//YY
     sendStr[3] = 0x08;//MM
     sendStr[4] = 0x09;//DD
-    sendStr[5] = 0x15;//hh
-    sendStr[6] = 0x07;//mm
-    sendStr[7] = 0x40;//ss
+    sendStr[5] = 0x16;//hh
+    sendStr[6] = 0x18;//mm
+    sendStr[7] = 0x30;//ss
     sendStr[8] = 0x00;
     sendStr[9] = 0x00;
     sendStr[10] = 0x00;
@@ -324,7 +324,7 @@
      [data bytes];
 //    NSLog(@"%@",[data bytes]);
 #warning 暂时关闭设置时间功能
-    //[self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
+//    [self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
 }
 
 #pragma mark  设置通知

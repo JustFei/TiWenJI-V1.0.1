@@ -33,7 +33,7 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     _pickerArray=[[NSMutableArray alloc]initWithCapacity:1];
-    for(int i=37;i<42;i++)
+    for(int i=37;i<=42;i++)
     {
         NSString *stringInt = [NSString stringWithFormat:@"%d",i];
         
@@ -41,14 +41,14 @@
         [_pickerArray addObject:stringInt];
     }
     _pickerArray2=[[NSMutableArray alloc]initWithCapacity:1];
-    for(int i=0;i<99;i++)
+    for(int i=0;i<=99;i++)
     {
         NSString *stringInt = [NSString stringWithFormat:@"%d",i];
         
         [_pickerArray2 addObject:stringInt];
     }
     _pickerArray3=[[NSMutableArray alloc]initWithCapacity:1];
-    for(int i=20;i<37;i++)
+    for(int i=30;i<=40;i++)
     {
         NSString *stringInt = [NSString stringWithFormat:@"%d",i];
         
@@ -57,8 +57,8 @@
     
     
     
-    [self.pick1 selectRow:20 inComponent:0 animated:YES];
-    [self.pick1 selectRow:20 inComponent:2 animated:YES];
+    [self.pick1 selectRow:0 inComponent:0 animated:YES];
+    [self.pick1 selectRow:0 inComponent:2 animated:YES];
     
 }
 -(void)pass:(int)sender{
@@ -73,17 +73,17 @@
    
     
     if (qian==nil&&hou==nil) {
-        [self.delegate baojingokButtonClicked:self Time:@"30.20" sender:Sender];
+        [self.delegate baojingokButtonClicked:self Time:@"37.00" sender:Sender];
       
     } if (qian==nil&&hou!=nil) {
-         NSString*string=@"30.";
+         NSString*string=@"37.";
         NSString*str=[string stringByAppendingString:hou];
         [self.delegate baojingokButtonClicked:self Time:str sender:Sender];
        
     }
     
     if (qian!=nil&&hou==nil) {
-        NSString*string2=@"20";
+        NSString*string2=@"00";
         
         NSString*str2=[[qian stringByAppendingString:@"."] stringByAppendingString:string2];
         [self.delegate baojingokButtonClicked:self Time:str2 sender:Sender];

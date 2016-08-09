@@ -180,7 +180,21 @@
     [formatter setDateFormat:@"YYYYMMddhh"];
     NSString *string_day_time = [formatter stringFromDate:date] ;
     
-    [self chazhao:string_day_time];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 处理耗时操作的代码块...
+        [self chazhao:string_day_time];
+        //通知主线程刷新
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //回调或者说是通知主线程刷新，
+            self.labelText.text=_zuida;
+            //刷新图表数据
+            [_lineChartView reloadData];
+            [_lineChartView reloadDataWithAnimate:NO];
+        });
+        
+    });
+    
+    
 }
 
 //查找数据
@@ -316,9 +330,9 @@
    
         NSLog(@"_titles个数 = %ld",_titles.count);
         NSLog(@"_dataSource个数 = %ld",_dataSource.count);
-        //刷新图表数据
-        [_lineChartView reloadData];
-        [_lineChartView reloadDataWithAnimate:NO];
+//        //刷新图表数据
+//        [_lineChartView reloadData];
+//        [_lineChartView reloadDataWithAnimate:NO];
         
         //获取到最大温度
         for (NSString*p in _dataSource) {
@@ -326,7 +340,7 @@
                 _zuida=p;
             }
         }
-        self.labelText.text=_zuida;
+//        self.labelText.text=_zuida;
         
       
         
