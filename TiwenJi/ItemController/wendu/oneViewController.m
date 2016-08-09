@@ -21,11 +21,6 @@
 #import "diwenbaojingView.h"
 
 
-
-
-
-
-
 @interface oneViewController ()<MJSecondPopupDelegate,dwbjViewPopupDelegate>{
     gaowenbaojinView*secondDetailViewController;
     diwenbaojingView*dwViewController;
@@ -202,23 +197,7 @@
     
     //这里判断再次连接的蓝牙设备是否是启动app后连接的设备，如果是，则连接，不是就继续搜索
     babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
-    
-//    babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
-
-//- (void)chonglianmethod
-//{
-//    NSLog(@"这里是断开后重新连接蓝牙设备的方法");
-//    
-//    babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.scanForPeripherals().connectToPeripherals
-//    
-//    //findConnectPerpherals 是获取当前连接的设备信息
-////    NSArray *peripheralArray = [babycao findConnectedPeripherals];
-////    NSLog(@"%@",peripheralArray);
-//    
-//    
-//}
-
 
 #pragma mark - 蓝牙连接代理模块
 -(void)babyDelegate1{
@@ -243,16 +222,14 @@
     
     //断开连接时候的回调
     [babycao setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
-        NSLog(@"设备断开");
+        NSLog(@"设备断开，当前设备状态 == %ld",(long)weakSelf.Peripheral.state);
+        NSLog(@"peripheral == %ld",(long)peripheral.state);
         
         //温度按钮设置为扫描设备的文本
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-#warning 十秒后不会显示扫描设备
-            if (weakSelf.Peripheral.state == 0) {
+            if (weakSelf.Peripheral.state == 1) {
                 [weakSelf.wenbutton setTitle:@"扫描设备" forState:0];
             }
-            
         });
         
         //关闭掉获取温度的定时器
@@ -261,10 +238,20 @@
         
         NSLog(@"重连设备名称 == %@", peripheral.name);
         
+        //还没有连接上，就会被执行，所以获取不到历史数据
         //断开连接后，在连接条件回复后，可连接
         if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
             [weakbaby.centralManager connectPeripheral:peripheral options:nil];
-            [weakSelf reloaddataforbulettoh];
+            
+            //当设备状态处于连接状态时，就获取断开时数据
+            if (weakSelf.Peripheral.state == 2) {
+                
+                //先获取断开时产生的数据
+                [weakSelf getDataAtDisconnect];
+            }
+
+            //在完成历史数据加载后，再重新加载数据
+            //[weakSelf reloaddataforbulettoh];
         }
         
     }];
@@ -274,6 +261,8 @@
         NSLog(@"查找到特征值 特征值为== %@", service.characteristics[0]);
         
         [weakSelf insertRowToTableView:service];
+        
+        [weakSelf getDataAtDisconnect];
         
         if (![weakSelf.reconnectTimer isValid]) {
             //前30秒，每三秒钟获取一次数据
@@ -291,18 +280,6 @@
         weakSelf.chongliangTimer=nil;
         
     }];
-    
-//    [babycao setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-//        [weakSelf insertRowToTableView:service];
-//        
-//        if (![weakSelf.reconnectTimer isValid]) {
-//            weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
-//        }
-//        
-//        [weakSelf.chongliangTimer invalidate];
-//        weakSelf.chongliangTimer=nil;
-//    }];
-    
     
     [babycao setBlockOnDidWriteValueForCharacteristic:^(CBCharacteristic *characteristic, NSError *error) {
         if (error) {
@@ -331,6 +308,38 @@
     }];
     
     
+}
+
+//获取设备上保存的数据
+- (void)getDataAtDisconnect
+{
+    unsigned char sendStr[16];
+    
+    sendStr[0] = 0xFC;
+    sendStr[1] = 0x05;
+    sendStr[2] = 0x00;
+    sendStr[3] = 0x00;
+    sendStr[4] = 0x00;
+    sendStr[5] = 0x00;
+    sendStr[6] = 0x00;
+    sendStr[7] = 0x00;
+    sendStr[8] = 0x00;
+    sendStr[9] = 0x00;
+    sendStr[10] = 0x00;
+    sendStr[11] = 0x00;
+    sendStr[12] = 0x00;
+    sendStr[13] = 0x00;
+    sendStr[14] = 0x00;
+    sendStr[15] = 0x00;
+    
+    NSData *data = [NSData dataWithBytes:sendStr length:16];
+    
+    NSLog(@"特征写入前为 == %@", self.viewCharacteristic);
+    
+    //写characteristic
+    [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
+    
+    NSLog(@"特征写后为 == %@", self.viewCharacteristic);
 }
 
 #pragma mark 已连接的CBCharacteristic和设置通知
@@ -403,6 +412,7 @@
         const unsigned char *hexBytesLight = [self.viewCharacteristic.value bytes];
         
         NSString *Str1 = [NSString stringWithFormat:@"%02x", hexBytesLight[0]];
+        NSLog(@"标识符 = %@",Str1);
         
         //如果获取到的值的第一个字节是不是“04”，如果是，就对数值进行操作，不是就舍去
         if ([Str1 isEqualToString:@"04"]) {
@@ -423,7 +433,22 @@
             //取得当前时间，x轴
             NSDate* nowDate = [[NSDate alloc]init];
             
+            NSLog(@"当前时间 == %@",nowDate);
+            
             NSTimeInterval nowTimeInterval = [nowDate timeIntervalSince1970] * 1000;
+            
+            NSLog(@"当前时间 == %f",nowTimeInterval);
+            
+//            NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[7]];
+//            NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[8]];
+//            NSString *DD = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
+//            NSString *hh = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
+//            NSString *mm = [NSString stringWithFormat:@"%02x", hexBytesLight[11]];
+//            NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
+//            
+//            NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
+//            //换了温度计上的时间后，在图表中显示不正确，暂时不考虑替换
+//            NSLog(@"温度计时间 == %f",tiwenjiTimeInterval);
             
             //随机温度，y轴
             float temperature =[_wen floatValue];
@@ -454,8 +479,35 @@
                 [self saveCoreData2];
             }
         }
+        if ([Str1 isEqualToString:@"05"]) {
+            NSString *battery = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
+            NSString *battery2 = [NSString stringWithFormat:@"%02x", hexBytesLight[15]];
+            
+            NSLog(@"设备上保存了%@数据",[NSString stringWithFormat:@"%@%@",battery,battery2]);
+        }
     }
 }
+
+//处理时间
+- (NSTimeInterval)stringByYYYY: (NSString *)YYYY MM:(NSString *)MM DD:(NSString *)DD hh:(NSString *)hh mm:(NSString *)mm ss:(NSString *)ss
+{
+    //@"2016-08-09 02:24:10 +0000"
+    NSString *string = [NSString stringWithFormat:@"20%@-%@-%@ %@:%@:%@",YYYY ,DD ,MM ,hh ,mm ,ss] ;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    // this is imporant - we set our input date format to match our input string
+    // if format doesn't match you'll get nil from your string, so be careful
+    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    NSDate *date = [[NSDate alloc] init];
+    // voila!
+    date = [dateFormatter dateFromString:string];
+    NSLog(@"体温计时间 = %@", date);
+    
+    //date to timestamp
+    NSTimeInterval timeInterval = [date timeIntervalSince1970] * 1000;
+    return timeInterval;
+}
+
+
 -(void)Gbaojing{
     
     if (_Gbiao)
@@ -688,11 +740,12 @@
 
 //将最高温存储到数据库当中
 -(void)saveCoreData2{
+    
     NSDate *date = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYYMMddhh"];
-    NSString *string_day= [ [formatter stringFromDate:date] substringToIndex:10];
-  
+    [formatter setDateFormat:@"YYYYMMddhhmm"];
+    NSString *string_day= [ [formatter stringFromDate:date] substringToIndex:12];
+    NSLog(@"存储一次数据，时间为 == %@",string_day);
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"])
     {
@@ -807,12 +860,7 @@
                         {
                             NSLog(@"failed to save the context error ");
                         }
-                        
                     }
-                    
-                    
-                    
-                    
                 }
                 
                 else

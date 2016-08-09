@@ -244,12 +244,12 @@
     
     sendStr[0] = 0xFC;
     sendStr[1] = 0x00;//设置时间标识为00
-    sendStr[2] = 0x00;//YY
-    sendStr[3] = 0x00;//MM
-    sendStr[4] = 0x08;//DD
-    sendStr[5] = 0x17;//hh
-    sendStr[6] = 0x34;//mm
-    sendStr[7] = 0x12;//ss
+    sendStr[2] = 0x16;//YY
+    sendStr[3] = 0x08;//MM
+    sendStr[4] = 0x09;//DD
+    sendStr[5] = 0x15;//hh
+    sendStr[6] = 0x07;//mm
+    sendStr[7] = 0x40;//ss
     sendStr[8] = 0x00;
     sendStr[9] = 0x00;
     sendStr[10] = 0x00;
@@ -274,33 +274,27 @@
     NSString *sendString = [NSString stringWithFormat:@"FC00%@0000000000000000",[todayStr substringWithRange:NSMakeRange(2, 12)]];
     NSLog(@"%@",sendString);
     
-    NSString *yy = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(2, 2)]];
-    sendStr[2] = (char)yy.intValue;
-    NSString *MM = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(4, 2)]];
-    sendStr[3] = (char)MM.intValue;
-    NSString *dd = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(6, 2)]];
-    sendStr[4] = (char)dd.intValue;
-    NSString *hh = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(8, 2)]];
-    sendStr[5] = (char)hh.intValue;
-    NSString *mm = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(10, 2)]];
-    sendStr[6] = (char)mm.intValue;
-    NSString *ss = [NSString stringWithFormat:@"%@",[todayStr substringWithRange:NSMakeRange(12, 2)]];
-    sendStr[7] = (char)ss.intValue;
-    
     //根据当前时间来设置写入特征值还不会
-//    NSInteger YY = [sendString substringWithRange:NSMakeRange(4, 2)].integerValue;
-//    NSInteger MM = [sendString substringWithRange:NSMakeRange(6, 2)].integerValue;
-//    NSInteger DD = [sendString substringWithRange:NSMakeRange(8, 2)].integerValue;
-//    NSInteger hh = [sendString substringWithRange:NSMakeRange(10, 2)].integerValue;
-//    NSInteger mm = [sendString substringWithRange:NSMakeRange(12, 2)].integerValue;
-//    NSInteger ss = [sendString substringWithRange:NSMakeRange(14, 2)].integerValue;
-//    NSLog(@"数字命令 == yy:%ld,MM:%ld,dd:%ld,hh:%ld,mm:%ld,ss:%ld",YY,MM,DD,hh,mm,ss);
-//    sendStr[2] = YY;
-//    sendStr[3] = MM;
-//    sendStr[4] = DD;
-//    sendStr[5] = hh;
-//    sendStr[6] = mm;
-//    sendStr[7] = ss;
+    NSInteger YY = [sendString substringWithRange:NSMakeRange(4, 2)].integerValue;
+    NSInteger MM = [sendString substringWithRange:NSMakeRange(6, 2)].integerValue;
+    NSInteger DD = [sendString substringWithRange:NSMakeRange(8, 2)].integerValue;
+    NSInteger hh = [sendString substringWithRange:NSMakeRange(10, 2)].integerValue;
+    NSInteger mm = [sendString substringWithRange:NSMakeRange(12, 2)].integerValue;
+    NSInteger ss = [sendString substringWithRange:NSMakeRange(14, 2)].integerValue;
+    NSLog(@"数字命令 == yy:%ld,MM:%ld,dd:%ld,hh:%ld,mm:%ld,ss:%ld",YY,MM,DD,hh,mm,ss);
+    NSString *YY16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)YY]];
+    NSString *MM16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)MM]];
+    NSString *DD16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)DD]];
+    NSString *hh16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)hh]];
+    NSString *mm16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)mm]];
+    NSString *ss16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)ss]];
+    NSLog(@"十六进制 == %@/%@/%@ %@：%@：%@",YY16,MM16,DD16,hh16,mm16,ss16);
+//    sendStr[2] = YY16.intValue;
+//    sendStr[3] = MM16.intValue;
+//    sendStr[4] = DD16.intValue;
+//    sendStr[5] = hh16.intValue;
+//    sendStr[6] = mm16.intValue;
+//    sendStr[7] = ss16.intValue;
     
 //    NSDate *nowDate = [NSDate date];
 //    NSDateFormatter *datefomat = [[NSDateFormatter alloc] init];
@@ -326,12 +320,11 @@
     
 //    NSLog(@"数字命令 ==yyyy:%d, MM:%d,dd:%d,hh:%d,mm:%d,ss:%d",yyyy,MM,DD,hh,mm,ss);
     
-    
-    
-    
     NSData *data = [NSData dataWithBytes:sendStr length:16];
-    [data bytes];
-    [self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
+     [data bytes];
+//    NSLog(@"%@",[data bytes]);
+#warning 暂时关闭设置时间功能
+    //[self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
 }
 
 #pragma mark  设置通知

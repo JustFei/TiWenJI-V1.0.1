@@ -34,7 +34,8 @@
 @property (strong, nonatomic) MCLineChartView *lineChartView;
 
 //横轴坐标显示
-@property (strong, nonatomic) NSArray *titles;
+//@property (strong, nonatomic) NSArray *titles;
+@property (nonatomic ,strong) NSMutableArray *titles;
 
 //数据源
 @property (strong, nonatomic) NSMutableArray *dataSource;
@@ -71,10 +72,12 @@
     //[self babyDelegate];
     
     
-    _dataSource=[NSMutableArray arrayWithCapacity:24];
-    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
+//    _dataSource=[NSMutableArray array];
+//    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
+    _dataSource = [NSMutableArray array];
     
-    _titles = @[@"01:00", @"02:00", @"03:00",@"04:00",@"05:00",@"06:00",@"07:00",@"08:00",@"09:00",@"10:00",@"11:00",@"012:00",@"13:00",@"14:00",@"15:00",@"16:00",@"17:00",@"18:00",@"19:00",@"20:00",@"21:00",@"22:00",@"23:00",@"24:00"];
+//    _titles = @[@"01:00", @"02:00", @"03:00",@"04:00",@"05:00",@"06:00",@"07:00",@"08:00",@"09:00",@"10:00",@"11:00",@"012:00",@"13:00",@"14:00",@"15:00",@"16:00",@"17:00",@"18:00",@"19:00",@"20:00",@"21:00",@"22:00",@"23:00",@"24:00"];
+    
     
     
     _lineChartView = [[MCLineChartView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height*0.5 - 20, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height*0.5 - 30)];
@@ -174,7 +177,7 @@
  NSLog(@"viewWillAppear");
     NSDate *date = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYYMMdd"];
+    [formatter setDateFormat:@"YYYYMMddhh"];
     NSString *string_day_time = [formatter stringFromDate:date] ;
     
     [self chazhao:string_day_time];
@@ -184,8 +187,12 @@
 -(void)chazhao:(NSString*)string{
     NSString*string_day_time=string;
     
+    //先清空数据源
+    _titles = nil;
     _dataSource=nil;
-    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
+//    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
+    _titles = [NSMutableArray array];
+    _dataSource = [[NSMutableArray alloc] init];
     _zuida=@"0°C";
     
     //从沙盒中获取到最大温度，可换成从数据库获取来的温度数据
@@ -213,88 +220,102 @@
             {
 //                NSLog(@"pp.shijian=%@ pp.wendu=%@",pp.shijian,pp.wendu);
 //                [timeArray  addObject:[pp.shijian substringToIndex:8]];
+                /**
+                 *  这一步操作是将当天的温度以及时间添加到数据源中
+                 */
+                if ([[pp.shijian substringToIndex:8] isEqualToString:_today[_zhongjian]]) {
+                    NSLog(@"pp.shijian == %@",pp.shijian);//201608091423
+                    NSString *hh = [pp.shijian substringWithRange:NSMakeRange(8, 2)];
+                    NSString *mm = [pp.shijian substringWithRange:NSMakeRange(10, 2)];
+                    [_titles addObject:[NSString stringWithFormat:@"%@:%@",hh ,mm]];
+                    
+                    NSLog(@"存储的温度数据 == %@",pp.wendu);
+                    [_dataSource addObject:pp.wendu];
+                }
                 
                 //将person的历史温度数据放到dataSource数据源中
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"00"]]) {
-                    [_dataSource replaceObjectAtIndex:24 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"01"]]) {
-                    [_dataSource replaceObjectAtIndex:0 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"02"]]) {
-                    [_dataSource replaceObjectAtIndex:1 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"03"]]) {
-                    [_dataSource replaceObjectAtIndex:2 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"04"]]) {
-                    [_dataSource replaceObjectAtIndex:3 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"05"]]) {
-                    [_dataSource replaceObjectAtIndex:4 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"06"]]) {
-                    [_dataSource replaceObjectAtIndex:5 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"07"]]) {
-                    [_dataSource replaceObjectAtIndex:6 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"08"]]) {
-                    [_dataSource replaceObjectAtIndex:7 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"09"]]) {
-                    [_dataSource replaceObjectAtIndex:8 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"10"]]) {
-                    [_dataSource replaceObjectAtIndex:9 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"11"]]) {
-                    [_dataSource replaceObjectAtIndex:10 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"12"]]) {
-                    [_dataSource replaceObjectAtIndex:11 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"13"]]) {
-                    [_dataSource replaceObjectAtIndex:12 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"14"]]) {
-                    [_dataSource replaceObjectAtIndex:13 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"15"]]) {
-                    [_dataSource replaceObjectAtIndex:14 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"16"]]) {
-                    [_dataSource replaceObjectAtIndex:15 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"17"]]) {
-                    [_dataSource replaceObjectAtIndex:16 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"18"]]) {
-                    [_dataSource replaceObjectAtIndex:17 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"19"]]) {
-                    [_dataSource replaceObjectAtIndex:18 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"20"]]) {
-                    [_dataSource replaceObjectAtIndex:19 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"21"]]) {
-                    [_dataSource replaceObjectAtIndex:20 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"22"]]) {
-                    [_dataSource replaceObjectAtIndex:21 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
-                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"23"]]) {
-                    [_dataSource replaceObjectAtIndex:22 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"00"]]) {
+//                    [_dataSource replaceObjectAtIndex:24 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"01"]]) {
+//                    [_dataSource replaceObjectAtIndex:0 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"02"]]) {
+//                    [_dataSource replaceObjectAtIndex:1 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"03"]]) {
+//                    [_dataSource replaceObjectAtIndex:2 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"04"]]) {
+//                    [_dataSource replaceObjectAtIndex:3 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"05"]]) {
+//                    [_dataSource replaceObjectAtIndex:4 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"06"]]) {
+//                    [_dataSource replaceObjectAtIndex:5 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"07"]]) {
+//                    [_dataSource replaceObjectAtIndex:6 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"08"]]) {
+//                    [_dataSource replaceObjectAtIndex:7 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"09"]]) {
+//                    [_dataSource replaceObjectAtIndex:8 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"10"]]) {
+//                    [_dataSource replaceObjectAtIndex:9 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"11"]]) {
+//                    [_dataSource replaceObjectAtIndex:10 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"12"]]) {
+//                    [_dataSource replaceObjectAtIndex:11 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"13"]]) {
+//                    [_dataSource replaceObjectAtIndex:12 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"14"]]) {
+//                    [_dataSource replaceObjectAtIndex:13 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"15"]]) {
+//                    [_dataSource replaceObjectAtIndex:14 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"16"]]) {
+//                    [_dataSource replaceObjectAtIndex:15 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"17"]]) {
+//                    [_dataSource replaceObjectAtIndex:16 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"18"]]) {
+//                    [_dataSource replaceObjectAtIndex:17 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"19"]]) {
+//                    [_dataSource replaceObjectAtIndex:18 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"20"]]) {
+//                    [_dataSource replaceObjectAtIndex:19 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"21"]]) {
+//                    [_dataSource replaceObjectAtIndex:20 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"22"]]) {
+//                    [_dataSource replaceObjectAtIndex:21 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
+//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"23"]]) {
+//                    [_dataSource replaceObjectAtIndex:22 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
+//                }
                 
                 
             }
         }
    
+        NSLog(@"_titles个数 = %ld",_titles.count);
+        NSLog(@"_dataSource个数 = %ld",_dataSource.count);
         //刷新图表数据
         [_lineChartView reloadData];
         [_lineChartView reloadDataWithAnimate:NO];
