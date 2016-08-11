@@ -29,6 +29,7 @@
 @property(nonatomic,strong)CBPeripheral*Peripheral;
 @property(nonatomic,strong)CBCharacteristic*viewCharacteristic;
 @property(nonatomic,strong)NSTimer*reconnectTimer;
+@property(nonatomic,strong)NSTimer*reconnectTimer15;
 @property(nonatomic,strong)NSString*wendu;
 @property(nonatomic,strong)NSTimer*reconnectblurtooth;
 @property(nonatomic,strong)NSTimer*chongliangTimer;
@@ -217,7 +218,40 @@
     //连接成功的时候回调
     [babycao setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         NSLog(@"成功连接设备，名称== %@",peripheral.name);
+        
+        //连接成功后，取消扫描
+        [weakbaby cancelScan];
     
+    }];
+    
+    //查找到特征值的时候的回调
+    [babycao setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
+        NSLog(@"查找到特征值 特征值为== %@", service.characteristics[0]);
+        
+        [weakSelf insertRowToTableView:service];
+        
+        [weakSelf getDataAtDisconnect];
+        
+        if (![weakSelf.reconnectTimer isValid]) {
+            //前30秒，每三秒钟获取一次数据
+#warning 现在的问题是，如果置零reconnectTimer，后台中reconnectTimer15就会停止，如果不置零，就会出现3，15两个定时器
+            weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+            
+            //30秒后，每十秒钟获取一次温度
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(30 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [weakSelf.reconnectTimer invalidate];
+//                weakSelf.reconnectTimer=nil;
+                
+//                weakSelf.reconnectTimer15 = [NSTimer scheduledTimerWithTimeInterval:15 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+            });
+
+            //重新开辟一个15秒的定时器，来获取温度，该定时器可在后台运行
+        }
+        
+        
+        [weakSelf.chongliangTimer invalidate];
+        weakSelf.chongliangTimer=nil;
+        
     }];
     
     //断开连接时候的回调
@@ -233,8 +267,8 @@
         });
         
         //关闭掉获取温度的定时器
-        [weakSelf.reconnectTimer invalidate];
-        weakSelf.reconnectTimer = nil;
+//        [weakSelf.reconnectTimer15 invalidate];
+//        weakSelf.reconnectTimer15 = nil;
         
         NSLog(@"重连设备名称 == %@", peripheral.name);
         
@@ -248,34 +282,9 @@
             //在完成历史数据加载后，再重新加载数据
             [weakSelf reloaddataforbulettoh];
         }
-        
     }];
     
-    //查找到特征值的时候的回调
-    [babycao setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        NSLog(@"查找到特征值 特征值为== %@", service.characteristics[0]);
-        
-        [weakSelf insertRowToTableView:service];
-        
-        [weakSelf getDataAtDisconnect];
-        
-        if (![weakSelf.reconnectTimer isValid]) {
-            //前30秒，每三秒钟获取一次数据
-            weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:3 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
-            //30秒后，每十秒钟获取一次温度
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(30 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.reconnectTimer invalidate];
-                weakSelf.reconnectTimer=nil;
-                weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:15 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
-            });
-            
-        }
-        
-        [weakSelf.chongliangTimer invalidate];
-        weakSelf.chongliangTimer=nil;
-        
-    }];
-    
+    //特征写入状态回调
     [babycao setBlockOnDidWriteValueForCharacteristic:^(CBCharacteristic *characteristic, NSError *error) {
         if (error) {
             NSLog(@"特征写入失败，原因为== %@",[error localizedDescription]);
@@ -301,8 +310,6 @@
             [weakSelf insertReadValues:characteristic];
         }
     }];
-    
-    
 }
 
 //获取设备上保存的数据
@@ -426,24 +433,31 @@
             NSLog(@"最大的温度=%@",_wendu);
             
             //取得当前时间，x轴
-            NSDate* nowDate = [[NSDate alloc]init];
-            
-            NSLog(@"当前时间 == %@",nowDate);
-            
-            NSTimeInterval nowTimeInterval = [nowDate timeIntervalSince1970] * 1000;
-            
-            NSLog(@"当前时间 == %f",nowTimeInterval);
-            
-//            NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[7]];
-//            NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[8]];
-//            NSString *DD = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
-//            NSString *hh = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
-//            NSString *mm = [NSString stringWithFormat:@"%02x", hexBytesLight[11]];
-//            NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
+//            NSDate* nowDate = [[NSDate alloc]init];
+//            NSDateFormatter *nowDateFormatter = [[NSDateFormatter alloc] init];
+//            [nowDateFormatter setDateFormat:@"yyyyMMddHHmm"];
+//            NSString *nowDateStr = [nowDateFormatter stringFromDate:nowDate];
+//            NSString *nowmmStr = [nowDateStr substringFromIndex:10];
+//            NSLog(@"%@",nowmmStr);
 //            
-//            NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
-//            //换了温度计上的时间后，在图表中显示不正确，暂时不考虑替换
-//            NSLog(@"温度计时间 == %f",tiwenjiTimeInterval);
+//            NSLog(@"当前时间 == %@",nowDate);
+            
+//            NSTimeInterval nowTimeInterval = [nowDate timeIntervalSince1970] * 1000;
+            
+            //1470899984907.288086
+//            NSLog(@"！！！！！！！！！当前时间 == %f",nowTimeInterval);
+            
+            NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[7]];
+            NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[8]];
+            NSString *DD = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
+            NSString *hh = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
+            NSString *mm = [NSString stringWithFormat:@"%02x", hexBytesLight[11]];
+            NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
+
+            NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
+//            //换了温度计上的时间后，已经替换
+            //1470899980000.000000
+            NSLog(@"？？？？？？？？？？温度计时间 == %f",tiwenjiTimeInterval);
             
             //随机温度，y轴
             float temperature =[_wen floatValue];
@@ -452,14 +466,14 @@
                 //温度低于30度就不显示在折线图上
                 if (temperature<30) {
                     NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
-                    [jsStr appendFormat:@"updateData(%f,%d)",nowTimeInterval,30];
+                    [jsStr appendFormat:@"updateData(%f,%d)",tiwenjiTimeInterval,30];
                     
                     [_webview stringByEvaluatingJavaScriptFromString:jsStr];
                 }
                 else{
                     NSLog(@"temperature=%0.2f",temperature);
                     NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
-                    [jsStr appendFormat:@"updateData(%f,%0.2f)",nowTimeInterval,temperature];
+                    [jsStr appendFormat:@"updateData(%f,%0.2f)",tiwenjiTimeInterval,temperature];
                     
                     [_webview stringByEvaluatingJavaScriptFromString:jsStr];
                 }
@@ -471,7 +485,12 @@
                 
             }
             else{
-                [self saveCoreData2];
+                //每隔五分钟存储一次数据
+                NSInteger mmTime = [mm integerValue];
+                if (mmTime % 5 == 0) {
+                    NSLog(@"存储时的时间 == %ld",(long)mmTime);
+                    [self saveCoreData2];
+                }
             }
         }
         //获取设备上在断开连接期间保存的数据个数
@@ -488,7 +507,6 @@
             
             //000c 条数据，
             NSLog(@"设备上保存了%ld数据",(long)[sumHistory integerValue]);
-            
             
             //如果有历史温度，就保存到数据库中，（后期如果可以，就展示在当前温度界面）
             if ([temp10 integerValue] > 0) {
@@ -509,12 +527,50 @@
             }
             NSLog(@"最大的温度=%@",_wendu);
             
+            NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[7]];
+            NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[8]];
+            NSString *DD = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
+            NSString *hh = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
+            NSString *mm = [NSString stringWithFormat:@"%02x", hexBytesLight[11]];
+            NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
+            
+            NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
+            //            //换了温度计上的时间后，已经替换
+            //1470899980000.000000
+            NSLog(@"？？？？？？？？？？温度计时间 == %f",tiwenjiTimeInterval);
+            
+            //随机温度，y轴
+            float temperature =[_wen floatValue];
+            if (temperature!=0) {
+                
+                //温度低于30度就不显示在折线图上
+                if (temperature<30) {
+                    NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
+                    [jsStr appendFormat:@"updateData(%f,%d)",tiwenjiTimeInterval,30];
+                    
+                    [_webview stringByEvaluatingJavaScriptFromString:jsStr];
+                }
+                else{
+                    NSLog(@"temperature=%0.2f",temperature);
+                    NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
+                    [jsStr appendFormat:@"updateData(%f,%0.2f)",tiwenjiTimeInterval,temperature];
+                    
+                    [_webview stringByEvaluatingJavaScriptFromString:jsStr];
+                }
+                
+            }
+
+            
             if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]==nil) {
                 NSLog(@"用户为空");
                 
             }
             else{
-                [self saveCoreData2];
+                NSInteger mmTime = [mm integerValue];
+                if (mmTime % 5 == 0) {
+                    NSLog(@"存储时的时间 == %ld",(long)mmTime);
+                    [self saveCoreData2];
+                }
             }
         }
     }
@@ -554,7 +610,7 @@
 - (NSTimeInterval)stringByYYYY: (NSString *)YYYY MM:(NSString *)MM DD:(NSString *)DD hh:(NSString *)hh mm:(NSString *)mm ss:(NSString *)ss
 {
     //@"2016-08-09 02:24:10 +0000"
-    NSString *string = [NSString stringWithFormat:@"20%@-%@-%@ %@:%@:%@",YYYY ,DD ,MM ,hh ,mm ,ss] ;
+    NSString *string = [NSString stringWithFormat:@"20%@-%@-%@ %@:%@:%@",YYYY ,MM ,DD ,hh ,mm ,ss] ;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
@@ -602,7 +658,6 @@
                     notification.fireDate = pushDate;
                     
                     // 设置时区
-                    
                     notification.timeZone = [NSTimeZone defaultTimeZone];
                     
                     // 设置重复间隔

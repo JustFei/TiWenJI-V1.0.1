@@ -29,6 +29,7 @@
 
 - (CGFloat)dotPaddingInLineChartView:(MCLineChartView *)lineChartView;
 
+//这里是设置温度信息的方法
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;
 - (UIView *)lineChartView:(MCLineChartView *)lineChartView hintViewOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;
 - (UIView *)lineChartView:(MCLineChartView *)lineChartView pointViewOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;

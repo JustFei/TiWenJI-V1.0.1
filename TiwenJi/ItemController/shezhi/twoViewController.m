@@ -70,25 +70,18 @@
     self.myappdelegate=[UIApplication sharedApplication].delegate;
     baby=[BabyBluetooth shareBabyBluetooth];
     //[self babyDelegate];
-    
-    
-//    _dataSource=[NSMutableArray array];
-//    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
+
     _dataSource = [NSMutableArray array];
     
-//    _titles = @[@"01:00", @"02:00", @"03:00",@"04:00",@"05:00",@"06:00",@"07:00",@"08:00",@"09:00",@"10:00",@"11:00",@"012:00",@"13:00",@"14:00",@"15:00",@"16:00",@"17:00",@"18:00",@"19:00",@"20:00",@"21:00",@"22:00",@"23:00",@"24:00"];
-    
-    
-    
     _lineChartView = [[MCLineChartView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height*0.5 - 20, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height*0.5 - 30)];
-    _lineChartView.dotRadius = 3;
+    _lineChartView.dotRadius = 1.5;
     _lineChartView.oppositeY = NO;
     _lineChartView.dataSource = self;
     _lineChartView.delegate = self;
     _lineChartView.minValue = @0;
     _lineChartView.maxValue = @43;
     _lineChartView.solidDot = YES;
-    _lineChartView.numberOfYAxis = 11;
+    _lineChartView.numberOfYAxis = 10;
     _lineChartView.colorOfXAxis = [UIColor whiteColor];
     _lineChartView.colorOfXText = [UIColor whiteColor];
     _lineChartView.colorOfYAxis = [UIColor whiteColor];
@@ -97,6 +90,15 @@
     [self.view addSubview:_lineChartView];
     
     [_lineChartView reloadDataWithAnimate:NO];
+    
+    //载入历史记录的button
+    UIButton *loginHistoryButton = [[UIButton alloc] initWithFrame:CGRectMake(self.view.center.x - 50, self.view.center.y + 50, 100, 50)];
+    loginHistoryButton.backgroundColor = [UIColor redColor];
+    [loginHistoryButton setTitle:@"载入历史" forState:UIControlStateNormal];
+    [loginHistoryButton addTarget:self action:@selector(loginHistory:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:loginHistoryButton];
+    [self.view bringSubviewToFront:loginHistoryButton];
+    
     NSLog(@"viewDidLoad");
     self.curDate = [NSDate date];
     self.formatter = [[NSDateFormatter alloc] init];
@@ -105,6 +107,35 @@
     _today=[[NSMutableArray alloc]init];
     [self coredatachaozao];
 }
+
+- (void)loginHistory:(UIButton *)sender
+{
+    NSDate *date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"YYYYMMdd"];
+    NSString *string_day_time = [formatter stringFromDate:date] ;
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 处理耗时操作的代码块...
+        [self chazhao:string_day_time];
+        //通知主线程刷新
+        dispatch_async(dispatch_get_main_queue(), ^{
+            for (NSString*p in _dataSource) {
+                if( [_zuida floatValue]<[p floatValue]){
+                    _zuida=p;
+                }
+            }
+            self.labelText.text=_zuida;
+            //回调或者说是通知主线程刷新，
+            [_lineChartView reloadData];
+            [_lineChartView reloadDataWithAnimate:NO];
+        });
+        
+    });
+    
+    [sender setHidden:YES];
+}
+
 -(void)coredatachaozao{
     NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
@@ -177,24 +208,21 @@
  NSLog(@"viewWillAppear");
     NSDate *date = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYYMMddhh"];
+    [formatter setDateFormat:@"YYYYMMdd"];
     NSString *string_day_time = [formatter stringFromDate:date] ;
     
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        // 处理耗时操作的代码块...
-        [self chazhao:string_day_time];
-        //通知主线程刷新
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //回调或者说是通知主线程刷新，
-            self.labelText.text=_zuida;
-            //刷新图表数据
-            [_lineChartView reloadData];
-            [_lineChartView reloadDataWithAnimate:NO];
-        });
-        
-    });
-    
-    
+//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//        // 处理耗时操作的代码块...
+//        [self chazhao:string_day_time];
+//        //通知主线程刷新
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            //回调或者说是通知主线程刷新，
+//            self.labelText.text=_zuida;
+//            //刷新图表数据
+//            [_lineChartView reloadData];
+//            [_lineChartView reloadDataWithAnimate:NO];
+//        });
+//    });
 }
 
 //查找数据
@@ -236,8 +264,9 @@
 //                [timeArray  addObject:[pp.shijian substringToIndex:8]];
                 /**
                  *  这一步操作是将当天的温度以及时间添加到数据源中
+                 *  YYYYMMdd
                  */
-                if ([[pp.shijian substringToIndex:8] isEqualToString:_today[_zhongjian]]) {
+                if ([[pp.shijian substringToIndex:8] isEqualToString:string_day_time]) {
                     NSLog(@"pp.shijian == %@",pp.shijian);//201608091423
                     NSString *hh = [pp.shijian substringWithRange:NSMakeRange(8, 2)];
                     NSString *mm = [pp.shijian substringWithRange:NSMakeRange(10, 2)];
@@ -328,9 +357,10 @@
             }
         }
    
-        NSLog(@"_titles个数 = %ld",_titles.count);
-        NSLog(@"_dataSource个数 = %ld",_dataSource.count);
-//        //刷新图表数据
+        NSLog(@"_titles个数 = %ld",(unsigned long)_titles.count);
+        NSLog(@"_dataSource个数 = %ld",(unsigned long)_dataSource.count);
+        
+        //刷新图表数据
 //        [_lineChartView reloadData];
 //        [_lineChartView reloadDataWithAnimate:NO];
         
@@ -341,9 +371,6 @@
             }
         }
 //        self.labelText.text=_zuida;
-        
-      
-        
     }
     else
     {
@@ -361,7 +388,24 @@
     [formatter setDateFormat:@"YYYYMMdd"];
     NSString *string_day_time = [formatter stringFromDate:date] ;
     
-    [self chazhao:string_day_time];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 处理耗时操作的代码块...
+        [self chazhao:string_day_time];
+        //通知主线程刷新
+        dispatch_async(dispatch_get_main_queue(), ^{
+            for (NSString*p in _dataSource) {
+                if( [_zuida floatValue]<[p floatValue]){
+                    _zuida=p;
+                }
+            }
+            self.labelText.text=_zuida;
+            //回调或者说是通知主线程刷新，
+            [_lineChartView reloadData];
+            [_lineChartView reloadDataWithAnimate:NO];
+        });
+        
+    });
+    
 }
 
 //前一天的数据
@@ -381,10 +425,32 @@
                 NSString*day=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(6,2)];;
                 NSLog(@"%@-%@-%@",yesr,month,day);
                 NSString*dstr=[[[[yesr stringByAppendingString:@"-"] stringByAppendingString:month] stringByAppendingString:@"-"] stringByAppendingString:day];
-            
+                
                 [self.todayButton setTitle:dstr forState:0];
+                
+                
+//                [self chazhao:[_today objectAtIndex:_zhongjian]];
+                NSLog(@"33333%@",_today[_zhongjian]);
+                
+                dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                    // 处理耗时操作的代码块...
                     [self chazhao:[_today objectAtIndex:_zhongjian]];
-                NSLog(@"33333%d",_zhongjian);
+                    //通知主线程刷新
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        //回调或者说是通知主线程刷新，
+                        for (NSString*p in _dataSource) {
+                            if( [_zuida floatValue]<[p floatValue]){
+                                _zuida=p;
+                            }
+                        }
+                        self.labelText.text=_zuida;
+                        [_lineChartView reloadData];
+                        [_lineChartView reloadDataWithAnimate:NO];
+                    });
+                    
+                });
+                
+                
             }else if (_zhongjian<0){
                 _zhongjian ++;
                 [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
@@ -414,7 +480,35 @@
             NSString*dstr=[[[[yesr stringByAppendingString:@"-"] stringByAppendingString:month] stringByAppendingString:@"-"] stringByAppendingString:day];
             [self.todayButton setTitle:dstr forState:0];
               [self chazhao:[_today objectAtIndex:_zhongjian]];
-            NSLog(@"%d",_zhongjian);
+            NSLog(@"%@",_today[_zhongjian]);
+            
+            [self.todayButton setTitle:dstr forState:0];
+            
+            //                [self chazhao:[_today objectAtIndex:_zhongjian]];
+            NSLog(@"33333%@",_today[_zhongjian]);
+            
+            //分线程获取数据，结束后刷新UI
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                // 处理耗时操作的代码块...
+                [self chazhao:[_today objectAtIndex:_zhongjian]];
+                //通知主线程刷新
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    //回调或者说是通知主线程刷新，
+                    
+                    for (NSString*p in _dataSource) {
+                        if( [_zuida floatValue]<[p floatValue]){
+                            _zuida=p;
+                        }
+                    }
+                    self.labelText.text=_zuida;
+                    
+                    [_lineChartView reloadData];
+                    [_lineChartView reloadDataWithAnimate:NO];
+                });
+                
+            });
+            
+            
             
         }else if (_zhongjian==_today.count)
         {

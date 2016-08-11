@@ -10,6 +10,6 @@
 
 @interface MCChartInformationView : UIView
 
-- (instancetype)initWithText:(NSString *)text;
+- (instancetype)initWithText:(NSString *)text ;//withBackgroudColor:(UIColor *)backColor
 
 @end

@@ -15,6 +15,7 @@ CGFloat const kMCTipDefaultWidth = 8.0f;
 CGFloat const kMCTipDefaultHeight = 5.0f;
 
 #define kMCChartInformationViewColor [UIColor colorWithWhite:1.0 alpha:0.9]
+//#define kMCChartInformationViewColor [UIColor redColor]
 
 @interface MCChartInformationView ()
 
@@ -24,7 +25,7 @@ CGFloat const kMCTipDefaultHeight = 5.0f;
 
 @implementation MCChartInformationView
 
-- (instancetype)initWithText:(NSString *)text {
+- (instancetype)initWithText:(NSString *)text  {//withBackgroudColor:(UIColor *)backColor
     self = [super initWithFrame:CGRectMake(0, 0, kMCTextDefaultWidth, kMCTextDefaultHeight + kMCTipDefaultHeight)];
     if (self) {
         self.backgroundColor = [UIColor clearColor];

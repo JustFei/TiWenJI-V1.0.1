@@ -164,6 +164,8 @@
 - (IBAction)baocun:(id)sender {
     if ([self.baojingjiege.text isEqualToString:@"0"]||[self.diwenLabel.text isEqualToString:@"0"]||[self.gaowenLabel.text isEqualToString:@"0"]) {
         NSLog(@"设置不完整 无法保存");
+        UIAlertView *failSaveView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"设置不完整，请设置完整" delegate:self cancelButtonTitle:@"知道了" otherButtonTitles:nil, nil];
+        [failSaveView show];
     }
     else{
         

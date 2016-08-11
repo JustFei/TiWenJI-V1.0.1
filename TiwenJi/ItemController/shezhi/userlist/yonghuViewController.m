@@ -438,7 +438,7 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)updateuser:(WenduData*)user{
@@ -467,9 +467,7 @@
 }
 
 - (IBAction)back:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:^{
-            
-            }];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)handleSwipeFrom:(UISwipeGestureRecognizer*)action{
@@ -519,8 +517,8 @@
 {
     ;
   
-        NSLog(@"这里退出POP 还要传数据过去");
-      WenduData*des=self.datasuore[indexPath.row];
+    NSLog(@"这里退出POP 还要传数据过去");
+    WenduData*des=self.datasuore[indexPath.row];
     self.nameText.text=des.name;
     self.hightText.text=des.height;
     self.weihtText.text=des.weiht;

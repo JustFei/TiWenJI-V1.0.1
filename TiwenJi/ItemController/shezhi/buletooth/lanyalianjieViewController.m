@@ -42,7 +42,7 @@
     [self babyDelegate];
     [self startlayer];
     layerTimer = [NSTimer timerWithTimeInterval:8 target:self selector:@selector(stoplayer) userInfo:nil repeats:NO];
-        [layerTimer setFireDate: [[NSDate date]dateByAddingTimeInterval:8]];
+    [layerTimer setFireDate: [[NSDate date]dateByAddingTimeInterval:8]];
     [[NSRunLoop currentRunLoop] addTimer:layerTimer forMode:NSRunLoopCommonModes];
     
 }
@@ -133,7 +133,6 @@
     [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
        // NSLog(@"%@",[peripheral.identifier UUIDString]);
       
-      
         [weakSelf insertTableView:peripheral advertisementData:advertisementData];
     }];
     
@@ -150,6 +149,9 @@
         weakSelf.beaconView.image=[UIImage imageNamed:@"blue_connect.png"];
         weakSelf.duankaiSwitch.enabled=YES;
         [weakSelf.duankaiSwitch setOn:YES];
+        
+        //连接成功后，取消扫描
+        [weakBaby cancelScan];
         
 //        [weakSelf dismissViewControllerAnimated:YES completion:nil];
         
@@ -175,10 +177,13 @@
         weakSelf.duankaiSwitch.enabled=NO;
         [weakSelf.duankaiSwitch setOn:NO];
         
-        //断开连接后，在连接条件回复后，可连接
-        if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
-            [weakBaby.centralManager connectPeripheral:peripheral options:nil];
-//            [weakSelf reloadDataBluetooth];
+        //手动断开
+        if ([weakSelf.duankaiSwitch isOn]) {
+            //断开连接后，在连接条件回复后，可连接
+            if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
+                [weakBaby.centralManager connectPeripheral:peripheral options:nil];
+                //            [weakSelf reloadDataBluetooth];
+            }
         }
     }];
     
@@ -244,12 +249,12 @@
     
     sendStr[0] = 0xFC;
     sendStr[1] = 0x00;//设置时间标识为00
-    sendStr[2] = 0x16;//YY
-    sendStr[3] = 0x08;//MM
-    sendStr[4] = 0x09;//DD
-    sendStr[5] = 0x16;//hh
-    sendStr[6] = 0x18;//mm
-    sendStr[7] = 0x30;//ss
+//    sendStr[2] = 0x00;//YY
+//    sendStr[3] = 0x00;//MM
+//    sendStr[4] = 0x00;//DD
+//    sendStr[5] = 0x00;//hh
+//    sendStr[6] = 0x00;//mm
+//    sendStr[7] = 0x00;//ss
     sendStr[8] = 0x00;
     sendStr[9] = 0x00;
     sendStr[10] = 0x00;
@@ -274,63 +279,52 @@
     NSString *sendString = [NSString stringWithFormat:@"FC00%@0000000000000000",[todayStr substringWithRange:NSMakeRange(2, 12)]];
     NSLog(@"%@",sendString);
     
-    //根据当前时间来设置写入特征值还不会
+    //根据当前时间来设置写入特征值已经搞定
     NSInteger YY = [sendString substringWithRange:NSMakeRange(4, 2)].integerValue;
     NSInteger MM = [sendString substringWithRange:NSMakeRange(6, 2)].integerValue;
     NSInteger DD = [sendString substringWithRange:NSMakeRange(8, 2)].integerValue;
     NSInteger hh = [sendString substringWithRange:NSMakeRange(10, 2)].integerValue;
     NSInteger mm = [sendString substringWithRange:NSMakeRange(12, 2)].integerValue;
     NSInteger ss = [sendString substringWithRange:NSMakeRange(14, 2)].integerValue;
-    NSLog(@"数字命令 == yy:%ld,MM:%ld,dd:%ld,hh:%ld,mm:%ld,ss:%ld",YY,MM,DD,hh,mm,ss);
-    NSString *YY16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)YY]];
-    NSString *MM16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)MM]];
-    NSString *DD16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)DD]];
-    NSString *hh16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)hh]];
-    NSString *mm16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)mm]];
-    NSString *ss16 = [NSString stringWithFormat:@"0x%@",[[NSString alloc] initWithFormat:@"%1lx",(long)ss]];
-    NSLog(@"十六进制 == %@/%@/%@ %@：%@：%@",YY16,MM16,DD16,hh16,mm16,ss16);
-//    sendStr[2] = YY16.intValue;
-//    sendStr[3] = MM16.intValue;
-//    sendStr[4] = DD16.intValue;
-//    sendStr[5] = hh16.intValue;
-//    sendStr[6] = mm16.intValue;
-//    sendStr[7] = ss16.intValue;
-    
-//    NSDate *nowDate = [NSDate date];
-//    NSDateFormatter *datefomat = [[NSDateFormatter alloc] init];
-//    [datefomat setDateFormat:@"yyyy"];
-//    int yyyy = [[datefomat stringFromDate:nowDate] intValue];
-//    yyyy = yyyy % 100;
-//    [datefomat setDateFormat:@"MM"];
-//    int MM = [[datefomat stringFromDate:nowDate] intValue];
-//    [datefomat setDateFormat:@"dd"];
-//    int DD = [[datefomat stringFromDate:nowDate] intValue];
-//    [datefomat setDateFormat:@"hh"];
-//    int hh = [[datefomat stringFromDate:nowDate] intValue];
-//    [datefomat setDateFormat:@"mm"];
-//    int mm = [[datefomat stringFromDate:nowDate] intValue];
-//    [datefomat setDateFormat:@"ss"];
-//    int ss = [[datefomat stringFromDate:nowDate] intValue];
-//    sendStr[2] = yyyy;
-//    sendStr[3] = MM;
-//    sendStr[4] = DD;
-//    sendStr[5] = hh;
-//    sendStr[6] = mm;
-//    sendStr[7] = ss;
-    
-//    NSLog(@"数字命令 ==yyyy:%d, MM:%d,dd:%d,hh:%d,mm:%d,ss:%d",yyyy,MM,DD,hh,mm,ss);
-    
+#pragma mark - 十进制转换BCD编码实现
+    //这里是将十进制的数字转换成BCD码格式，这样就可以写入特征了
+    DectoBCD(YY, &sendStr[2], 2);
+    DectoBCD(MM, &sendStr[3], 2);
+    DectoBCD(DD, &sendStr[4], 2);
+    DectoBCD(hh, &sendStr[5], 2);
+    DectoBCD(mm, &sendStr[6], 2);
+    DectoBCD(ss, &sendStr[7], 2);
+
     NSData *data = [NSData dataWithBytes:sendStr length:16];
      [data bytes];
-//    NSLog(@"%@",[data bytes]);
-#warning 暂时关闭设置时间功能
-//    [self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
+    [self.bluetoothPeripheral writeValue:data forCharacteristic:self.bluetoothviewCharacteristic type:CBCharacteristicWriteWithResponse];
+}
+
+///////////////////////////////////////////////////////// //
+// 功能：十进制转 BCD 码 //
+// 输入： int Dec                      待转换的十进制数据 //      int length                   BCD 码数据长度 //
+// 输出： unsigned char *Bcd           转换后的 BCD 码 //
+// 返回： 0  success //
+// 思路：原理同 BCD 码转十进制 //
+//////////////////////////////////////////////////////////
+int DectoBCD(int Dec, unsigned char *Bcd, int length)
+{
+    int i;
+    int temp = Dec;
+    for(i=length-1;i>=0;i--)
+        //这里由于我们是两位数两位数传进来，所以不需要简历循环
+//    {temp=Dec%100;
+        Bcd[i]=((temp/10)<<4)+((temp%10)&0x0F);
+//        Dec/=100;
+        NSLog(@"%s",Bcd);
+        printf("%s",Bcd);
+//    }
+    
+    return 0;
 }
 
 #pragma mark  设置通知
 -(void)setnotificationison{
-    
-    
     [baby notify:self.bluetoothPeripheral
      characteristic:self.bluetoothviewCharacteristic
               block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
@@ -344,7 +338,6 @@
 
 #pragma mark - 通过特征返回的值计算出电量
 -(void)insertReadValues:(CBCharacteristic *)characteristics{
-    NSLog(@"返回的电量=%@",characteristics.value);
     if ([characteristics.value bytes]!=nil) {
         const unsigned char *hexBytesLight = [characteristics.value bytes];
         //NSLog(@"------------======------%@",[NSString stringWithFormat:@"%02x", hexBytesLight[14]]);
@@ -355,8 +348,9 @@
         if ([Str1 isEqualToString:@"07"]) {
         
             if (![[NSString stringWithFormat:@"%02x", hexBytesLight[14]] isEqualToString:@"00"]) {
-                NSLog(@"berbarbaerb===%@",[NSString stringWithFormat:@"%02x", hexBytesLight[14]]);
+//                NSLog(@"berbarbaerb===%@",[NSString stringWithFormat:@"%02x", hexBytesLight[14]]);
                 NSString*dianliang=[NSString stringWithFormat:@"%02x", hexBytesLight[14]];
+                NSLog(@"获取到的电量 == %@",dianliang);
                 
                 for(int i=0;i<dianliang.length;i++)
                 {
@@ -391,7 +385,14 @@
             }
         }
         if ([Str1 isEqualToString:@"00"]) {
-            NSLog(@"时间设置成功，时间为 == %s",hexBytesLight);
+            NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
+            NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
+            NSString *DD = [NSString stringWithFormat:@"%02x", hexBytesLight[11]];
+            NSString *hh = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
+            NSString *mm = [NSString stringWithFormat:@"%02x", hexBytesLight[13]];
+            NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
+            
+            NSLog(@"时间设置成功，时间为 == %@-%@-%@ %@:%@:%@",YY ,MM ,DD ,hh ,mm ,ss);
         }else if ([Str1 isEqualToString:@"80"]) {
             NSLog(@"时间设置失败，失败校验为 == %s",hexBytesLight);
         }

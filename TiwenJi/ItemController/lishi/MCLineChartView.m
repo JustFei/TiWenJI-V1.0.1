@@ -321,9 +321,9 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
                     } completion:nil];
                 }
             } else if ([self.delegate respondsToSelector:@selector(lineChartView:informationOfDotInLineNumber:index:)]) {
-                NSString *information = [self.delegate lineChartView:self informationOfDotInLineNumber:lineNumber index:index];
+                NSString *information = [self.delegate lineChartView:self informationOfDotInLineNumber:lineNumber index:index ];//backgroundColor:[UIColor redColor]
                 if (information) {
-                    MCChartInformationView *informationView = [[MCChartInformationView alloc] initWithText:information];
+                    MCChartInformationView *informationView = [[MCChartInformationView alloc] initWithText:information ];//withBackgroudColor:[UIColor redColor]
                     informationView.center = CGPointMake(xOffset, yOffset - CGRectGetHeight(informationView.bounds)/2 - _dotRadius);
                     informationView.alpha = 0.0;
                     [_scrollView addSubview:informationView];
