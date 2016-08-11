@@ -4,7 +4,7 @@
 //
 //  Created by 莫福见 on 16/2/22.
 //  Copyright © 2016年 Manridy.Bobo.com. All rights reserved.
-//
+//  此注释仅仅为提交用
 
 #import "oneViewController.h"
 #import "wenduchuli.h"
