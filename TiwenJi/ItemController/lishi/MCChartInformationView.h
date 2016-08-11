@@ -10,6 +10,8 @@
 
 @interface MCChartInformationView : UIView
 
+@property (nonatomic, strong) UILabel *textLabel;
+
 - (instancetype)initWithText:(NSString *)text ;//withBackgroudColor:(UIColor *)backColor
 
 @end

@@ -19,7 +19,7 @@ CGFloat const kMCTipDefaultHeight = 5.0f;
 
 @interface MCChartInformationView ()
 
-@property (nonatomic, strong) UILabel *textLabel;
+
 
 @end
 

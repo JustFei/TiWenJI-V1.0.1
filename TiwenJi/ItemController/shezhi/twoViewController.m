@@ -199,8 +199,6 @@
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
     
     return [NSString stringWithFormat:@"%@°C", _dataSource[index]];
-    
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -232,7 +230,6 @@
     //先清空数据源
     _titles = nil;
     _dataSource=nil;
-//    _dataSource=[[NSMutableArray alloc]initWithObjects:@"", @"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",@"",nil];
     _titles = [NSMutableArray array];
     _dataSource = [[NSMutableArray alloc] init];
     _zuida=@"0°C";
@@ -260,8 +257,6 @@
             for (Test*pp in persons)
                 
             {
-//                NSLog(@"pp.shijian=%@ pp.wendu=%@",pp.shijian,pp.wendu);
-//                [timeArray  addObject:[pp.shijian substringToIndex:8]];
                 /**
                  *  这一步操作是将当天的温度以及时间添加到数据源中
                  *  YYYYMMdd

@@ -29,6 +29,7 @@
 
 - (CGFloat)dotPaddingInLineChartView:(MCLineChartView *)lineChartView;
 
+//设置每个点上面的提示框的内容
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index ;//backgroundColor:(UIColor *)backColor
 - (UIView *)lineChartView:(MCLineChartView *)lineChartView hintViewOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;
 - (UIView *)lineChartView:(MCLineChartView *)lineChartView pointViewOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;

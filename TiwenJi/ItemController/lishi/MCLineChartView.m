@@ -323,7 +323,23 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
             } else if ([self.delegate respondsToSelector:@selector(lineChartView:informationOfDotInLineNumber:index:)]) {
                 NSString *information = [self.delegate lineChartView:self informationOfDotInLineNumber:lineNumber index:index ];//backgroundColor:[UIColor redColor]
                 if (information) {
+                    
+                    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+                    //这里得到报警设置里面的高温报警的值和低温报警的值，之后设置不同的颜色即可
+                    float highsetTemperature = [[user objectForKey:@"gaowenLabel"] floatValue];
+                    float lowestTemperature = [[user objectForKey:@"diwenLabel"] floatValue];
+                    
                     MCChartInformationView *informationView = [[MCChartInformationView alloc] initWithText:information ];//withBackgroudColor:[UIColor redColor]
+                    
+                    //给高温点设置红色，低温点设置蓝色，普通点设置白色
+                    if ([information floatValue] >= highsetTemperature) {
+                        informationView.textLabel.backgroundColor = [UIColor redColor];
+                    }else if ([information floatValue] <= lowestTemperature) {
+                        informationView.textLabel.backgroundColor = [UIColor blueColor];
+                    }else if (lowestTemperature <[information floatValue] && [information floatValue] < highsetTemperature ) {
+                        informationView.textLabel.backgroundColor = [UIColor colorWithWhite:1 alpha:0];
+                    }
+                    
                     informationView.center = CGPointMake(xOffset, yOffset - CGRectGetHeight(informationView.bounds)/2 - _dotRadius);
                     informationView.alpha = 0.0;
                     [_scrollView addSubview:informationView];
