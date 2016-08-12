@@ -20,13 +20,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-   
+    self.tabelview.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 2;
+    return 1;
 }
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [self.tabelview dequeueReusableCellWithIdentifier:@"cell"];
@@ -41,7 +41,7 @@
     
             
         case 0:
-            cell.textLabel.text=@"使用帮助";
+            cell.textLabel.text=NSLocalizedString(@"UseHelp", nil );
             break;
             
         case 1:

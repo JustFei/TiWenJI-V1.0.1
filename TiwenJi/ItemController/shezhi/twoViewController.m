@@ -93,8 +93,9 @@
     
     //载入历史记录的button
     UIButton *loginHistoryButton = [[UIButton alloc] initWithFrame:CGRectMake(self.view.center.x - 50, self.view.center.y + 50, 100, 50)];
-    loginHistoryButton.backgroundColor = [UIColor redColor];
-    [loginHistoryButton setTitle:@"载入历史" forState:UIControlStateNormal];
+    loginHistoryButton.backgroundColor = [UIColor clearColor];
+    [loginHistoryButton setTitle:NSLocalizedString(@"HistoryLoad", nil) forState:UIControlStateNormal];
+    loginHistoryButton.titleLabel.font = [UIFont systemFontOfSize:15];
     [loginHistoryButton addTarget:self action:@selector(loginHistory:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:loginHistoryButton];
     [self.view bringSubviewToFront:loginHistoryButton];

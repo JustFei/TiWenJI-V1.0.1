@@ -36,6 +36,9 @@
 "QidongCancel" = "不连接";
 "QidongSure" = "连接";
 
+//twoView 载入历史
+"HistoryLoad" = "载入历史记录";
+
 /**
  *  暂时不做国际化
  */

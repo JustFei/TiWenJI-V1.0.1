@@ -28,10 +28,13 @@
 "AboutUs" = "About Us";
 
 //关于我们View  使用帮助
-"UseHelp" = "Usinghelp";
+"UseHelp" = "Help";
 
 //qidongView 启动界面
 "QidongTitle" = "WeatherConnect";//是否连接
 "LastPer" = "Last use device:";
 "QidongCancel" = "NO";
 "QidongSure" = "YES";
+
+//twoView 载入历史
+"HistoryLoad" = "Load History";

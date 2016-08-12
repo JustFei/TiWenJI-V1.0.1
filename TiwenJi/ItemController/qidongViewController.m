@@ -188,9 +188,9 @@
             {
                     NSLog(@"最后一次使用设备不为空");
                     NSLog(@"======%@",self.qidongperipheral);
-                    NSString*str=@"上次次使用设备:";
+                    NSString*str=NSLocalizedString(@"LastPer", nil);
                     
-                    UIAlertView*alert=[[UIAlertView alloc]initWithTitle:@"是否连接" message:[str stringByAppendingString:self.qidongperipheral.name] delegate:self cancelButtonTitle:@"不连接" otherButtonTitles:@"连接", nil];
+                    UIAlertView*alert=[[UIAlertView alloc]initWithTitle:NSLocalizedString(@"QidongTitle", nil) message:[str stringByAppendingString:self.qidongperipheral.name] delegate:self cancelButtonTitle:NSLocalizedString(@"QidongCancel", nil) otherButtonTitles:NSLocalizedString(@"QidongSure", nil), nil];
                     [alert show];
                     [_yanshi invalidate];
                     _yanshi=nil;
