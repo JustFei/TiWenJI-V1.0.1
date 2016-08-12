@@ -1,0 +1,15 @@
+
+/* Class = "UIButton"; normalTitle = "不再提醒"; ObjectID = "4mm-9s-TVb"; */
+"4mm-9s-TVb.normalTitle" = "不再提醒";
+
+/* Class = "UILabel"; text = "高温报警"; ObjectID = "OBe-o5-Dwi"; */
+"OBe-o5-Dwi.text" = "高温报警";
+
+/* Class = "UIButton"; normalTitle = "稍后提醒"; ObjectID = "Pvf-0V-Yrc"; */
+"Pvf-0V-Yrc.normalTitle" = "稍后提醒";
+
+/* Class = "UILabel"; text = "张小明 当前体温为"; ObjectID = "SZV-OD-oby"; */
+"SZV-OD-oby.text" = "张小明 当前体温为";
+
+/* Class = "UILabel"; text = "38.5°C"; ObjectID = "jPX-Tz-6P0"; */
+"jPX-Tz-6P0.text" = "38.5°C";

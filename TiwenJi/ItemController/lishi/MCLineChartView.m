@@ -121,7 +121,13 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
 - (CGFloat)normalizedHeightForRawHeight:(NSNumber *)rawHeight {
     CGFloat value = [rawHeight floatValue];
     CGFloat maxHeight = [self.maxValue floatValue];
-    return value/maxHeight * _chartHeight;
+    CGFloat minHeight = [self.minValue floatValue];
+    
+    
+    NSLog(@"value == %f / maxHeight == %f",value,maxHeight);
+    
+    
+    return (value - minHeight)/(maxHeight - minHeight) * _chartHeight;
 }
 
 - (id)maxValue {
@@ -250,6 +256,9 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
             CGColorRef color = [self.delegate lineChartView:self lineColorWithLineNumber:lineNumber].CGColor;
             lineLayer.strokeColor = color;
             lineLayer.fillColor = [UIColor clearColor].CGColor;
+            
+            
+            //这里设置点的颜色
             pointLayer.strokeColor = color;
             pointLayer.fillColor = [UIColor whiteColor].CGColor;
         } else {
@@ -259,6 +268,7 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
             pointLayer.strokeColor = color;
             pointLayer.fillColor = [UIColor whiteColor].CGColor;
         }
+        
         if ([self.delegate respondsToSelector:@selector(lineChartView:lineWidthWithLineNumber:)]) {
             lineLayer.lineWidth = [self.delegate lineChartView:self lineWidthWithLineNumber:lineNumber];
             pointLayer.lineWidth = [self.delegate lineChartView:self lineWidthWithLineNumber:lineNumber];
@@ -266,8 +276,6 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
             lineLayer.lineWidth = LINE_WIDTH_DEFAULT;
             pointLayer.lineWidth = LINE_WIDTH_DEFAULT;
         }
-        
-        
         
         CGFloat xOffset = _dotPadding/2;
         CGFloat chartYOffset = _oppositeY ? LINE_CHART_TOP_PADDING : _chartHeight + LINE_CHART_TOP_PADDING;
@@ -321,23 +329,30 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
                     } completion:nil];
                 }
             } else if ([self.delegate respondsToSelector:@selector(lineChartView:informationOfDotInLineNumber:index:)]) {
+                
+                //坐标点上面的信息页面设置
                 NSString *information = [self.delegate lineChartView:self informationOfDotInLineNumber:lineNumber index:index ];//backgroundColor:[UIColor redColor]
                 if (information) {
+                    MCChartInformationView *informationView = [[MCChartInformationView alloc] initWithText:information ];//withBackgroudColor:[UIColor redColor]
                     
+                    //设置信息背景颜色
+                   
                     NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
                     //这里得到报警设置里面的高温报警的值和低温报警的值，之后设置不同的颜色即可
                     float highsetTemperature = [[user objectForKey:@"gaowenLabel"] floatValue];
                     float lowestTemperature = [[user objectForKey:@"diwenLabel"] floatValue];
                     
-                    MCChartInformationView *informationView = [[MCChartInformationView alloc] initWithText:information ];//withBackgroudColor:[UIColor redColor]
-                    
                     //给高温点设置红色，低温点设置蓝色，普通点设置白色
-                    if ([information floatValue] >= highsetTemperature) {
-                        informationView.textLabel.backgroundColor = [UIColor redColor];
-                    }else if ([information floatValue] <= lowestTemperature) {
-                        informationView.textLabel.backgroundColor = [UIColor blueColor];
-                    }else if (lowestTemperature <[information floatValue] && [information floatValue] < highsetTemperature ) {
-                        informationView.textLabel.backgroundColor = [UIColor colorWithWhite:1 alpha:0];
+                    if (highsetTemperature || lowestTemperature) {
+                        if ([information floatValue] >= highsetTemperature) {
+                            informationView.textLabel.textColor = [UIColor redColor];
+                        }else if ([information floatValue] <= lowestTemperature) {
+                            informationView.textLabel.textColor = [UIColor blueColor];
+                        }else if (lowestTemperature <[information floatValue] && [information floatValue] < highsetTemperature ) {
+                            informationView.textLabel.textColor = [UIColor whiteColor];
+                        }
+                    }else {
+                        informationView.textLabel.textColor = [UIColor whiteColor];
                     }
                     
                     informationView.center = CGPointMake(xOffset, yOffset - CGRectGetHeight(informationView.bounds)/2 - _dotRadius);
@@ -349,7 +364,6 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
                     } completion:nil];
                 }
             }
-
             
             if (lineNumber == 0 && [self.delegate respondsToSelector:@selector(lineChartView:titleAtLineNumber:)]) {
                 UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(xOffset - _dotPadding/2 + 4, _chartHeight + LINE_CHART_TOP_PADDING, _dotPadding - 8, LINE_CHART_TEXT_HEIGHT)];
@@ -364,8 +378,10 @@ CGFloat static const kChartViewUndefinedCachedHeight = -1.0f;
             
             xOffset += _dotPadding;
         }
+        
         lineLayer.path = lineBezierPath.CGPath;
         pointLayer.path = pointBezierPath.CGPath;
+        //判断是否是实心，如果是实心，就和边框颜色一致，如果是空心，就为透明
         pointLayer.fillColor = _solidDot ? lineLayer.strokeColor : [UIColor clearColor].CGColor;
         [_scrollView.layer insertSublayer:lineLayer atIndex:(unsigned)lineNumber];
         [_scrollView.layer insertSublayer:pointLayer above:lineLayer];

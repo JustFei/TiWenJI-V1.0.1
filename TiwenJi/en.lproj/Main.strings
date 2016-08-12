@@ -1,0 +1,286 @@
+
+/* Class = "UITabBarItem"; title = "历史"; ObjectID = "0sY-tH-caC"; */
+//"0sY-tH-caC.title" = "历史";
+"0sY-tH-caC.title" = "History";
+
+/* Class = "UILabel"; text = "报警设置"; ObjectID = "11j-cZ-Xjq"; */
+//"11j-cZ-Xjq.text" = "报警设置";
+"11j-cZ-Xjq.text" = "Alarm Setting";
+
+/* Class = "UILabel"; text = "岁"; ObjectID = "1a9-6Z-EjR"; */
+//"1a9-6Z-EjR.text" = "岁";
+"1a9-6Z-EjR.text" = "Annum";
+
+/* Class = "UILabel"; text = "170"; ObjectID = "5Jz-W4-Zje"; */
+"5Jz-W4-Zje.text" = "170";
+
+/* Class = "UILabel"; text = "°C"; ObjectID = "6jy-CC-o6u"; */
+"6jy-CC-o6u.text" = "°C";
+
+/* Class = "UILabel"; text = "设备连接"; ObjectID = "76S-Tk-uPO"; */
+//"76S-Tk-uPO.text" = "设备连接";
+"76S-Tk-uPO.text" = "Device Attachment";
+
+/* Class = "UILabel"; text = "铃声"; ObjectID = "7HP-1l-Tey"; */
+//"7HP-1l-Tey.text" = "铃声";
+"7HP-1l-Tey.text" = "Ringing";
+
+/* Class = "UILabel"; text = "SHENZHEN MANRIDY TECHNOLOGY CO,.LTD."; ObjectID = "93S-qt-DQC"; */
+"93S-qt-DQC.text" = "SHENZHEN MANRIDY TECHNOLOGY CO,.LTD.";
+
+/* Class = "UILabel"; text = "当前温度"; ObjectID = "9k7-U4-fiD"; */
+//"9k7-U4-fiD.text" = "当前温度";
+"9k7-U4-fiD.text" = "Current Temperature";
+
+/* Class = "UILabel"; text = "小知识"; ObjectID = "ATw-lh-JKz"; */
+//"ATw-lh-JKz.text" = "小知识";
+"ATw-lh-JKz.text" = "Tips";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "Aal-PL-oJx"; */
+//"Aal-PL-oJx.normalTitle" = "返回";
+"Aal-PL-oJx.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "电量:"; ObjectID = "Bt0-6g-IXa"; */
+//"Bt0-6g-IXa.text" = "电量:";
+"Bt0-6g-IXa.text" = "Battery:";
+
+/* Class = "UILabel"; text = "用户信息"; ObjectID = "CIS-by-gBF"; */
+//"CIS-by-gBF.text" = "用户信息";
+"CIS-by-gBF.text" = "User Information";
+
+/* Class = "UITabBarItem"; title = "温度"; ObjectID = "Cng-oF-cxX"; */
+//"Cng-oF-cxX.title" = "温度";
+"Cng-oF-cxX.title" = "Temperature";
+
+/* Class = "UILabel"; text = "0"; ObjectID = "D1G-2D-JvH"; */
+"D1G-2D-JvH.text" = "0";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "D2d-7H-oWr"; */
+//"D2d-7H-oWr.normalTitle" = "返回";
+"D2d-7H-oWr.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "姓名"; ObjectID = "D4z-KD-TRr"; */
+//"D4z-KD-TRr.text" = "姓名";
+"D4z-KD-TRr.text" = "Name";
+
+/* Class = "UILabel"; text = "振动"; ObjectID = "EW6-jg-mXX"; */
+//"EW6-jg-mXX.text" = "振动";
+"EW6-jg-mXX.text" = "Vibrate";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "EbH-6Q-GnO"; */
+//"EbH-6Q-GnO.normalTitle" = "返回";
+"EbH-6Q-GnO.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "报警间隔"; ObjectID = "Egn-ff-Ut6"; */
+//"Egn-ff-Ut6.text" = "报警间隔";
+"Egn-ff-Ut6.text" = "Warning Interval";
+
+/* Class = "UILabel"; text = "关于"; ObjectID = "FXa-EU-C6E"; */
+//"FXa-EU-C6E.text" = "关于";
+"FXa-EU-C6E.text" = "About";
+
+/* Class = "UIButton"; normalTitle = "保存设置"; ObjectID = "GFe-pD-Bte"; */
+//"GFe-pD-Bte.normalTitle" = "保存设置";
+"GFe-pD-Bte.normalTitle" = "Save Settings";
+
+/* Class = "UILabel"; text = "关于我们"; ObjectID = "GMx-BP-fOb"; */
+//"GMx-BP-fOb.text" = "关于我们";
+"GMx-BP-fOb.text" = "About Us";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "GSH-nn-TJX"; */
+//"GSH-nn-TJX.normalTitle" = "返回";
+"GSH-nn-TJX.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "最高温度"; ObjectID = "HZa-a1-LoX"; */
+//"HZa-a1-LoX.text" = "最高温度";
+"HZa-a1-LoX.text" = "Highest Temperature";
+
+/* Class = "UILabel"; text = "使用帮助"; ObjectID = "Hav-kB-Aqo"; */
+//"Hav-kB-Aqo.text" = "使用帮助";
+"Hav-kB-Aqo.text" = "Help";
+
+/* Class = "UILabel"; text = "低温报警"; ObjectID = "Ih5-dh-FXz"; */
+//"Ih5-dh-FXz.text" = "低温报警";
+"Ih5-dh-FXz.text" = "Low Warning";
+
+/* Class = "UILabel"; text = "报警设置"; ObjectID = "Lp0-Ki-69Q"; */
+//"Lp0-Ki-69Q.text" = "报警设置";
+"Lp0-Ki-69Q.text" = "Warning Setting";
+
+/* Class = "UILabel"; text = "姓名"; ObjectID = "N2i-dJ-stu"; */
+//"N2i-dJ-stu.text" = "姓名";
+"N2i-dJ-stu.text" = "Name";
+
+/* Class = "UIButton"; normalTitle = "保存"; ObjectID = "NlE-NZ-9O9"; */
+//"NlE-NZ-9O9.normalTitle" = "保存";
+"NlE-NZ-9O9.normalTitle" = "Save";
+
+/* Class = "UILabel"; text = "小知识"; ObjectID = "OJI-qS-a66"; */
+//"OJI-qS-a66.text" = "小知识";
+"OJI-qS-a66.text" = "Tips";
+
+/* Class = "UILabel"; text = "高温报警"; ObjectID = "On6-pa-KfG"; */
+//"On6-pa-KfG.text" = "高温报警";
+"On6-pa-KfG.text" = "High Waring";
+
+/* Class = "UILabel"; text = "用户信息"; ObjectID = "Oo3-0K-Ktc"; */
+//"Oo3-0K-Ktc.text" = "用户信息";
+"Oo3-0K-Ktc.text" = "User Information";
+
+/* Class = "UILabel"; text = "性别"; ObjectID = "R2O-Rt-m5C"; */
+//"R2O-Rt-m5C.text" = "性别";
+"R2O-Rt-m5C.text" = "Gender";
+
+/* Class = "UILabel"; text = "°C"; ObjectID = "R2U-ED-N3p"; */
+"R2U-ED-N3p.text" = "°C";
+
+/* Class = "UILabel"; text = "年龄"; ObjectID = "RXd-I7-739"; */
+//"RXd-I7-739.text" = "年龄";
+"RXd-I7-739.text" = "Age";
+
+/* Class = "UILabel"; text = "报警温度"; ObjectID = "RvJ-9B-bhK"; */
+//"RvJ-9B-bhK.text" = "报警温度";
+"RvJ-9B-bhK.text" = "Warning Temperature";
+
+/* Class = "UILabel"; text = "baby care 智能体温计"; ObjectID = "Rxu-fH-5qI"; */
+//"Rxu-fH-5qI.text" = "baby care 智能体温计";
+"Rxu-fH-5qI.text" = "baby care Smart Thermometer";
+
+/* Class = "UILabel"; text = "小明"; ObjectID = "SMg-W0-ZpJ"; */
+//"SMg-W0-ZpJ.text" = "小明";
+"SMg-W0-ZpJ.text" = "Xiao Ming";
+
+/* Class = "UILabel"; text = "用户列表"; ObjectID = "Ts5-hu-e1q"; */
+//"Ts5-hu-e1q.text" = "用户列表";
+"Ts5-hu-e1q.text" = "User List";
+
+/* Class = "UILabel"; text = "历史温度"; ObjectID = "Uef-EX-Mvx"; */
+//"Uef-EX-Mvx.text" = "历史温度";
+"Uef-EX-Mvx.text" = "History Temperature";
+
+/* Class = "UILabel"; text = "体重"; ObjectID = "VaY-LQ-a0e"; */
+//"VaY-LQ-a0e.text" = "体重";
+"VaY-LQ-a0e.text" = "Weight";
+
+/* Class = "UILabel"; text = "铃声"; ObjectID = "Vgr-5Z-S8m"; */
+//"Vgr-5Z-S8m.text" = "铃声";
+"Vgr-5Z-S8m.text" = "Ringing";
+
+/* Class = "UILabel"; text = "关于我们"; ObjectID = "WGG-xE-OCQ"; */
+//"WGG-xE-OCQ.text" = "关于我们";
+"WGG-xE-OCQ.text" = "About Us";
+
+/* Class = "UILabel"; text = "深圳曼瑞德科技有限公司"; ObjectID = "XKz-qd-rNf"; */
+//"XKz-qd-rNf.text" = "深圳曼瑞德科技有限公司";
+"XKz-qd-rNf.text" = "SHENZHEN MANRIDY TECHNOLOGY CO,.LTD.";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "Yhv-gu-cfL"; */
+//"Yhv-gu-cfL.normalTitle" = "返回";
+"Yhv-gu-cfL.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "振动"; ObjectID = "ZBh-Hj-8Qj"; */
+//"ZBh-Hj-8Qj.text" = "振动";
+"ZBh-Hj-8Qj.text" = "Vibrate";
+
+/* Class = "UILabel"; text = "0"; ObjectID = "Zec-R0-An6"; */
+"Zec-R0-An6.text" = "0";
+
+/* Class = "UILabel"; text = "官方微信公众号"; ObjectID = "Znb-xI-GhU"; */
+//"Znb-xI-GhU.text" = "官方微信公众号";
+"Znb-xI-GhU.text" = "Official WeChat public number";
+
+/* Class = "UILabel"; text = "身高"; ObjectID = "aT7-Y9-4gb"; */
+//"aT7-Y9-4gb.text" = "身高";
+"aT7-Y9-4gb.text" = "Height";
+
+/* Class = "UILabel"; text = "CM"; ObjectID = "ak8-Z2-xwT"; */
+"ak8-Z2-xwT.text" = "CM";
+
+/* Class = "UIButton"; normalTitle = "今天"; ObjectID = "asF-su-YQb"; */
+//"asF-su-YQb.normalTitle" = "今天";
+"asF-su-YQb.normalTitle" = "Today";
+
+/* Class = "UILabel"; text = "设置"; ObjectID = "baE-aI-lQs"; */
+//"baE-aI-lQs.text" = "设置";
+"baE-aI-lQs.text" = "Setting";
+
+/* Class = "UILabel"; text = "0"; ObjectID = "cnF-CH-Vx1"; */
+"cnF-CH-Vx1.text" = "0";
+
+/* Class = "UILabel"; text = "KG"; ObjectID = "dMk-FA-cpz"; */
+"dMk-FA-cpz.text" = "KG";
+
+/* Class = "UILabel"; text = "分钟"; ObjectID = "fLO-at-YoX"; */
+//"fLO-at-YoX.text" = "分钟";
+"fLO-at-YoX.text" = "Min";
+
+/* Class = "UILabel"; text = "11"; ObjectID = "gAu-B9-j0r"; */
+"gAu-B9-j0r.text" = "11";
+
+/* Class = "UILabel"; text = "   深圳曼瑞德科技有限公司创立于时尚创新之都—深圳龙华新区，是国内较早进入移动健康、智能健康领域的企业，成立翌始就确定了“创新、科技、时尚、健康”的科技理念。       \n\n    曼瑞德科技致立于与人体健康和人类环境健康相关的产品及方案的研发、设计。公司以市场需求为导向，以研发创新为核心、以质量为保证，凭借十余年的健康产品技术积累，不断研发出符合市场需求的高新技术产品。目前公司在生理信号检测、环境检测、主控平台等方面掌握多项核心技术，拥有各类专利、软件著作权、核心技术等十几项；公司创始人及核心团队均来自国内外知名医疗企业，拥有十余年医疗从业经验。\n\n     曼瑞德科技自成立之日起，就立志要提高民族健康产业，为社会的进步承担自己的责任，曼瑞德科技的愿景是成为健康行业中有竞争力的、有强大持续发展能力的、有卓越企业文化的高科技企业。尽管前面还有很长的路要走，科技始终充满活力，满怀激情，迈着坚定的步伐，朝着既定的目标奋进。 “立足创新、专注质量、诚信服务、真诚合作、共同发展”是曼瑞德人始终如一的追求，为客户提供创新、优质、安全、可靠的技术和产品是曼瑞德科技永恒的方针。我们将不断超越自我，一如既往地为客户创造价值，提供更优质的技术、产品和服务！"; ObjectID = "iBv-FO-a1a"; */
+"iBv-FO-a1a.text" = "   深圳曼瑞德科技有限公司创立于时尚创新之都—深圳龙华新区，是国内较早进入移动健康、智能健康领域的企业，成立翌始就确定了“创新、科技、时尚、健康”的科技理念。       \n\n    曼瑞德科技致立于与人体健康和人类环境健康相关的产品及方案的研发、设计。公司以市场需求为导向，以研发创新为核心、以质量为保证，凭借十余年的健康产品技术积累，不断研发出符合市场需求的高新技术产品。目前公司在生理信号检测、环境检测、主控平台等方面掌握多项核心技术，拥有各类专利、软件著作权、核心技术等十几项；公司创始人及核心团队均来自国内外知名医疗企业，拥有十余年医疗从业经验。\n\n     曼瑞德科技自成立之日起，就立志要提高民族健康产业，为社会的进步承担自己的责任，曼瑞德科技的愿景是成为健康行业中有竞争力的、有强大持续发展能力的、有卓越企业文化的高科技企业。尽管前面还有很长的路要走，科技始终充满活力，满怀激情，迈着坚定的步伐，朝着既定的目标奋进。 “立足创新、专注质量、诚信服务、真诚合作、共同发展”是曼瑞德人始终如一的追求，为客户提供创新、优质、安全、可靠的技术和产品是曼瑞德科技永恒的方针。我们将不断超越自我，一如既往地为客户创造价值，提供更优质的技术、产品和服务！";
+
+/* Class = "UILabel"; text = "报警温度"; ObjectID = "jKv-f8-wdx"; */
+//"jKv-f8-wdx.text" = "报警温度";
+"jKv-f8-wdx.text" = "Warning Temperature";
+
+
+/* Class = "UILabel"; text = "%"; ObjectID = "jVk-bY-FGU"; */
+"jVk-bY-FGU.text" = "%";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "jXV-ET-jXE"; */
+//"jXV-ET-jXE.normalTitle" = "返回";
+"jXV-ET-jXE.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "SHENZHEN MANRIDY TECHNOLOGY CO.,LTD."; ObjectID = "kb5-Ze-oej"; */
+"kb5-Ze-oej.text" = "SHENZHEN MANRIDY TECHNOLOGY CO.,LTD.";
+
+/* Class = "UILabel"; text = "官方网站://www.manridy.com"; ObjectID = "kmb-00-rMv"; */
+//"kmb-00-rMv.text" = "官方网站://www.manridy.com";
+"kmb-00-rMv.text" = "Official Website://www.manridy.com";
+
+/* Class = "UILabel"; text = "--"; ObjectID = "kuW-3e-02H"; */
+"kuW-3e-02H.text" = "--";
+
+/* Class = "UILabel"; text = "男"; ObjectID = "lBs-vr-PEm"; */
+//"lBs-vr-PEm.text" = "男";
+"lBs-vr-PEm.text" = "Male";
+
+/* Class = "UILabel"; text = "以上内容均来源于网络"; ObjectID = "lIw-R3-424"; */
+//"lIw-R3-424.text" = "以上内容均来源于网络";
+"lIw-R3-424.text" = "All of the above are derived from the network";
+
+/* Class = "UITabBarItem"; title = "设置"; ObjectID = "nb5-6I-aaY"; */
+//"nb5-6I-aaY.title" = "设置";
+"nb5-6I-aaY.title" = "Setting";
+
+/* Class = "UILabel"; text = "深圳市曼瑞德科技有限公司"; ObjectID = "nxH-Gb-wfK"; */
+//"nxH-Gb-wfK.text" = "深圳市曼瑞德科技有限公司";
+"nxH-Gb-wfK.text" = "SHENZHEN MANRIDY TECHNOLOGY CO.,LTD.";
+
+/* Class = "UILabel"; text = "50"; ObjectID = "pQ8-Ou-LJT"; */
+"pQ8-Ou-LJT.text" = "50";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "pb8-dI-8Uf"; */
+//"pb8-dI-8Uf.normalTitle" = "返回";
+"pb8-dI-8Uf.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "小知识"; ObjectID = "rKO-U1-KI7"; */
+//"rKO-U1-KI7.text" = "小知识";
+"rKO-U1-KI7.text" = "Tips";
+
+/* Class = "UIButton"; normalTitle = "返回"; ObjectID = "rO9-Zw-A20"; */
+//"rO9-Zw-A20.normalTitle" = "返回";
+"rO9-Zw-A20.normalTitle" = "Back";
+
+/* Class = "UILabel"; text = "软件版本:v1.0"; ObjectID = "sQm-6s-Hny"; */
+//"sQm-6s-Hny.text" = "软件版本:v1.0";
+"sQm-6s-Hny.text" = "Software Version:v1.0";
+
+/* Class = "UILabel"; text = "设备连接"; ObjectID = "swp-Va-ASh"; */
+//"swp-Va-ASh.text" = "设备连接";
+"swp-Va-ASh.text" = "Device Attachment";
+
+/* Class = "UILabel"; text = "官方微博"; ObjectID = "wgz-N4-F7y"; */
+//"wgz-N4-F7y.text" = "官方微博";
+"wgz-N4-F7y.text" = "Official Weibo";

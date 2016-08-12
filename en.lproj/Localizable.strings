@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  TiwenJi
+
+  Created by JustBill on 16/8/11.
+  Copyright © 2016年 Manridy.Bobo.com. All rights reserved.
+*/
+
+//oneView 扫描设备的按钮
+"ScanDevice" = "ScanDevice";
+
+//oneView 温度曲线图
+"TemperatureProfile" = "Temperature Profile";
+
+//threeView 用户姓名Label
+"Name" = "Name";
+
+//用户列表View 用户性别初始值
+"Gender" = "Male";
+
+//用户列表View 用户性别修改的选项
+"GenderFmale" = "Fmale";
+
+//蓝牙连接View 没有连接设备Label
+"ConnectState" = "Not Connected";
+
+//关于我们View  关于我们
+"AboutUs" = "About Us";
+
+//关于我们View  使用帮助
+"UseHelp" = "Usinghelp";
+
+//qidongView 启动界面
+"QidongTitle" = "WeatherConnect";//是否连接
+"LastPer" = "Last use device:";
+"QidongCancel" = "NO";
+"QidongSure" = "YES";

@@ -47,7 +47,7 @@
     
     if (name==nil)
     {
-        self.Namelabel.text=@"姓名";
+        self.Namelabel.text=NSLocalizedString(@"Name", nil);
     }
     else
     {

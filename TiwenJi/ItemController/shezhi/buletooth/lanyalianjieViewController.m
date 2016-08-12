@@ -280,12 +280,12 @@
     NSLog(@"%@",sendString);
     
     //根据当前时间来设置写入特征值已经搞定
-    NSInteger YY = [sendString substringWithRange:NSMakeRange(4, 2)].integerValue;
-    NSInteger MM = [sendString substringWithRange:NSMakeRange(6, 2)].integerValue;
-    NSInteger DD = [sendString substringWithRange:NSMakeRange(8, 2)].integerValue;
-    NSInteger hh = [sendString substringWithRange:NSMakeRange(10, 2)].integerValue;
-    NSInteger mm = [sendString substringWithRange:NSMakeRange(12, 2)].integerValue;
-    NSInteger ss = [sendString substringWithRange:NSMakeRange(14, 2)].integerValue;
+    int YY = [sendString substringWithRange:NSMakeRange(4, 2)].intValue;
+    int MM = [sendString substringWithRange:NSMakeRange(6, 2)].intValue;
+    int DD = [sendString substringWithRange:NSMakeRange(8, 2)].intValue;
+    int hh = [sendString substringWithRange:NSMakeRange(10, 2)].intValue;
+    int mm = [sendString substringWithRange:NSMakeRange(12, 2)].intValue;
+    int ss = [sendString substringWithRange:NSMakeRange(14, 2)].intValue;
 #pragma mark - 十进制转换BCD编码实现
     //这里是将十进制的数字转换成BCD码格式，这样就可以写入特征了
     DectoBCD(YY, &sendStr[2], 2);

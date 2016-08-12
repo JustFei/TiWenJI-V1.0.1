@@ -24,13 +24,25 @@
 @protocol MCLineChartViewDelegate <NSObject>
 
 @optional
+/**
+ *  设置线的颜色
+ *
+ *  @param lineChartView 折线图实例
+ *  @param lineNumber    第几条线
+ *
+ *  @return 颜色
+ */
 - (UIColor *)lineChartView:(MCLineChartView *)lineChartView lineColorWithLineNumber:(NSInteger)lineNumber;
+
+////根据点的索引来设置点的颜色
+//- (UIColor *)lineChartView:(MCLineChartView *)lineChartView pointColorWithIndex:(NSInteger)index;
+
 - (CGFloat)lineChartView:(MCLineChartView *)lineChartView lineWidthWithLineNumber:(NSInteger)lineNumber;
 
 - (CGFloat)dotPaddingInLineChartView:(MCLineChartView *)lineChartView;
 
 //设置每个点上面的提示框的内容
-- (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index ;//backgroundColor:(UIColor *)backColor
+- (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;
 - (UIView *)lineChartView:(MCLineChartView *)lineChartView hintViewOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;
 - (UIView *)lineChartView:(MCLineChartView *)lineChartView pointViewOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index;
 

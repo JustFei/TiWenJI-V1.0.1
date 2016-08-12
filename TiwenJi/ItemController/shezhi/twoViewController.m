@@ -74,11 +74,11 @@
     _dataSource = [NSMutableArray array];
     
     _lineChartView = [[MCLineChartView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height*0.5 - 20, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height*0.5 - 30)];
-    _lineChartView.dotRadius = 1.5;
+    _lineChartView.dotRadius = 3.0;
     _lineChartView.oppositeY = NO;
     _lineChartView.dataSource = self;
     _lineChartView.delegate = self;
-    _lineChartView.minValue = @0;
+    _lineChartView.minValue = @30;
     _lineChartView.maxValue = @43;
     _lineChartView.solidDot = YES;
     _lineChartView.numberOfYAxis = 10;
@@ -174,7 +174,14 @@
 
 //每个坐标的值
 - (id)lineChartView:(MCLineChartView *)lineChartView valueAtLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
-    return _dataSource[index];
+    
+    float Tvalue = [_dataSource[index] floatValue];
+    
+    if (Tvalue > 30) {
+        return _dataSource[index];
+    }else {
+        return @30;
+    }
 }
 
 //横坐标的坐标值：时间
@@ -194,6 +201,30 @@
         return [UIColor yellowColor];
     }
 }
+
+//设置每个点的颜色
+//- (UIColor *)lineChartView:(MCLineChartView *)lineChartView pointColorWithIndex:(NSInteger)index
+//{
+//    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+//    //这里得到报警设置里面的高温报警的值和低温报警的值，之后设置不同的颜色即可
+//    float highsetTemperature = [[user objectForKey:@"gaowenLabel"] floatValue];
+//    float lowestTemperature = [[user objectForKey:@"diwenLabel"] floatValue];
+//    UIColor *pointColor;
+//
+//    //给高温点设置红色，低温点设置蓝色，普通点设置白色
+//    if (highsetTemperature || lowestTemperature) {
+//        if ([_dataSource[index] floatValue] >= highsetTemperature) {
+//            pointColor = [UIColor redColor];
+//        }else if ([_dataSource[index] floatValue] <= lowestTemperature) {
+//            pointColor = [UIColor blueColor];
+//        }else if (lowestTemperature <[_dataSource[index] floatValue] && [_dataSource[index] floatValue] < highsetTemperature ) {
+//            pointColor = [UIColor colorWithRed:0/255.0 green:207/255.0 blue:187/255.0 alpha:1.0];
+//        }
+//    }else {
+//        pointColor = [UIColor colorWithRed:0/255.0 green:207/255.0 blue:187/255.0 alpha:1.0];
+//    }
+//    return pointColor;
+//}
 
 //折线上点的提示框的值
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index {

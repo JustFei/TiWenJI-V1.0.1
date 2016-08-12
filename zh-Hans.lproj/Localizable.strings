@@ -1,0 +1,66 @@
+/* 
+  Localizable.strings
+  TiwenJi
+
+  Created by JustBill on 16/8/11.
+  Copyright © 2016年 Manridy.Bobo.com. All rights reserved.
+*/
+
+//oneView 扫描设备的按钮
+"ScanDevice" = "扫描设备";
+
+//oneView 温度曲线图
+"TemperatureProfile" = "温度曲线图";
+
+//threeView 用户姓名Label
+"Name" = "姓名";
+
+//用户列表View 用户性别初始值
+"Gender" = "男";
+
+//用户列表View 用户性别修改的选项
+"GenderFmale" = "女";
+
+//蓝牙连接View 没有连接设备Label
+"ConnectState" = "未连接设备";
+
+//关于我们View  关于我们
+"AboutUs" = "关于我们";
+
+//关于我们View  使用帮助
+"UseHelp" = "使用帮助";
+
+//qidongView 启动界面
+"QidongTitle" = "是否连接";
+"LastPer" = "上次使用设备:";
+"QidongCancel" = "不连接";
+"QidongSure" = "连接";
+
+/**
+ *  暂时不做国际化
+ */
+//小知识View 1-11条所有的cell的Label
+//1
+//"Tips1" = "1.什么是小儿发热？";
+////2
+//"Tips2" = "2.小儿发烧的原因";
+////3
+//"Tips3" = "3.小儿发烧的临床表现";
+////4
+//"Tips4" = "4.小儿发烧的检查";
+////5
+//"Tips5" = "5.小儿发烧的诊断及并发症";
+////6
+//"Tips6" = "6.小儿发烧的治疗";
+////7
+//"Tips7" = "7.六招简单的退烧法";
+////8
+//"Tips8" = "8.小儿发烧的物理降温方法";
+////9
+//"Tips9" = "9.小儿感冒补水";
+////10
+//"Tips10" = "10.怎么选择儿童退烧药";
+////11
+//"Tips11" = "11.怎样区分孩子正常的体温升高或降低";
+
+

@@ -147,14 +147,14 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     NSLog(@"oneviewWillDisappear");
-    [self.GbaojingTimer invalidate];
-    self.GbaojingTimer=nil;
-    [self.DbaojingTimer invalidate];
-    self.DbaojingTimer=nil;
-    [_Gdaoji invalidate];
-    _Gdaoji=nil;
-    [_Ddaoji invalidate];
-    _Ddaoji=nil;
+//    [self.GbaojingTimer invalidate];
+//    self.GbaojingTimer=nil;
+//    [self.DbaojingTimer invalidate];
+//    self.DbaojingTimer=nil;
+//    [_Gdaoji invalidate];
+//    _Gdaoji=nil;
+//    [_Ddaoji invalidate];
+//    _Ddaoji=nil;
     
     
 }
@@ -174,7 +174,7 @@
     }
     else
     {
-        [self.wenbutton setTitle:@"扫描设备" forState:0];
+        [self.wenbutton setTitle:NSLocalizedString(@"ScanDevice", nil) forState:0];
     }
 }
 
@@ -262,7 +262,7 @@
         //温度按钮设置为扫描设备的文本
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             if (weakSelf.Peripheral.state == 1) {
-                [weakSelf.wenbutton setTitle:@"扫描设备" forState:0];
+                [weakSelf.wenbutton setTitle:NSLocalizedString(@"ScanDevice", nil) forState:0];
             }
         });
         
@@ -489,7 +489,9 @@
                 NSInteger mmTime = [mm integerValue];
                 if (mmTime % 5 == 0) {
                     NSLog(@"存储时的时间 == %ld",(long)mmTime);
-                    [self saveCoreData2];
+                    NSString *string_day = [NSString stringWithFormat:@"20%@%@%@%@%@",YY,MM,DD,hh,mm];
+                    
+                    [self saveCoreData2: string_day];
                 }
             }
         }
@@ -569,7 +571,9 @@
                 NSInteger mmTime = [mm integerValue];
                 if (mmTime % 5 == 0) {
                     NSLog(@"存储时的时间 == %ld",(long)mmTime);
-                    [self saveCoreData2];
+                    NSString *string_day = [NSString stringWithFormat:@"20%@%@%@%@%@",YY,MM,DD,hh,mm];
+                    
+                    [self saveCoreData2: string_day];
                 }
             }
         }
@@ -856,12 +860,12 @@
 
 
 //将最高温存储到数据库当中(将时间作为参数传入进来，按照设备上的时间进行存储)
--(void)saveCoreData2{
+-(void)saveCoreData2:(NSString *)string_day{
     
-    NSDate *date = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYYMMddhhmm"];
-    NSString *string_day= [ [formatter stringFromDate:date] substringToIndex:12];
+    //NSDate *date = [NSDate date];
+//    ÷NS÷DateFormatter *formatter = [[NSDateFormatter alloc] init];
+//    [formatter setDateFormat:@"YYYYMMddhhmm"];
+//    NSString *string_day= [ [formatter stringFromDate:date] substringToIndex:12];
     NSLog(@"存储一次数据，时间为 == %@",string_day);
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"suername"])

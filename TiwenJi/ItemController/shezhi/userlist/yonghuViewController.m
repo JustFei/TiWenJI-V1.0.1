@@ -110,7 +110,7 @@
     NSString*sex=[[NSUserDefaults standardUserDefaults] objectForKey:@"suersex"];
     if (sex==nil)
     {
-        self.sexlabel.text=@"男";
+        self.sexlabel.text=NSLocalizedString(@"Gender", nil);
     }
     else
     {
@@ -336,11 +336,11 @@
     NSLog(@"sex");
     
     if ([self.sexlabel.text isEqualToString:@"女"]) {
-        self.sexlabel.text=@"男";
+        self.sexlabel.text=NSLocalizedString(@"Gender", nil);
         
     }
     else{
-        self.sexlabel.text=@"女";
+        self.sexlabel.text=NSLocalizedString(@"GenderFmale", nil);
         
         
         
