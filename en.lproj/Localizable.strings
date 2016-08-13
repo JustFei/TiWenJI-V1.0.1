@@ -38,3 +38,6 @@
 
 //twoView 载入历史
 "HistoryLoad" = "Load History";
+
+//twoView 历史界面的今天按钮
+"TodayButton" = "Today";

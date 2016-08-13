@@ -107,14 +107,14 @@
         self.weihtText.text=weiht;
     }
     
-    NSString*sex=[[NSUserDefaults standardUserDefaults] objectForKey:@"suersex"];
-    if (sex==nil)
+    BOOL sex= [[NSUserDefaults standardUserDefaults] objectForKey:@"suersex"];
+    if (sex==1)
     {
         self.sexlabel.text=NSLocalizedString(@"Gender", nil);
     }
     else
     {
-        self.sexlabel.text=sex;
+        self.sexlabel.text=NSLocalizedString(@"GenderFmale", nil);
     }
   
     
@@ -335,16 +335,29 @@
 - (IBAction)changsexButton:(id)sender {
     NSLog(@"sex");
     
-    if ([self.sexlabel.text isEqualToString:@"女"]) {
-        self.sexlabel.text=NSLocalizedString(@"Gender", nil);
-        
+    //获取当前设备的语言
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+    NSString* preferredLang = [languages objectAtIndex:0];
+    
+    if ([preferredLang isEqualToString:@"zh-Hans"]) {
+        //如果是简体中文就按照男女来设置
+        if ([self.sexlabel.text isEqualToString:@"女"]) {
+            self.sexlabel.text=NSLocalizedString(@"Gender", nil);
+        }
+        else{
+            self.sexlabel.text=NSLocalizedString(@"GenderFmale", nil);
+        }
+    }else {
+        //如果是其他语言的话就设置Fmale
+        if ([self.sexlabel.text isEqualToString:@"Fmale"]) {
+            self.sexlabel.text = NSLocalizedString(@"Gender", nil);
+        }else {
+            self.sexlabel.text = NSLocalizedString(@"GenderFmale", nil);
+        }
     }
-    else{
-        self.sexlabel.text=NSLocalizedString(@"GenderFmale", nil);
-        
-        
-        
-    }
+    
+    
 }
 
 #pragma mark  保存到数据库
@@ -368,11 +381,8 @@
     
     NSData *data;
     if (UIImagePNGRepresentation(self.iconimageView.image) == nil) {
-        
         data = UIImageJPEGRepresentation(self.iconimageView.image, 1);
-        
     } else {
-        
         data = UIImagePNGRepresentation(self.iconimageView.image);
     }
    
@@ -522,7 +532,30 @@
     self.nameText.text=des.name;
     self.hightText.text=des.height;
     self.weihtText.text=des.weiht;
-    self.sexlabel.text=des.sex;
+    
+    //获取当前设备的语言
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+    NSString* preferredLang = [languages objectAtIndex:0];
+    
+    if ([preferredLang isEqualToString:@"zh-Hans"]) {
+        //如果是简体中文就按照男女来设置
+        if ([self.sexlabel.text isEqualToString:@"女"]) {
+            self.sexlabel.text=NSLocalizedString(@"Gender", nil);
+        }
+        else{
+            self.sexlabel.text=NSLocalizedString(@"GenderFmale", nil);
+        }
+    }else {
+        //如果是其他语言的话就设置Fmale
+        if ([self.sexlabel.text isEqualToString:@"Fmale"]) {
+            self.sexlabel.text = NSLocalizedString(@"Gender", nil);
+        }else {
+            self.sexlabel.text = NSLocalizedString(@"GenderFmale", nil);
+        }
+    }
+//    self.sexlabel.text = des.sex;
+    
     self.agetext.text=des.age;
     self.iconimageView.image=[UIImage imageWithData:des.iconImage];
    

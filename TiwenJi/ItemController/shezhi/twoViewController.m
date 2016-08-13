@@ -16,8 +16,6 @@
 #import "AppDelegate.h"
 #import "THDatePickerViewController.h"
 
-
-
 @interface twoViewController () <MCLineChartViewDataSource, MCLineChartViewDelegate>{
     BabyBluetooth*baby;
     NSMutableArray*timeArray;
@@ -116,9 +114,12 @@
     [formatter setDateFormat:@"YYYYMMdd"];
     NSString *string_day_time = [formatter stringFromDate:date] ;
     
+    [SVProgressHUD show];
+    
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         // 处理耗时操作的代码块...
         [self chazhao:string_day_time];
+        
         //通知主线程刷新
         dispatch_async(dispatch_get_main_queue(), ^{
             for (NSString*p in _dataSource) {
@@ -130,6 +131,9 @@
             //回调或者说是通知主线程刷新，
             [_lineChartView reloadData];
             [_lineChartView reloadDataWithAnimate:NO];
+            
+            [SVProgressHUD dismiss];
+            
         });
         
     });
@@ -407,17 +411,35 @@
 }
 
 //今天的按钮事件
-- (IBAction)todayButtonAction:(id)sender {
-    [self.todayButton setTitle:@"今天" forState:0];
+- (IBAction)todayButtonAction:(UIButton *)sender {
+//    [self.todayButton setTitle:@"今天" forState:0];
   
-    NSDate *date = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYYMMdd"];
-    NSString *string_day_time = [formatter stringFromDate:date] ;
+
     
+    NSString *todayStr = sender.titleLabel.text;
+    NSLog(@"%@",todayStr);
+    NSString *caozuoStr;
+    NSLog(NSLocalizedString(@"TodayButton", nil));
+    
+    if ([todayStr isEqualToString:NSLocalizedString(@"TodayButton", nil)]) {
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"YYYYMMdd"];
+            NSString *string_day_time = [formatter stringFromDate:date];
+        caozuoStr = string_day_time;
+    }else {
+        NSMutableString *mutTodayStr = [NSMutableString stringWithString:todayStr];
+        NSString *string_day_time = [mutTodayStr stringByReplacingOccurrencesOfString:@"-" withString:@""];
+        caozuoStr = string_day_time;
+    }
+    
+    NSLog(@"%@",caozuoStr);
+    
+    [SVProgressHUD show];
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         // 处理耗时操作的代码块...
-        [self chazhao:string_day_time];
+        [self chazhao:caozuoStr];
+        
         //通知主线程刷新
         dispatch_async(dispatch_get_main_queue(), ^{
             for (NSString*p in _dataSource) {
@@ -429,6 +451,9 @@
             //回调或者说是通知主线程刷新，
             [_lineChartView reloadData];
             [_lineChartView reloadDataWithAnimate:NO];
+            
+            [SVProgressHUD dismiss];
+            
         });
         
     });
@@ -459,6 +484,8 @@
 //                [self chazhao:[_today objectAtIndex:_zhongjian]];
                 NSLog(@"33333%@",_today[_zhongjian]);
                 
+                [SVProgressHUD show];
+                
                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
                     // 处理耗时操作的代码块...
                     [self chazhao:[_today objectAtIndex:_zhongjian]];
@@ -473,6 +500,7 @@
                         self.labelText.text=_zuida;
                         [_lineChartView reloadData];
                         [_lineChartView reloadDataWithAnimate:NO];
+                        [SVProgressHUD dismiss];
                     });
                     
                 });
@@ -502,18 +530,25 @@
         {
             NSString*yesr=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(0,4)];
             NSString*month=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(4,2)];
-            NSString*day=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(6,2)];;
+            NSString*day=[[_today objectAtIndex:_zhongjian]substringWithRange:NSMakeRange(6,2)];
+            
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"YYYYMMdd"];
+            NSString *string_day_time = [formatter stringFromDate:date];
+            
+            
+            if ([[NSString stringWithFormat:@"%@%@%@",yesr,month,day] isEqualToString:string_day_time]) {
+                [self.todayButton setTitle:NSLocalizedString(@"TodayButton", nil) forState:0];
+            } else {
             NSLog(@"%@-%@-%@",yesr,month,day);
             NSString*dstr=[[[[yesr stringByAppendingString:@"-"] stringByAppendingString:month] stringByAppendingString:@"-"] stringByAppendingString:day];
             [self.todayButton setTitle:dstr forState:0];
-              [self chazhao:[_today objectAtIndex:_zhongjian]];
-            NSLog(@"%@",_today[_zhongjian]);
-            
-            [self.todayButton setTitle:dstr forState:0];
-            
-            //                [self chazhao:[_today objectAtIndex:_zhongjian]];
+            }
             NSLog(@"33333%@",_today[_zhongjian]);
             
+            
+            [SVProgressHUD show];
             //分线程获取数据，结束后刷新UI
             dispatch_async(dispatch_get_global_queue(0, 0), ^{
                 // 处理耗时操作的代码块...
@@ -531,6 +566,8 @@
                     
                     [_lineChartView reloadData];
                     [_lineChartView reloadDataWithAnimate:NO];
+                    
+                    [SVProgressHUD dismiss];
                 });
                 
             });

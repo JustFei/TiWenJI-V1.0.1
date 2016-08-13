@@ -64,7 +64,7 @@
 -(void)pass:(int)sender{
     Sender=sender;
     NSLog(@"Sender=%d",Sender);
-    
+    [self.pick1 reloadAllComponents];
 }
 - (IBAction)OK:(id)sender {
     

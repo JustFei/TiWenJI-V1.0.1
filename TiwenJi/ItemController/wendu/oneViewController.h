@@ -33,4 +33,6 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *vieww;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *Viewh;
 
+
+-(void)lianjie;
 @end

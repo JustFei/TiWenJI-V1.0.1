@@ -61,6 +61,7 @@
 
    
     [super viewDidLoad];
+
     self.myappdelegate2=[UIApplication sharedApplication].delegate;
     _xianshidaojishiTime=15;
     _wenduchuli=[[wenduchuli alloc]init];
@@ -89,7 +90,6 @@
      _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
     
     //[self time];
-    
 }
 
 #pragma mark - 高低温报警
@@ -403,6 +403,7 @@
                [self insertReadValues:characteristics];
                
            }];
+    [self setTime];
 }
 #pragma mark 解析通知返回来的温度数据
 //协议写入成功后通知回来的值
@@ -415,6 +416,19 @@
         
         NSString *Str1 = [NSString stringWithFormat:@"%02x", hexBytesLight[0]];
         NSLog(@"标识符 = %@",Str1);
+        
+        if ([Str1 isEqualToString:@"00"]) {
+            NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
+            NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
+            NSString *DD = [NSString stringWithFormat:@"%02x", hexBytesLight[11]];
+            NSString *hh = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
+            NSString *mm = [NSString stringWithFormat:@"%02x", hexBytesLight[13]];
+            NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[14]];
+            
+            NSLog(@"时间设置成功，时间为 == %@-%@-%@ %@:%@:%@",YY ,MM ,DD ,hh ,mm ,ss);
+        }else if ([Str1 isEqualToString:@"80"]) {
+            NSLog(@"时间设置失败，失败校验为 == %s",hexBytesLight);
+        }
         
         //如果获取到的值的第一个字节是不是“04”，如果是，就对数值进行操作，不是就舍去
         if ([Str1 isEqualToString:@"04"]) {
@@ -578,6 +592,87 @@
             }
         }
     }
+}
+
+//设置时间
+- (void)setTime
+{
+    unsigned char sendStr[16];
+    
+    sendStr[0] = 0xFC;
+    sendStr[1] = 0x00;//设置时间标识为00
+    //    sendStr[2] = 0x00;//YY
+    //    sendStr[3] = 0x00;//MM
+    //    sendStr[4] = 0x00;//DD
+    //    sendStr[5] = 0x00;//hh
+    //    sendStr[6] = 0x00;//mm
+    //    sendStr[7] = 0x00;//ss
+    sendStr[8] = 0x00;
+    sendStr[9] = 0x00;
+    sendStr[10] = 0x00;
+    sendStr[11] = 0x00;
+    sendStr[12] = 0x00;
+    sendStr[13] = 0x00;
+    sendStr[14] = 0x00;
+    sendStr[15] = 0x00;
+    
+    NSDate *today = [NSDate date];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString* s1 = [df stringFromDate:today];
+    NSDate* date = [df dateFromString:s1];
+    //转换时间格式
+    NSDateFormatter*df2 = [[NSDateFormatter alloc]init];//格式化
+    [df2 setDateFormat:@"yyyyMMddHHmmss"];
+    //改为中国时区
+    [df2 setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"zh_CN"]];
+    NSString *todayStr =[df2 stringFromDate:date];
+    
+    NSString *sendString = [NSString stringWithFormat:@"FC00%@0000000000000000",[todayStr substringWithRange:NSMakeRange(2, 12)]];
+    NSLog(@"%@",sendString);
+    
+    //根据当前时间来设置写入特征值已经搞定
+    int YY = [sendString substringWithRange:NSMakeRange(4, 2)].intValue;
+    int MM = [sendString substringWithRange:NSMakeRange(6, 2)].intValue;
+    int DD = [sendString substringWithRange:NSMakeRange(8, 2)].intValue;
+    int hh = [sendString substringWithRange:NSMakeRange(10, 2)].intValue;
+    int mm = [sendString substringWithRange:NSMakeRange(12, 2)].intValue;
+    int ss = [sendString substringWithRange:NSMakeRange(14, 2)].intValue;
+#pragma mark - 十进制转换BCD编码实现
+    //这里是将十进制的数字转换成BCD码格式，这样就可以写入特征了
+    DectoBCD(YY, &sendStr[2], 2);
+    DectoBCD(MM, &sendStr[3], 2);
+    DectoBCD(DD, &sendStr[4], 2);
+    DectoBCD(hh, &sendStr[5], 2);
+    DectoBCD(mm, &sendStr[6], 2);
+    DectoBCD(ss, &sendStr[7], 2);
+    
+    NSData *data = [NSData dataWithBytes:sendStr length:16];
+    [data bytes];
+    [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
+}
+
+///////////////////////////////////////////////////////// //
+// 功能：十进制转 BCD 码 //
+// 输入： int Dec                      待转换的十进制数据 //      int length                   BCD 码数据长度 //
+// 输出： unsigned char *Bcd           转换后的 BCD 码 //
+// 返回： 0  success //
+// 思路：原理同 BCD 码转十进制 //
+//////////////////////////////////////////////////////////
+int DectoBCD(int Dec, unsigned char *Bcd, int length)
+{
+    int i;
+    int temp = Dec;
+    for(i=length-1;i>=0;i--)
+        //这里由于我们是两位数两位数传进来，所以不需要简历循环
+        //    {temp=Dec%100;
+        Bcd[i]=((temp/10)<<4)+((temp%10)&0x0F);
+    //        Dec/=100;
+    NSLog(@"%s",Bcd);
+    printf("%s",Bcd);
+    //    }
+    
+    return 0;
 }
 
 - (void)gitHistoryT
@@ -835,6 +930,13 @@
 - (void)cancelButtonClicked:(gaowenbaojinView *)aSecondDetailViewController
 {
     NSLog(@"高温报警View  不再提醒");
+    //修改沙盒里面高温报警的值
+    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+    
+    [user setBool:0 forKey:@"Gswitch"];
+    [user setBool:0 forKey:@"GLswitch"];
+    [user setBool:0 forKey:@"GZswitch"];
+    
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     secondDetailViewController = nil;
 }
@@ -847,6 +949,13 @@
 }
 -(void)dwcancelButtonClicked:(ViewController *)secondDetailViewController{
     NSLog(@"低温报警View  不再提醒");
+    
+    //修改沙盒里面高温报警的值
+    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+    
+    [user setBool:0 forKey:@"Dswitch"];
+    [user setBool:0 forKey:@"DLswitch"];
+    [user setBool:0 forKey:@"DZ"];
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     dwViewController = nil;
     
