@@ -14,7 +14,7 @@
 #import "testViewController.h"
 #import "otherpopViewController.h"
 
-
+#import "Test.h"
 
 
 
@@ -68,7 +68,7 @@
     
     if (name==nil)
     {
-        self.nameText.text=@"用户名";
+        self.nameText.text=NSLocalizedString(@"UserName", nil);
     }
     else
     {
@@ -586,18 +586,46 @@
 {
     return YES;
 }
+
+//删除用户时的操作
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-   
    WenduData*newmodels=self.datasuore[indexPath.row];
+   
+    
+    //CoreData请求命令集
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+    //实体描述，即表明为Test，
+    NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
+    //给这个命令指定一个表：Test
+    [fetchRequest setEntity:entity];
+    //谓词
+    NSPredicate * agePre = [NSPredicate predicateWithFormat:@"name like[cd] %@",newmodels.name];
+    
+    NSLog(@"沙盒 == %@, 当前选中 == %@",[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"] ,newmodels.name);
+    
+    //给命令具体执行内容，内容为查找，查找 name为沙盒中存储的suername
+    [fetchRequest setPredicate:agePre];
+    NSError * requestError = nil;
+    //执行这个命令，获得结果persons
+    NSArray * persons = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
+    NSLog(@"persons == %@, count = %lu",persons ,(unsigned long)persons.count);
+    
+    if (!requestError) {
+        NSLog(@"aaa");
+        for (Test *object in persons) {
+            NSLog(@"eee");
+            NSLog(@"%@", object);
+            [self.myappdelegate.managedObjectContext deleteObject:object];
+        }
+    }
+    
+    
+    
     [self.datasuore removeObject:newmodels];
     [self.myappdelegate.managedObjectContext deleteObject:newmodels];
     [self.myappdelegate saveContext];
     [self.tableview deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    
-   
-    
-    
     
 }
 - (void)NcancelButtonClicked:(testViewController*)secondDetailViewController{

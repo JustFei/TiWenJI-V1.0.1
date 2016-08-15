@@ -102,9 +102,7 @@
     self.curDate = [NSDate date];
     self.formatter = [[NSDateFormatter alloc] init];
     [_formatter setDateFormat:@"YYYYMMdd"];
-    
-    _today=[[NSMutableArray alloc]init];
-    [self coredatachaozao];
+
 }
 
 - (void)loginHistory:(UIButton *)sender
@@ -118,6 +116,10 @@
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         // 处理耗时操作的代码块...
+        _today = nil;
+        _today=[[NSMutableArray alloc]init];
+        [self coredatachaozao];
+        
         [self chazhao:string_day_time];
         
         //通知主线程刷新
@@ -207,30 +209,6 @@
     }
 }
 
-//设置每个点的颜色
-//- (UIColor *)lineChartView:(MCLineChartView *)lineChartView pointColorWithIndex:(NSInteger)index
-//{
-//    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
-//    //这里得到报警设置里面的高温报警的值和低温报警的值，之后设置不同的颜色即可
-//    float highsetTemperature = [[user objectForKey:@"gaowenLabel"] floatValue];
-//    float lowestTemperature = [[user objectForKey:@"diwenLabel"] floatValue];
-//    UIColor *pointColor;
-//
-//    //给高温点设置红色，低温点设置蓝色，普通点设置白色
-//    if (highsetTemperature || lowestTemperature) {
-//        if ([_dataSource[index] floatValue] >= highsetTemperature) {
-//            pointColor = [UIColor redColor];
-//        }else if ([_dataSource[index] floatValue] <= lowestTemperature) {
-//            pointColor = [UIColor blueColor];
-//        }else if (lowestTemperature <[_dataSource[index] floatValue] && [_dataSource[index] floatValue] < highsetTemperature ) {
-//            pointColor = [UIColor colorWithRed:0/255.0 green:207/255.0 blue:187/255.0 alpha:1.0];
-//        }
-//    }else {
-//        pointColor = [UIColor colorWithRed:0/255.0 green:207/255.0 blue:187/255.0 alpha:1.0];
-//    }
-//    return pointColor;
-//}
-
 //折线上点的提示框的值
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
     
@@ -238,25 +216,7 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    
- NSLog(@"viewWillAppear");
-    NSDate *date = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYYMMdd"];
-    NSString *string_day_time = [formatter stringFromDate:date] ;
-    
-//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//        // 处理耗时操作的代码块...
-//        [self chazhao:string_day_time];
-//        //通知主线程刷新
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            //回调或者说是通知主线程刷新，
-//            self.labelText.text=_zuida;
-//            //刷新图表数据
-//            [_lineChartView reloadData];
-//            [_lineChartView reloadDataWithAnimate:NO];
-//        });
-//    });
+
 }
 
 //查找数据
@@ -306,85 +266,6 @@
                     NSLog(@"存储的温度数据 == %@",pp.wendu);
                     [_dataSource addObject:pp.wendu];
                 }
-                
-                //将person的历史温度数据放到dataSource数据源中
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"00"]]) {
-//                    [_dataSource replaceObjectAtIndex:24 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"01"]]) {
-//                    [_dataSource replaceObjectAtIndex:0 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"02"]]) {
-//                    [_dataSource replaceObjectAtIndex:1 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"03"]]) {
-//                    [_dataSource replaceObjectAtIndex:2 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"04"]]) {
-//                    [_dataSource replaceObjectAtIndex:3 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"05"]]) {
-//                    [_dataSource replaceObjectAtIndex:4 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"06"]]) {
-//                    [_dataSource replaceObjectAtIndex:5 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"07"]]) {
-//                    [_dataSource replaceObjectAtIndex:6 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"08"]]) {
-//                    [_dataSource replaceObjectAtIndex:7 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"09"]]) {
-//                    [_dataSource replaceObjectAtIndex:8 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"10"]]) {
-//                    [_dataSource replaceObjectAtIndex:9 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"11"]]) {
-//                    [_dataSource replaceObjectAtIndex:10 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"12"]]) {
-//                    [_dataSource replaceObjectAtIndex:11 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"13"]]) {
-//                    [_dataSource replaceObjectAtIndex:12 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"14"]]) {
-//                    [_dataSource replaceObjectAtIndex:13 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"15"]]) {
-//                    [_dataSource replaceObjectAtIndex:14 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"16"]]) {
-//                    [_dataSource replaceObjectAtIndex:15 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"17"]]) {
-//                    [_dataSource replaceObjectAtIndex:16 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"18"]]) {
-//                    [_dataSource replaceObjectAtIndex:17 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"19"]]) {
-//                    [_dataSource replaceObjectAtIndex:18 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"20"]]) {
-//                    [_dataSource replaceObjectAtIndex:19 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"21"]]) {
-//                    [_dataSource replaceObjectAtIndex:20 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"22"]]) {
-//                    [_dataSource replaceObjectAtIndex:21 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-//                if ([pp.shijian isEqualToString:[string_day_time stringByAppendingString:@"23"]]) {
-//                    [_dataSource replaceObjectAtIndex:22 withObject:[NSString stringWithFormat:@"%@",pp.wendu]];
-//                }
-                
-                
             }
         }
    
@@ -708,19 +589,15 @@
     [self.datePicker setCurrentDateColor:[UIColor colorWithRed:242/255.0 green:121/255.0 blue:53/255.0 alpha:1.0]];
     [self.datePicker setSelectedBackgroundColor:[UIColor colorWithRed:125/255.0 green:208/255.0 blue:0/255.0 alpha:1.0]];
     [self.datePicker setCurrentDateColor:[UIColor colorWithRed:242/255.0 green:121/255.0 blue:53/255.0 alpha:1.0]];
-    
+    __weak typeof(self) weakSelf = self;
     [self.datePicker setDateHasItemsCallback:^BOOL(NSDate *date) {
-        __weak typeof(self) weakSelf = self;
-        
-      
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyyMMdd"];
         NSString *strDate = [dateFormatter stringFromDate:date];
-      
-        return [weakSelf.today containsObject:strDate];
         
+        return [weakSelf.today containsObject:strDate];
     }];
- 
+    
     [self presentSemiViewController:self.datePicker withOptions:@{
                                                                   KNSemiModalOptionKeys.pushParentBack    : @(NO),
                                                                   KNSemiModalOptionKeys.animationDuration : @(1.0),
@@ -730,12 +607,36 @@
     
     
 }
+
+//在日历上选择日期的话，刷新当前天数的日期和数据
 -(void)datePickerDonePressed:(THDatePickerViewController *)datePicker{
     self.curDate = datePicker.date;
-     NSLog(@"%@",[_formatter stringFromDate:_curDate]);
+    NSLog(@"%@",[_formatter stringFromDate:_curDate]);
     [_todayButton setTitle:[_formatter2 stringFromDate:_curDate] forState:0];
-    [self chazhao:[_formatter stringFromDate:_curDate]];
-   
+    
+    [SVProgressHUD show];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 处理耗时操作的代码块...
+        [self chazhao:[_formatter stringFromDate:_curDate]];
+        
+        //通知主线程刷新
+        dispatch_async(dispatch_get_main_queue(), ^{
+            for (NSString*p in _dataSource) {
+                if( [_zuida floatValue]<[p floatValue]){
+                    _zuida=p;
+                }
+            }
+            self.labelText.text=_zuida;
+            //回调或者说是通知主线程刷新，
+            [_lineChartView reloadData];
+            [_lineChartView reloadDataWithAnimate:NO];
+            
+            [SVProgressHUD dismiss];
+            
+        });
+        
+    });
+    
     
     [self dismissSemiModalView];
 }

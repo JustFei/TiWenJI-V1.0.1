@@ -30,6 +30,7 @@
 @property(nonatomic,strong)CBCharacteristic*viewCharacteristic;
 @property(nonatomic,strong)NSTimer*reconnectTimer;
 @property(nonatomic,strong)NSTimer*reconnectTimer15;
+@property(nonatomic,strong)NSString*currentWendu;
 @property(nonatomic,strong)NSString*wendu;
 @property(nonatomic,strong)NSTimer*reconnectblurtooth;
 @property(nonatomic,strong)NSTimer*chongliangTimer;
@@ -230,11 +231,13 @@
         
         [weakSelf insertRowToTableView:service];
         
+        //获取设备上保存的数据
         [weakSelf getDataAtDisconnect];
         
         if (![weakSelf.reconnectTimer isValid]) {
             //前30秒，每三秒钟获取一次数据
-#warning 现在的问题是，如果置零reconnectTimer，后台中reconnectTimer15就会停止，如果不置零，就会出现3，15两个定时器
+
+            //经过测试得出的结论，如果定时器的时间超过5秒，进入后台后很快就会停止
             weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
             
             //30秒后，每十秒钟获取一次温度
@@ -476,7 +479,7 @@
             //随机温度，y轴
             float temperature =[_wen floatValue];
             if (temperature!=0) {
-                
+                _currentWendu = [NSString stringWithFormat:@"%0.2f",temperature];
                 //温度低于30度就不显示在折线图上
                 if (temperature<30) {
                     NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
@@ -557,8 +560,9 @@
             
             //随机温度，y轴
             float temperature =[_wen floatValue];
+            
             if (temperature!=0) {
-                
+                _currentWendu = [NSString stringWithFormat:@"%0.2f",temperature];
                 //温度低于30度就不显示在折线图上
                 if (temperature<30) {
                     NSMutableString* jsStr = [[NSMutableString alloc] initWithCapacity:0];
@@ -986,6 +990,8 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
         [fetchRequest setPredicate:agePre];
         NSError * requestError = nil;
         NSArray * persons = [self.myappdelegate2.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
+        
+        //判断存储的时间是否存在于数据库中，如果存在，就更新温度数据，如果不存在就创建新的对象存储数据
         if ([persons count]>0)
         {
             for (Test*pp in persons)
@@ -1004,7 +1010,7 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
             {
                 newPerson.name=[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"];
                 newPerson.shijian=string_day;
-                newPerson.wendu=_wendu;
+                newPerson.wendu=_currentWendu;
                 
                 
                 // 保存数据
@@ -1038,11 +1044,10 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
 }
 -(void)updateuser:(Test*)user{
     
-    
-    user.wendu=_wendu;
-    
-    
-    
+    //做个判断，如果数据库中的温度小于当前温度，就替换掉，否则不作操作
+    if (user.wendu <_currentWendu) {
+        user.wendu = _currentWendu;
+    }
     
     //更新数据
     [self.myappdelegate2.managedObjectContext save:nil];

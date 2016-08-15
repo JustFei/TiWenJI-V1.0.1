@@ -41,3 +41,9 @@
 
 //twoView 历史界面的今天按钮
 "TodayButton" = "Today";
+
+//用户列表界面 用户名
+"UserName" = "Name";
+
+
+
