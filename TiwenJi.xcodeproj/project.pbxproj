@@ -106,6 +106,7 @@
 		3B7818E01C9F888200DC5B7E /* dialog_ok-disabled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B7818CA1C9F888200DC5B7E /* dialog_ok-disabled@2x.png */; };
 		3B7818E11C9F888200DC5B7E /* dialog_ok.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B7818CB1C9F888200DC5B7E /* dialog_ok.png */; };
 		3B7818E21C9F888200DC5B7E /* dialog_ok@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B7818CC1C9F888200DC5B7E /* dialog_ok@2x.png */; };
+		3B7B95DB1D61C03E006619F7 /* startback.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B7B95DD1D61C03E006619F7 /* startback.png */; };
 		3B83589C1CA5291C0035F7A5 /* zuo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B83589B1CA5291C0035F7A5 /* zuo.png */; };
 		3B90F2461C92A196002607E0 /* MCLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B90F2451C92A196002607E0 /* MCLineChartView.m */; };
 		3B90F2491C92A3C1002607E0 /* MCChartInformationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B90F2481C92A3C1002607E0 /* MCChartInformationView.m */; };
@@ -315,6 +316,8 @@
 		3B7818CA1C9F888200DC5B7E /* dialog_ok-disabled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dialog_ok-disabled@2x.png"; sourceTree = "<group>"; };
 		3B7818CB1C9F888200DC5B7E /* dialog_ok.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dialog_ok.png; sourceTree = "<group>"; };
 		3B7818CC1C9F888200DC5B7E /* dialog_ok@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dialog_ok@2x.png"; sourceTree = "<group>"; };
+		3B7B95DC1D61C03E006619F7 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/startback.png; sourceTree = "<group>"; };
+		3B7B95DE1D61C040006619F7 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "zh-Hans"; path = "zh-Hans.lproj/startback.png"; sourceTree = "<group>"; };
 		3B83589B1CA5291C0035F7A5 /* zuo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zuo.png; sourceTree = "<group>"; };
 		3B90F2441C92A196002607E0 /* MCLineChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MCLineChartView.h; sourceTree = "<group>"; };
 		3B90F2451C92A196002607E0 /* MCLineChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MCLineChartView.m; sourceTree = "<group>"; };
@@ -626,6 +629,7 @@
 		3B4B92C51C8FC853002C1855 /* tupian */ = {
 			isa = PBXGroup;
 			children = (
+				3B7B95DD1D61C03E006619F7 /* startback.png */,
 				3B7818B71C9F888200DC5B7E /* arrow_left.png */,
 				3B7818B81C9F888200DC5B7E /* arrow_left@2x.png */,
 				3B7818B91C9F888200DC5B7E /* arrow_right.png */,
@@ -899,6 +903,7 @@
 				3B7818DB1C9F888200DC5B7E /* dialog_clear-disabled.png in Resources */,
 				3B6ACD441C9104580092D431 /* source.bundle in Resources */,
 				3B7818DF1C9F888200DC5B7E /* dialog_ok-disabled.png in Resources */,
+				3B7B95DB1D61C03E006619F7 /* startback.png in Resources */,
 				3B4B92F51C8FC853002C1855 /* set_user.png in Resources */,
 				3B7818DD1C9F888200DC5B7E /* dialog_clear.png in Resources */,
 				3B4B92EE1C8FC853002C1855 /* now_temp_ Frame.png in Resources */,
@@ -1095,6 +1100,15 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
+		3B7B95DD1D61C03E006619F7 /* startback.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3B7B95DC1D61C03E006619F7 /* en */,
+				3B7B95DE1D61C040006619F7 /* zh-Hans */,
+			);
+			name = startback.png;
+			sourceTree = "<group>";
+		};
 		9C27909E1D5CCDB700833416 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1159,6 +1173,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
+				VALID_ARCHS = "armv7 arm64";
 			};
 			name = Debug;
 		};
@@ -1197,6 +1212,7 @@
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "armv7 arm64";
 			};
 			name = Release;
 		};
@@ -1206,7 +1222,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "\"${PODS_ROOT}/Headers/Public\"";
 				INFOPLIST_FILE = TiwenJi/Info.plist;
@@ -1223,6 +1238,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobo.tiwenji;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "armv7 arm64";
 			};
 			name = Debug;
 		};
@@ -1232,7 +1248,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "\"${PODS_ROOT}/Headers/Public\"";
 				INFOPLIST_FILE = TiwenJi/Info.plist;
@@ -1249,6 +1264,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobo.tiwenji;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "armv7 arm64";
 			};
 			name = Release;
 		};

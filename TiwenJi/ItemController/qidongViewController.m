@@ -56,7 +56,7 @@
     [baby setBlockOnDiscoverServices:^(CBPeripheral *peripheral, NSError *error) {
         //如果发现服务失败，跳转到主界面
         if (error) {
-            UIAlertView *showFailView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"连接失败，请尝试手动连接" delegate:weakSelf cancelButtonTitle:@"知道了" otherButtonTitles:nil, nil];
+            UIAlertView *showFailView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"HintInfo", nil) delegate:weakSelf cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil];
             [showFailView show];
         }
     }];

@@ -36,7 +36,6 @@
     [super viewDidLoad];
     peripherals = [[NSMutableArray alloc]init];
     peripheralsAD = [[NSMutableArray alloc]init];
-  
    
     baby = [BabyBluetooth shareBabyBluetooth];
     [self babyDelegate];
@@ -53,7 +52,7 @@
     
     [self labereload];
     
-    
+    [self huoqudianliang];
 
 }
 - (void)viewDidLayoutSubviews
@@ -378,6 +377,8 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
                     int qian= int_ch1+int_ch2;
                     NSLog(@"电量是：%d",qian);
                     self.dianlianglabel.text=[NSString stringWithFormat:@"%d",qian];
+                    
+                    [[NSUserDefaults standardUserDefaults] setInteger:qian forKey:@"dianliang"];
                     
                     [self dismissViewControllerAnimated:YES completion:nil];
                     

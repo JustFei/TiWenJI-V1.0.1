@@ -164,7 +164,10 @@
 - (IBAction)baocun:(id)sender {
     if ([self.baojingjiege.text isEqualToString:@"0"]||[self.diwenLabel.text isEqualToString:@"0"]||[self.gaowenLabel.text isEqualToString:@"0"]) {
         NSLog(@"设置不完整 无法保存");
-        UIAlertView *failSaveView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"设置不完整，请设置完整" delegate:self cancelButtonTitle:@"知道了" otherButtonTitles:nil, nil];
+        UIAlertView *failSaveView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"SaveFailInfo", nil) delegate:self cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil];
+        
+        failSaveView.tag = 100;
+        
         [failSaveView show];
     }
     else{
@@ -238,7 +241,10 @@
         [user setObject:self.gaowenLabel.text forKey:@"gaowenLabel"];
         [user setObject:self.diwenLabel.text forKey:@"diwenLabel"];
         
-        UIAlertView *saveSuccessView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"保存成功" delegate:self cancelButtonTitle:@"完成" otherButtonTitles:nil, nil];
+        UIAlertView *saveSuccessView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"SaveSuccessInfo", nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Complete", nil) otherButtonTitles:nil, nil];
+        
+        saveSuccessView.tag = 101;
+        
         [saveSuccessView show];
        
     }
@@ -246,7 +252,12 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if (alertView.tag == 101) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    else {
+        
+    }
 }
 
 -(void)updateViewConstraints{

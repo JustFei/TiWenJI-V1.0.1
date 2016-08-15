@@ -20,7 +20,7 @@
     BabyBluetooth*baby;
     NSMutableArray*timeArray;
 }
-
+@property (nonatomic, strong) UIButton *loginHistoryButton;
 @property (nonatomic, retain) NSDate * curDate;
 @property (nonatomic, retain) NSDateFormatter * formatter;
 @property (nonatomic, retain) NSDateFormatter * formatter2;
@@ -58,6 +58,12 @@
     [super viewDidLoad];
     timeArray=[[NSMutableArray alloc]init];
     NSLog(@"viewDidLoad");
+    
+    //禁用所有按钮点击
+    self.todayButton.enabled = NO;
+    self.zuoButton.enabled = NO;
+    self.youButton.enabled = NO;
+    
     _zuida=@"20";
     self.curDate = [NSDate date];
     self.formatter = [[NSDateFormatter alloc] init];
@@ -90,13 +96,16 @@
     [_lineChartView reloadDataWithAnimate:NO];
     
     //载入历史记录的button
-    UIButton *loginHistoryButton = [[UIButton alloc] initWithFrame:CGRectMake(self.view.center.x - 50, self.view.center.y + 50, 100, 50)];
-    loginHistoryButton.backgroundColor = [UIColor clearColor];
-    [loginHistoryButton setTitle:NSLocalizedString(@"HistoryLoad", nil) forState:UIControlStateNormal];
-    loginHistoryButton.titleLabel.font = [UIFont systemFontOfSize:15];
-    [loginHistoryButton addTarget:self action:@selector(loginHistory:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:loginHistoryButton];
-    [self.view bringSubviewToFront:loginHistoryButton];
+    _loginHistoryButton = [[UIButton alloc] initWithFrame:CGRectMake(self.view.center.x - 50, self.view.center.y + 50, 100, 50)];
+    _loginHistoryButton.backgroundColor = [UIColor clearColor];
+    [[_loginHistoryButton layer] setBorderWidth:1.0f];
+    _loginHistoryButton.layer.cornerRadius = 25;
+    [[_loginHistoryButton layer] setBorderColor:[UIColor whiteColor].CGColor];
+    [_loginHistoryButton setTitle:NSLocalizedString(@"HistoryLoad", nil) forState:UIControlStateNormal];
+    _loginHistoryButton.titleLabel.font = [UIFont systemFontOfSize:15];
+    [_loginHistoryButton addTarget:self action:@selector(loginHistory:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_loginHistoryButton];
+    [self.view bringSubviewToFront:_loginHistoryButton];
     
     NSLog(@"viewDidLoad");
     self.curDate = [NSDate date];
@@ -139,6 +148,10 @@
         });
         
     });
+    
+    self.todayButton.enabled = YES;
+    self.zuoButton.enabled = YES;
+    self.youButton.enabled = YES;
     
     [sender setHidden:YES];
 }
@@ -389,12 +402,12 @@
                 
             }else if (_zhongjian<0){
                 _zhongjian ++;
-                [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"到顶了！"];
+                [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:NSLocalizedString(@"It's Top", nil)];
                 self.zuoButton.enabled=NO;
             }
     }
     else{
-        [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:@"没有历史数据"];
+        [SVProgressHUD showImage:[UIImage imageNamed:@"user_warning"] status:NSLocalizedString(@"NoMore", nil)];
     }
     
 }
@@ -603,9 +616,6 @@
                                                                   KNSemiModalOptionKeys.animationDuration : @(1.0),
                                                                   KNSemiModalOptionKeys.shadowOpacity     : @(0.3),
                                                                   }];
-    
-    
-    
 }
 
 //在日历上选择日期的话，刷新当前天数的日期和数据
@@ -632,11 +642,14 @@
             [_lineChartView reloadDataWithAnimate:NO];
             
             [SVProgressHUD dismiss];
-            
         });
-        
     });
     
+    [self.loginHistoryButton setHidden:YES];
+    
+    self.todayButton.enabled = YES;
+    self.zuoButton.enabled = YES;
+    self.youButton.enabled = YES;
     
     [self dismissSemiModalView];
 }

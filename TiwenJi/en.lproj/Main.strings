@@ -93,7 +93,7 @@
 
 /* Class = "UILabel"; text = "最高温度"; ObjectID = "HZa-a1-LoX"; */
 //"HZa-a1-LoX.text" = "最高温度";
-"HZa-a1-LoX.text" = "Highest Temperature";
+"HZa-a1-LoX.text" = "Highest";
 
 /* Class = "UILabel"; text = "使用帮助"; ObjectID = "Hav-kB-Aqo"; */
 //"Hav-kB-Aqo.text" = "使用帮助";

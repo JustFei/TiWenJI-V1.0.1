@@ -2628,7 +2628,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="start-back" translatesAutoresizingMaskIntoConstraints="NO" id="6bP-cK-J7o">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="startback.png" translatesAutoresizingMaskIntoConstraints="NO" id="6bP-cK-J7o">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </imageView>
                         </subviews>
@@ -2820,7 +2820,7 @@
         <image name="set_split-line.png" width="668" height="3"/>
         <image name="set_us.png" width="50" height="52"/>
         <image name="set_user.png" width="50" height="52"/>
-        <image name="start-back" width="320" height="480"/>
+        <image name="startback.png" width="750" height="1334"/>
         <image name="tab_history" width="27" height="27"/>
         <image name="tab_history_pre" width="27" height="27"/>
         <image name="tab_set" width="27" height="27"/>

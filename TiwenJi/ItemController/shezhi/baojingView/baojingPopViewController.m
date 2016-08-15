@@ -33,7 +33,7 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     _pickerArray=[[NSMutableArray alloc]initWithCapacity:1];
-    for(int i=37;i<=42;i++)
+    for(int i=30;i<=42;i++)
     {
         NSString *stringInt = [NSString stringWithFormat:@"%d",i];
         
@@ -233,14 +233,6 @@ numberOfRowsInComponent:(NSInteger)component
     }
     return 38; // 如果是其他列（只有第二列），宽度为210
 }
-
-    
-    
-
-    
-
-
-
 
 
 - (void)didReceiveMemoryWarning {

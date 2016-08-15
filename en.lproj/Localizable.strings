@@ -45,5 +45,24 @@
 //用户列表界面 用户名
 "UserName" = "Name";
 
+//启动页面的连接错误提示
+"Hint" = "Hint";
+//提示信息
+"HintInfo" = "Connection failed, please try a manual connection";
+//知道了 按钮
+"OK" = "OK";
 
+//到顶了
+"It's Top" = "It's Top";
 
+//没有更多数据了
+"NoMore" = "No more data";
+
+//报警设置界面 设置失败
+"SaveFailInfo" = "Information is not complete, cannot be saved";
+
+//报警设置界面 设置成功
+"SaveSuccessInfo" = "Set up the success";
+
+//完成按钮
+"Complete" = "Complete";
