@@ -287,12 +287,12 @@
     int ss = [sendString substringWithRange:NSMakeRange(14, 2)].intValue;
 #pragma mark - 十进制转换BCD编码实现
     //这里是将十进制的数字转换成BCD码格式，这样就可以写入特征了
-    DectoBCD(YY, &sendStr[2], 2);
-    DectoBCD(MM, &sendStr[3], 2);
-    DectoBCD(DD, &sendStr[4], 2);
-    DectoBCD(hh, &sendStr[5], 2);
-    DectoBCD(mm, &sendStr[6], 2);
-    DectoBCD(ss, &sendStr[7], 2);
+    DectoBCD1(YY, &sendStr[2], 2);
+    DectoBCD1(MM, &sendStr[3], 2);
+    DectoBCD1(DD, &sendStr[4], 2);
+    DectoBCD1(hh, &sendStr[5], 2);
+    DectoBCD1(mm, &sendStr[6], 2);
+    DectoBCD1(ss, &sendStr[7], 2);
 
     NSData *data = [NSData dataWithBytes:sendStr length:16];
      [data bytes];
@@ -306,7 +306,7 @@
 // 返回： 0  success //
 // 思路：原理同 BCD 码转十进制 //
 //////////////////////////////////////////////////////////
-int DectoBCD(int Dec, unsigned char *Bcd, int length)
+int DectoBCD1(int Dec, unsigned char *Bcd, int length)
 {
     int i;
     int temp = Dec;

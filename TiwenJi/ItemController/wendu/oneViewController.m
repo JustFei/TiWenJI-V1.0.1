@@ -59,9 +59,9 @@
 
 - (void)viewDidLoad {
     NSLog(@"oneviewDidLoad");
-
-   
     [super viewDidLoad];
+    
+//    [self lianjie];
 
     self.myappdelegate2=[UIApplication sharedApplication].delegate;
     _xianshidaojishiTime=15;
@@ -83,14 +83,6 @@
     NSURL* url = [NSURL fileURLWithPath:htmlPath];
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
     [_webview loadRequest:request];
-    
-    _user=[NSUserDefaults standardUserDefaults];
-    _wendu=@"19.00";
-    
-    _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-     _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-    
-    //[self time];
 }
 
 #pragma mark - 高低温报警
@@ -98,6 +90,11 @@
     NSLog(@"%ld",(long)self.Peripheral.state);
     if (self.Peripheral.state!=0) {
         
+        _user=[NSUserDefaults standardUserDefaults];
+        _wendu=@"19.00";
+        
+        _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
+        _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
         
         _Gbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Gswitch"]?YES:NO;
         _Dbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Dswitch"]?YES:NO;
@@ -117,10 +114,10 @@
 -(void)viewWillAppear:(BOOL)animated{
     NSLog(@"oneviewWillAppear");
 
-//    if (self.Peripheral.state == 0) {
-        [self lianjie];
-//    }
-
+    if (self.Peripheral.state == 0) {
+    [self lianjie];
+    }
+    [self time];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -148,16 +145,6 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     NSLog(@"oneviewWillDisappear");
-//    [self.GbaojingTimer invalidate];
-//    self.GbaojingTimer=nil;
-//    [self.DbaojingTimer invalidate];
-//    self.DbaojingTimer=nil;
-//    [_Gdaoji invalidate];
-//    _Gdaoji=nil;
-//    [_Ddaoji invalidate];
-//    _Ddaoji=nil;
-    
-    
 }
 
 
@@ -198,7 +185,21 @@
     NSLog(@"体温计设备名称 == %@",self.Peripheral.name);
     
     //这里判断再次连接的蓝牙设备是否是启动app后连接的设备，如果是，则连接，不是就继续搜索
-    babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+    
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 处理耗时操作的代码块...
+        babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+        
+        //通知主线程刷新
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+        });
+        
+    });
+    
+    //在第一个页面打开的时候，重新查找服务特征写入等步骤
+    //babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
 #pragma mark - 蓝牙连接代理模块
@@ -232,25 +233,17 @@
         [weakSelf insertRowToTableView:service];
         
         //获取设备上保存的数据
-        [weakSelf getDataAtDisconnect];
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            [weakSelf getDataAtDisconnect];
+        });
         
         if (![weakSelf.reconnectTimer isValid]) {
             //前30秒，每三秒钟获取一次数据
 
             //经过测试得出的结论，如果定时器的时间超过5秒，进入后台后很快就会停止
             weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
-            
-            //30秒后，每十秒钟获取一次温度
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(30 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [weakSelf.reconnectTimer invalidate];
-//                weakSelf.reconnectTimer=nil;
-                
-//                weakSelf.reconnectTimer15 = [NSTimer scheduledTimerWithTimeInterval:15 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
-            });
-
-            //重新开辟一个15秒的定时器，来获取温度，该定时器可在后台运行
         }
-        
         
         [weakSelf.chongliangTimer invalidate];
         weakSelf.chongliangTimer=nil;
@@ -261,6 +254,18 @@
     [babycao setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         NSLog(@"设备断开，当前设备状态 == %ld",(long)weakSelf.Peripheral.state);
         NSLog(@"peripheral == %ld",(long)peripheral.state);
+        
+        UIAlertView *disconnectView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"PerhipheralDisconnect", nil) delegate:weakSelf cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil];
+        [disconnectView show];
+        
+        //断开时停掉所有的计时器（除了重连时的计时器）
+            [weakSelf.Gdaoji invalidate];
+            weakSelf.Gdaoji=nil;
+            [weakSelf.Ddaoji invalidate];
+            weakSelf.Ddaoji=nil;
+        [weakSelf.reconnectTimer invalidate];
+        weakSelf.reconnectTimer = nil;
+        
         
         //温度按钮设置为扫描设备的文本
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -307,7 +312,7 @@
     
     //characteristic订阅状态改变的block
     [babycao setBlockOnDidUpdateNotificationStateForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
-        NSLog(@"订阅特征状态");
+        NSLog(@"订阅特征状态改变");
         
         if (characteristic.value) {
             [weakSelf insertReadValues:characteristic];
@@ -315,37 +320,6 @@
     }];
 }
 
-//获取设备上保存的数据
-- (void)getDataAtDisconnect
-{
-    unsigned char sendStr[16];
-    
-    sendStr[0] = 0xFC;
-    sendStr[1] = 0x05;
-    sendStr[2] = 0x00;
-    sendStr[3] = 0x00;
-    sendStr[4] = 0x00;
-    sendStr[5] = 0x00;
-    sendStr[6] = 0x00;
-    sendStr[7] = 0x00;
-    sendStr[8] = 0x00;
-    sendStr[9] = 0x00;
-    sendStr[10] = 0x00;
-    sendStr[11] = 0x00;
-    sendStr[12] = 0x00;
-    sendStr[13] = 0x00;
-    sendStr[14] = 0x00;
-    sendStr[15] = 0x00;
-    
-    NSData *data = [NSData dataWithBytes:sendStr length:16];
-    
-    NSLog(@"特征写入前为 == %@", self.viewCharacteristic);
-    
-    //写characteristic
-    [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
-    
-    NSLog(@"特征写后为 == %@", self.viewCharacteristic);
-}
 
 #pragma mark 已连接的CBCharacteristic和设置通知
 
@@ -358,42 +332,6 @@
     [self setnotificationison];
     
 }
-
--(void)huoquwendu{
-   
-    unsigned char sendStr[16];
-    
-    sendStr[0] = 0xFC;
-    sendStr[1] = 0x04;
-    sendStr[2] = 0x00;
-    sendStr[3] = 0x00;
-    sendStr[4] = 0x00;
-    sendStr[5] = 0x00;
-    sendStr[6] = 0x00;
-    sendStr[7] = 0x00;
-    sendStr[8] = 0x00;
-    sendStr[9] = 0x00;
-    sendStr[10] = 0x00;
-    sendStr[11] = 0x00;
-    sendStr[12] = 0x00;
-    sendStr[13] = 0x00;
-    sendStr[14] = 0x00;
-    sendStr[15] = 0x00;
-    
-    
-   
-  
-    NSData *data = [NSData dataWithBytes:sendStr length:16];
-    
-    NSLog(@"特征写入前为 == %@", self.viewCharacteristic);
-    
-    //写characteristic
-    [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
-
-    NSLog(@"特征写后为 == %@", self.viewCharacteristic);
-    
-}
-
 
 #pragma mark  设置通知
 -(void)setnotificationison{
@@ -420,6 +358,7 @@
         NSString *Str1 = [NSString stringWithFormat:@"%02x", hexBytesLight[0]];
         NSLog(@"标识符 = %@",Str1);
         
+        //00标志位，设置时间
         if ([Str1 isEqualToString:@"00"]) {
             NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
             NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
@@ -449,21 +388,6 @@
             }
             NSLog(@"最大的温度=%@",_wendu);
             
-            //取得当前时间，x轴
-//            NSDate* nowDate = [[NSDate alloc]init];
-//            NSDateFormatter *nowDateFormatter = [[NSDateFormatter alloc] init];
-//            [nowDateFormatter setDateFormat:@"yyyyMMddHHmm"];
-//            NSString *nowDateStr = [nowDateFormatter stringFromDate:nowDate];
-//            NSString *nowmmStr = [nowDateStr substringFromIndex:10];
-//            NSLog(@"%@",nowmmStr);
-//            
-//            NSLog(@"当前时间 == %@",nowDate);
-            
-//            NSTimeInterval nowTimeInterval = [nowDate timeIntervalSince1970] * 1000;
-            
-            //1470899984907.288086
-//            NSLog(@"！！！！！！！！！当前时间 == %f",nowTimeInterval);
-            
             NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[7]];
             NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[8]];
             NSString *DD = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
@@ -472,9 +396,7 @@
             NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
 
             NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
-//            //换了温度计上的时间后，已经替换
-            //1470899980000.000000
-            NSLog(@"？？？？？？？？？？温度计时间 == %f",tiwenjiTimeInterval);
+            //换了温度计上的时间后，已经替换
             
             //随机温度，y轴
             float temperature =[_wen floatValue];
@@ -554,9 +476,7 @@
             NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
             
             NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
-            //            //换了温度计上的时间后，已经替换
-            //1470899980000.000000
-            NSLog(@"？？？？？？？？？？温度计时间 == %f",tiwenjiTimeInterval);
+            //换了温度计上的时间后，已经替换
             
             //随机温度，y轴
             float temperature =[_wen floatValue];
@@ -596,6 +516,66 @@
             }
         }
     }
+}
+
+//获取设备上保存的数据
+- (void)getDataAtDisconnect
+{
+    unsigned char sendStr[16];
+    
+    sendStr[0] = 0xFC;
+    sendStr[1] = 0x05;
+    sendStr[2] = 0x00;
+    sendStr[3] = 0x00;
+    sendStr[4] = 0x00;
+    sendStr[5] = 0x00;
+    sendStr[6] = 0x00;
+    sendStr[7] = 0x00;
+    sendStr[8] = 0x00;
+    sendStr[9] = 0x00;
+    sendStr[10] = 0x00;
+    sendStr[11] = 0x00;
+    sendStr[12] = 0x00;
+    sendStr[13] = 0x00;
+    sendStr[14] = 0x00;
+    sendStr[15] = 0x00;
+    
+    NSData *data = [NSData dataWithBytes:sendStr length:16];
+    
+    //写characteristic
+    [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
+    
+}
+
+-(void)huoquwendu{
+    
+    unsigned char sendStr[16];
+    
+    sendStr[0] = 0xFC;
+    sendStr[1] = 0x04;
+    sendStr[2] = 0x00;
+    sendStr[3] = 0x00;
+    sendStr[4] = 0x00;
+    sendStr[5] = 0x00;
+    sendStr[6] = 0x00;
+    sendStr[7] = 0x00;
+    sendStr[8] = 0x00;
+    sendStr[9] = 0x00;
+    sendStr[10] = 0x00;
+    sendStr[11] = 0x00;
+    sendStr[12] = 0x00;
+    sendStr[13] = 0x00;
+    sendStr[14] = 0x00;
+    sendStr[15] = 0x00;
+    
+    
+    
+    
+    NSData *data = [NSData dataWithBytes:sendStr length:16];
+    
+    //写characteristic
+    [self.Peripheral writeValue:data forCharacteristic:self.viewCharacteristic type:CBCharacteristicWriteWithResponse];
+    
 }
 
 //设置时间
@@ -644,12 +624,12 @@
     int ss = [sendString substringWithRange:NSMakeRange(14, 2)].intValue;
 #pragma mark - 十进制转换BCD编码实现
     //这里是将十进制的数字转换成BCD码格式，这样就可以写入特征了
-    DectoBCD(YY, &sendStr[2], 2);
-    DectoBCD(MM, &sendStr[3], 2);
-    DectoBCD(DD, &sendStr[4], 2);
-    DectoBCD(hh, &sendStr[5], 2);
-    DectoBCD(mm, &sendStr[6], 2);
-    DectoBCD(ss, &sendStr[7], 2);
+    DectoBCD2(YY, &sendStr[2], 2);
+    DectoBCD2(MM, &sendStr[3], 2);
+    DectoBCD2(DD, &sendStr[4], 2);
+    DectoBCD2(hh, &sendStr[5], 2);
+    DectoBCD2(mm, &sendStr[6], 2);
+    DectoBCD2(ss, &sendStr[7], 2);
     
     NSData *data = [NSData dataWithBytes:sendStr length:16];
     [data bytes];
@@ -663,7 +643,7 @@
 // 返回： 0  success //
 // 思路：原理同 BCD 码转十进制 //
 //////////////////////////////////////////////////////////
-int DectoBCD(int Dec, unsigned char *Bcd, int length)
+int DectoBCD2(int Dec, unsigned char *Bcd, int length)
 {
     int i;
     int temp = Dec;
@@ -720,6 +700,7 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
     [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
     NSDate *date = [[NSDate alloc] init];
     // voila!
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Shanghai"]];
     date = [dateFormatter dateFromString:string];
     NSLog(@"体温计时间 = %@", date);
     
@@ -737,13 +718,17 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
                 NSLog(@"Gyes");
             if ([_wen floatValue]>[[_user objectForKey:@"gaowenLabel"]floatValue])
             {
-               
-                
+                //当再次进入此方法时，先清空之前present出来的低温控制器，然后在present出新的控制器
+                [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
+                secondDetailViewController = nil;
                 
                 secondDetailViewController=nil;
                 secondDetailViewController=[[gaowenbaojinView alloc]initWithNibName:@"gaowenbaojinView" bundle:nil];
                 secondDetailViewController.delegate=self;
                 [self presentPopupViewController:secondDetailViewController animationType:MJPopupViewAnimationFade];
+                
+                //关闭屏幕周围可点功能
+                self.view.userInteractionEnabled = NO;
                 
                 self.passSenderdelegate=secondDetailViewController;
                 [self.passSenderdelegate passSender:[[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"] stringByAppendingString:@" 当前温度为"] Wendu:[_wen stringByAppendingString:@"°C"]];
@@ -784,6 +769,18 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
                     UIApplication *app = [UIApplication sharedApplication];
                     
                     [app scheduleLocalNotification:notification];
+                    
+                    int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
+                    
+                    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * 60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                            
+                            if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+                                [self Gbaojing];
+                            }
+                        });
+                    }
+
                     
                 }
                 
@@ -826,6 +823,11 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
         }
         if ([_wen floatValue]<[[_user objectForKey:@"diwenLabel"]floatValue])
         {
+            //当再次进入此方法时，先清空之前present出来的低温控制器，然后在present出新的控制器
+            [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
+            secondDetailViewController = nil;
+            
+            //创建新的控制器
             dwViewController=nil;
             dwViewController=[[diwenbaojingView alloc]initWithNibName:@"diwenbaojingView" bundle:nil];
             dwViewController.delegate=self;
@@ -844,11 +846,9 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
             
             if (notification != nil) {
                 // 设置推送时间
-                
                 notification.fireDate = pushDate;
                 
                 // 设置时区
-                
                 notification.timeZone = [NSTimeZone defaultTimeZone];
                 
                 // 设置重复间隔
@@ -861,24 +861,37 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
                 notification.alertBody = @"低温警报！";
                 
                 //显示在icon上的红色圈中的数子
-                
-                notification.applicationIconBadgeNumber = 1;
+                notification.applicationIconBadgeNumber = [[[UIApplication sharedApplication] scheduledLocalNotifications] count]+1;
                 
                 //设置userinfo 方便在之后需要撤销的时候使用
-                
                 NSDictionary *info = [NSDictionary dictionaryWithObject:@"diwen"forKey:@"key1"];
                 
                 notification.userInfo = info;
                 
                 //添加推送到UIApplication
-                
                 UIApplication *app = [UIApplication sharedApplication];
+             
+                int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
                 
-                [app scheduleLocalNotification:notification];
+                if (_Dbiao) {
+                    
+                    [app scheduleLocalNotification:notification];
+                    
+                    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * 60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                            
+                            if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+                                [self Dbaojing];
+                            }
+                        });
+                    }
+                }
+            
                 
             }
 
             NSLog(@"温度低于低温报警温度  开始报警");
+            //14:02:40.031
             
             if ([_user boolForKey:@"DZ"]) {
                 
@@ -905,6 +918,9 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
     
     
 }
+
+
+
 -(void)pandanViod{
     _Gdaojishi--;
     if (_Gdaojishi==0) {
@@ -943,12 +959,20 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
     
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     secondDetailViewController = nil;
+    [_GbaojingTimer invalidate];
+    _GbaojingTimer = nil;
+    [_DbaojingTimer invalidate];
+    _DbaojingTimer = nil;
 }
 - (void)okButtonClicked:(gaowenbaojinView *)aSecondDetailViewController
 {
     NSLog(@"高温报警View  稍后提醒");
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     secondDetailViewController = nil;
+    
+    //开启屏幕周围可点功能
+    self.view.userInteractionEnabled = YES;
+    
      _Gdaoji=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(pandanViod) userInfo:nil repeats:YES];
 }
 -(void)dwcancelButtonClicked:(ViewController *)secondDetailViewController{
@@ -960,14 +984,23 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
     [user setBool:0 forKey:@"Dswitch"];
     [user setBool:0 forKey:@"DLswitch"];
     [user setBool:0 forKey:@"DZ"];
+    
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     dwViewController = nil;
+    [_GbaojingTimer invalidate];
+    _GbaojingTimer = nil;
+    [_DbaojingTimer invalidate];
+    _DbaojingTimer = nil;
     
 }
 -(void)dwokButtonClicked:(ViewController *)aSecondDetailViewController{
-    NSLog(@"低温报警View  不再提醒");
+    NSLog(@"低温报警View  稍后提醒");
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     dwViewController = nil;
+    
+    //开启屏幕周围可点功能
+    self.view.userInteractionEnabled = YES;
+    
      _Ddaoji=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(DpandanViod) userInfo:nil repeats:YES];
 }
 

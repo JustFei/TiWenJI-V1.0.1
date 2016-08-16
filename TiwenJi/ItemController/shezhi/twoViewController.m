@@ -114,6 +114,22 @@
 
 }
 
+//在
+-(void)viewWillAppear:(BOOL)animated{
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 处理耗时操作的代码块...
+        _today = nil;
+        _today=[[NSMutableArray alloc]init];
+        [self coredatachaozao];
+        
+        //通知主线程刷新
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+        });
+        
+    });
+}
+
 - (void)loginHistory:(UIButton *)sender
 {
     NSDate *date = [NSDate date];
@@ -226,10 +242,6 @@
 - (NSString *)lineChartView:(MCLineChartView *)lineChartView informationOfDotInLineNumber:(NSInteger)lineNumber index:(NSInteger)index {
     
     return [NSString stringWithFormat:@"%@°C", _dataSource[index]];
-}
-
--(void)viewWillAppear:(BOOL)animated{
-
 }
 
 //查找数据

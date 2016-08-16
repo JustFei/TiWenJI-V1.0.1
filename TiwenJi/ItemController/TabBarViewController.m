@@ -28,9 +28,9 @@
     
         [self.tabBar insertSubview:v atIndex:0];
     
-    
-  
-    
+//    oneViewController *oneViewController = self.viewControllers[0];
+//    
+//    [oneViewController lianjie];
     
     self.tabBar.tintColor=[UIColor whiteColor];
     
