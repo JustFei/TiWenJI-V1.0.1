@@ -66,3 +66,6 @@
 
 //完成按钮
 "Complete" = "Complete";
+
+//
+"PerhipheralDisconnect" = "Has been disconnected, please try to reconnect.";

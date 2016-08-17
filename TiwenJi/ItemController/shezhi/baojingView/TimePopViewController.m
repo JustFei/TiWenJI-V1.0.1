@@ -14,6 +14,8 @@
 }
 @property(nonatomic,strong)NSMutableArray*pickerArray;
 
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+@property (weak, nonatomic) IBOutlet UIButton *suerButton;
 
 @end
 
@@ -22,6 +24,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     _pickerArray=[[NSMutableArray alloc]initWithCapacity:1];
+    self.cancelButton.layer.borderWidth = 1.0;
+    self.suerButton.layer.borderWidth = 1.0;
+    self.cancelButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.suerButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    
     for(int i=2;i<30;i++)
     {
         NSString *stringInt = [NSString stringWithFormat:@"%d",i];

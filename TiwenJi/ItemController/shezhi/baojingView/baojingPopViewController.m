@@ -19,6 +19,8 @@
 @property(nonatomic,strong)NSString*zhengshu;
 @property(nonatomic,strong)NSString*xiaoshushu;
 
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+@property (weak, nonatomic) IBOutlet UIButton *sureButton;
 
 @end
 
@@ -27,13 +29,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
+    self.cancelButton.layer.borderWidth = 1.0;
+    self.sureButton.layer.borderWidth = 1.0;
+    self.cancelButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.sureButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
    
 }
 -(void)viewWillAppear:(BOOL)animated{
     _pickerArray=[[NSMutableArray alloc]initWithCapacity:1];
-    for(int i=30;i<=42;i++)
+    for(int i=30;i<=40;i++)
     {
         NSString *stringInt = [NSString stringWithFormat:@"%d",i];
         
@@ -43,7 +48,7 @@
     _pickerArray2=[[NSMutableArray alloc]initWithCapacity:1];
     for(int i=0;i<=99;i++)
     {
-        NSString *stringInt = [NSString stringWithFormat:@"%d",i];
+        NSString *stringInt = [NSString stringWithFormat:@"%02d",i];
         
         [_pickerArray2 addObject:stringInt];
     }
@@ -73,10 +78,10 @@
    
     
     if (qian==nil&&hou==nil) {
-        [self.delegate baojingokButtonClicked:self Time:@"37.00" sender:Sender];
+        [self.delegate baojingokButtonClicked:self Time:@"30.00" sender:Sender];
       
     } if (qian==nil&&hou!=nil) {
-         NSString*string=@"37.";
+         NSString*string=@"30.";
         NSString*str=[string stringByAppendingString:hou];
         [self.delegate baojingokButtonClicked:self Time:str sender:Sender];
        
