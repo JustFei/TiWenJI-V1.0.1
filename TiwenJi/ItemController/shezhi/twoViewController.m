@@ -173,23 +173,41 @@
 }
 
 -(void)coredatachaozao{
+//    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+//    NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
+//    [fetchRequest setEntity:entity];
+//    NSSortDescriptor*sort=[[NSSortDescriptor alloc]initWithKey:@"shijian" ascending:YES];
+////    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+//    NSArray *sortDescriptors = [[NSArray alloc]
+//                                initWithObjects:sort, nil];
+//    [fetchRequest setSortDescriptors:sortDescriptors];
+//    NSError * requestError = nil;
+//    NSArray * shuzu = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
+//    //NSLog(@"shuzu=%@",shuzu);
+    
     NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+    //实体描述，即表明为Test，
     NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
+    //给这个命令指定一个表：Test
     [fetchRequest setEntity:entity];
-    NSSortDescriptor*sort=[[NSSortDescriptor alloc]initWithKey:@"shijian" ascending:YES];
-    NSArray *sortDescriptors = [[NSArray alloc]
-                                initWithObjects:sort, nil];
-    [fetchRequest setSortDescriptors:sortDescriptors];
+    //谓词
+    NSPredicate * agePre = [NSPredicate predicateWithFormat:@"name like[cd] %@",[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]];
+    //给命令具体执行内容，内容为查找，查找 name为沙盒中存储的suername
+    [fetchRequest setPredicate:agePre];
     NSError * requestError = nil;
-    NSArray * shuzu = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
-    //NSLog(@"shuzu=%@",shuzu);
+    //执行这个命令，获得结果persons
+    NSArray * persons = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
     
     //判断日期是否和shijian中的前八个是否存在于today中，如果不存在，就添加该日期
-    for (Test*pp in shuzu) {
+    for (Test*pp in persons) {
         NSLog( @"pp.shijian=%@",pp.shijian);
-        if (![_today containsObject:[pp.shijian substringToIndex:8]]) {
-            [_today addObject:[pp.shijian substringToIndex:8]];
+        //如果是当前用户名的话
+        if ([pp.name isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]]) {
+            if (![_today containsObject:[pp.shijian substringToIndex:8]]) {
+                [_today addObject:[pp.shijian substringToIndex:8]];
+            }
         }
+        
         
     }
     NSLog(@"_today=%@",_today);
@@ -632,38 +650,46 @@
 
 //在日历上选择日期的话，刷新当前天数的日期和数据
 -(void)datePickerDonePressed:(THDatePickerViewController *)datePicker{
-    self.curDate = datePicker.date;
-    NSLog(@"%@",[_formatter stringFromDate:_curDate]);
-    [_todayButton setTitle:[_formatter2 stringFromDate:_curDate] forState:0];
     
-    [SVProgressHUD show];
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        // 处理耗时操作的代码块...
-        [self chazhao:[_formatter stringFromDate:_curDate]];
+    if ([_today containsObject:[_formatter stringFromDate: datePicker.date]]) {
+        self.curDate = datePicker.date;
+        NSLog(@"%@",[_formatter stringFromDate:_curDate]);
+        [_todayButton setTitle:[_formatter2 stringFromDate:_curDate] forState:0];
         
-        //通知主线程刷新
-        dispatch_async(dispatch_get_main_queue(), ^{
-            for (NSString*p in _dataSource) {
-                if( [_zuida floatValue]<[p floatValue]){
-                    _zuida=p;
-                }
-            }
-            self.labelText.text=_zuida;
-            //回调或者说是通知主线程刷新，
-            [_lineChartView reloadData];
-            [_lineChartView reloadDataWithAnimate:NO];
+        [SVProgressHUD show];
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            // 处理耗时操作的代码块...
+            [self chazhao:[_formatter stringFromDate:_curDate]];
             
-            [SVProgressHUD dismiss];
+            //通知主线程刷新
+            dispatch_async(dispatch_get_main_queue(), ^{
+                for (NSString*p in _dataSource) {
+                    if( [_zuida floatValue]<[p floatValue]){
+                        _zuida=p;
+                    }
+                }
+                self.labelText.text=_zuida;
+                //回调或者说是通知主线程刷新，
+                [_lineChartView reloadData];
+                [_lineChartView reloadDataWithAnimate:NO];
+                
+                [SVProgressHUD dismiss];
+            });
         });
-    });
+        
+        [self.loginHistoryButton setHidden:YES];
+        
+        self.todayButton.enabled = YES;
+        self.zuoButton.enabled = YES;
+        self.youButton.enabled = YES;
+        
+        [self dismissSemiModalView];
+    } else {
+        UIAlertView *selectWorngDateView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"WorngDatePick", nil) delegate:self cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil];
+        [selectWorngDateView show];
+    }
     
-    [self.loginHistoryButton setHidden:YES];
     
-    self.todayButton.enabled = YES;
-    self.zuoButton.enabled = YES;
-    self.youButton.enabled = YES;
-    
-    [self dismissSemiModalView];
 }
 
 -(void)datePickerCancelPressed:(THDatePickerViewController *)datePicker{

@@ -1332,13 +1332,6 @@
                                     <action selector="AddButton:" destination="etS-Rp-fpJ" eventType="touchUpInside" id="U1I-ge-9uz"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mSu-1x-7BB">
-                                <rect key="frame" x="192" y="84" width="25" height="25"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="25" id="HfY-IB-hVB"/>
-                                    <constraint firstAttribute="width" constant="25" id="m5c-Bp-g0y"/>
-                                </constraints>
-                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pPq-Kt-9dR">
                                 <rect key="frame" x="225" y="84" width="150" height="150"/>
                                 <constraints>
@@ -1418,7 +1411,6 @@
                             <constraint firstAttribute="trailing" secondItem="eKr-ae-wtU" secondAttribute="trailing" id="TIr-Z2-lia"/>
                             <constraint firstItem="kaU-jD-TDa" firstAttribute="top" secondItem="LTe-YW-EHv" secondAttribute="bottom" id="TLg-9q-9yA"/>
                             <constraint firstItem="NBI-X4-Fqe" firstAttribute="leading" secondItem="WLV-Wm-szT" secondAttribute="leadingMargin" id="Tng-Bu-pAS"/>
-                            <constraint firstItem="pPq-Kt-9dR" firstAttribute="leading" secondItem="mSu-1x-7BB" secondAttribute="trailing" constant="8" id="U51-Ll-Xva"/>
                             <constraint firstItem="9h7-Qj-hFS" firstAttribute="leading" secondItem="WLV-Wm-szT" secondAttribute="leading" id="Vc7-cV-eJQ"/>
                             <constraint firstAttribute="trailing" secondItem="kaU-jD-TDa" secondAttribute="trailing" id="Vy7-2J-m6v"/>
                             <constraint firstAttribute="trailingMargin" secondItem="WXQ-fP-BaD" secondAttribute="trailing" id="XGH-me-r9A"/>
@@ -1436,7 +1428,6 @@
                             <constraint firstItem="pPq-Kt-9dR" firstAttribute="top" secondItem="Oo3-0K-Ktc" secondAttribute="bottom" constant="20" id="k82-wO-9Wj"/>
                             <constraint firstItem="Zta-pC-McC" firstAttribute="leading" secondItem="WLV-Wm-szT" secondAttribute="leading" id="kmm-Ih-eda"/>
                             <constraint firstItem="WXQ-fP-BaD" firstAttribute="leading" secondItem="WLV-Wm-szT" secondAttribute="leadingMargin" id="l52-rf-ZT3"/>
-                            <constraint firstItem="pPq-Kt-9dR" firstAttribute="top" secondItem="mSu-1x-7BB" secondAttribute="top" id="lJ6-Yh-hAt"/>
                             <constraint firstItem="WXQ-fP-BaD" firstAttribute="top" secondItem="WLV-Wm-szT" secondAttribute="top" constant="64" id="nsd-Fb-kOv"/>
                             <constraint firstItem="eKr-ae-wtU" firstAttribute="leading" secondItem="WLV-Wm-szT" secondAttribute="leading" id="oyg-E5-7c3"/>
                             <constraint firstItem="Oo3-0K-Ktc" firstAttribute="top" secondItem="pZf-Wa-BgG" secondAttribute="bottom" id="qPk-L6-bYy"/>
@@ -1476,7 +1467,6 @@
                         <outlet property="infoheigt" destination="YkZ-7p-ooh" id="QkQ-ON-td6"/>
                         <outlet property="infoname" destination="Vk8-TN-cne" id="BIt-d7-zMd"/>
                         <outlet property="infosex" destination="zzM-Lv-EgM" id="Lyw-zR-gXK"/>
-                        <outlet property="infotouxian" destination="mSu-1x-7BB" id="3rv-cg-4gr"/>
                         <outlet property="infoweiht" destination="0TU-oO-SWU" id="4cN-6F-i8y"/>
                         <outlet property="nameText" destination="SMg-W0-ZpJ" id="guD-b9-JbB"/>
                         <outlet property="nianlingbutton" destination="amU-dh-pnz" id="ejN-A1-87k"/>

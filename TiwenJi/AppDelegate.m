@@ -35,12 +35,27 @@
     [[UITabBarItem appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithRed:40.0/255 green:72.0/255 blue:101.0/255 alpha:1]} forState:UIControlStateNormal];
     [[UITabBarItem appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor]} forState:UIControlStateSelected];
     
+    //推送:在8.0以下和8.0以上的版本中注册本地通知权限
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0)
+    {
+        if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert |UIRemoteNotificationTypeSound];
+        }
+    }
+    else
+    {
+        if ([[UIApplication sharedApplication]currentUserNotificationSettings].types==UIUserNotificationTypeNone) {
+            [[UIApplication sharedApplication]registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound  categories:nil]];
+        }
+    }
+    
     return YES;
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
     //点击提示框的打开
     application.applicationIconBadgeNumber = 0;
+    [application cancelAllLocalNotifications];
 }
 
 

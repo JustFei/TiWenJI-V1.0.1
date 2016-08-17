@@ -24,8 +24,10 @@
 @interface oneViewController ()<MJSecondPopupDelegate,dwbjViewPopupDelegate>{
     gaowenbaojinView*secondDetailViewController;
     diwenbaojingView*dwViewController;
+    
 }
 
+@property(nonatomic,strong)UIAlertView *disconnectView;
 @property(nonatomic,strong)CBPeripheral*Peripheral;
 @property(nonatomic,strong)CBCharacteristic*viewCharacteristic;
 @property(nonatomic,strong)NSTimer*reconnectTimer;
@@ -52,6 +54,7 @@
 
 
 
+
 @property (nonatomic, weak) JAYLineChart * lineChart;
 @end
 
@@ -59,9 +62,9 @@
 
 - (void)viewDidLoad {
     NSLog(@"oneviewDidLoad");
-
-   
     [super viewDidLoad];
+    
+//    [self lianjie];
 
     self.myappdelegate2=[UIApplication sharedApplication].delegate;
     _xianshidaojishiTime=15;
@@ -88,8 +91,7 @@
     _wendu=@"19.00";
     
     _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-     _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-    
+    _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
     
 }
 
@@ -97,6 +99,7 @@
 -(void)time{
     NSLog(@"%ld",(long)self.Peripheral.state);
     if (self.Peripheral.state!=0) {
+        
         
         
         _Gbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Gswitch"]?YES:NO;
@@ -117,9 +120,14 @@
 -(void)viewWillAppear:(BOOL)animated{
     NSLog(@"oneviewWillAppear");
 
-//    if (self.Peripheral.state == 0) {
-    [self lianjie];
+    NSLog(@"%ld",(long)self.Peripheral.state);
+    if (self.Peripheral.state == 0) {
+        [self lianjie];
+    }
+//    }else {
+//        [self lianjie2];
 //    }
+    
     [self time];
 }
 
@@ -148,16 +156,6 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     NSLog(@"oneviewWillDisappear");
-//    [self.GbaojingTimer invalidate];
-//    self.GbaojingTimer=nil;
-//    [self.DbaojingTimer invalidate];
-//    self.DbaojingTimer=nil;
-//    [_Gdaoji invalidate];
-//    _Gdaoji=nil;
-//    [_Ddaoji invalidate];
-//    _Ddaoji=nil;
-    
-    
 }
 
 
@@ -172,6 +170,33 @@
         }
         
         [self reloaddataforbulettoh];
+    }
+    else
+    {
+        [self.wenbutton setTitle:NSLocalizedString(@"ScanDevice", nil) forState:0];
+    }
+}
+
+-(void)lianjie2{
+    NSArray*arry=[babycao findConnectedPeripherals];
+    NSLog(@" findConnectedPeripherals=%@",arry);
+    if (arry.count>0)
+    {
+        for (CBPeripheral*per in arry)
+        {
+            self.Peripheral=per;
+        }
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            // 处理耗时操作的代码块...
+            babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+            
+            //通知主线程刷新
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+            });
+            
+        });
     }
     else
     {
@@ -234,6 +259,10 @@
     [babycao setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         NSLog(@"成功连接设备，名称== %@",peripheral.name);
         
+        if (weakSelf.disconnectView) {
+            [weakSelf.disconnectView dismissWithClickedButtonIndex:0 animated:NO];
+        }
+        
         //连接成功后，取消扫描
         [weakbaby cancelScan];
     
@@ -266,10 +295,9 @@
     //断开连接时候的回调
     [babycao setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         NSLog(@"设备断开，当前设备状态 == %ld",(long)weakSelf.Peripheral.state);
-        NSLog(@"peripheral == %ld",(long)peripheral.state);
         
-        UIAlertView *disconnectView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"PerhipheralDisconnect", nil) delegate:weakSelf cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil];
-        [disconnectView show];
+        weakSelf.disconnectView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"PerhipheralDisconnect", nil) delegate:weakSelf cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil];
+        [weakSelf.disconnectView show];
         
         //断开时停掉所有的计时器（除了重连时的计时器）
             [weakSelf.Gdaoji invalidate];
@@ -278,11 +306,12 @@
             weakSelf.Ddaoji=nil;
         [weakSelf.reconnectTimer invalidate];
         weakSelf.reconnectTimer = nil;
-        
+//        weakSelf.Peripheral = nil;
         
         //温度按钮设置为扫描设备的文本
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             if (weakSelf.Peripheral.state == 1) {
+                NSLog(@"更改title");
                 [weakSelf.wenbutton setTitle:NSLocalizedString(@"ScanDevice", nil) forState:0];
             }
         });
@@ -371,6 +400,7 @@
         NSString *Str1 = [NSString stringWithFormat:@"%02x", hexBytesLight[0]];
         NSLog(@"标识符 = %@",Str1);
         
+        //00标志位，设置时间
         if ([Str1 isEqualToString:@"00"]) {
             NSString *YY = [NSString stringWithFormat:@"%02x", hexBytesLight[9]];
             NSString *MM = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
@@ -408,9 +438,7 @@
             NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
 
             NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
-//            //换了温度计上的时间后，已经替换
-            //1470899980000.000000
-            NSLog(@"？？？？？？？？？？温度计时间 == %f",tiwenjiTimeInterval);
+            //换了温度计上的时间后，已经替换
             
             //随机温度，y轴
             float temperature =[_wen floatValue];
@@ -490,9 +518,7 @@
             NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
             
             NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
-            //            //换了温度计上的时间后，已经替换
-            //1470899980000.000000
-            NSLog(@"？？？？？？？？？？温度计时间 == %f",tiwenjiTimeInterval);
+            //换了温度计上的时间后，已经替换
             
             //随机温度，y轴
             float temperature =[_wen floatValue];
@@ -640,12 +666,12 @@
     int ss = [sendString substringWithRange:NSMakeRange(14, 2)].intValue;
 #pragma mark - 十进制转换BCD编码实现
     //这里是将十进制的数字转换成BCD码格式，这样就可以写入特征了
-    DectoBCD(YY, &sendStr[2], 2);
-    DectoBCD(MM, &sendStr[3], 2);
-    DectoBCD(DD, &sendStr[4], 2);
-    DectoBCD(hh, &sendStr[5], 2);
-    DectoBCD(mm, &sendStr[6], 2);
-    DectoBCD(ss, &sendStr[7], 2);
+    DectoBCD2(YY, &sendStr[2], 2);
+    DectoBCD2(MM, &sendStr[3], 2);
+    DectoBCD2(DD, &sendStr[4], 2);
+    DectoBCD2(hh, &sendStr[5], 2);
+    DectoBCD2(mm, &sendStr[6], 2);
+    DectoBCD2(ss, &sendStr[7], 2);
     
     NSData *data = [NSData dataWithBytes:sendStr length:16];
     [data bytes];
@@ -659,7 +685,7 @@
 // 返回： 0  success //
 // 思路：原理同 BCD 码转十进制 //
 //////////////////////////////////////////////////////////
-int DectoBCD(int Dec, unsigned char *Bcd, int length)
+int DectoBCD2(int Dec, unsigned char *Bcd, int length)
 {
     int i;
     int temp = Dec;
@@ -716,6 +742,7 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
     [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
     NSDate *date = [[NSDate alloc] init];
     // voila!
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Shanghai"]];
     date = [dateFormatter dateFromString:string];
     NSLog(@"体温计时间 = %@", date);
     
@@ -864,11 +891,9 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
             
             if (notification != nil) {
                 // 设置推送时间
-                
                 notification.fireDate = pushDate;
                 
                 // 设置时区
-                
                 notification.timeZone = [NSTimeZone defaultTimeZone];
                 
                 // 设置重复间隔
@@ -881,31 +906,32 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
                 notification.alertBody = @"低温警报！";
                 
                 //显示在icon上的红色圈中的数子
-                
-                notification.applicationIconBadgeNumber = 1;
+                notification.applicationIconBadgeNumber = [[[UIApplication sharedApplication] scheduledLocalNotifications] count]+1;
                 
                 //设置userinfo 方便在之后需要撤销的时候使用
-                
                 NSDictionary *info = [NSDictionary dictionaryWithObject:@"diwen"forKey:@"key1"];
                 
                 notification.userInfo = info;
                 
                 //添加推送到UIApplication
-                
                 UIApplication *app = [UIApplication sharedApplication];
                 
-                [app scheduleLocalNotification:notification];
-             
                 int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
-            
-                if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * 60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        
-                        if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                            [self Dbaojing];
-                        }
-                    });
+                
+                if (_Dbiao) {
+                    
+                    [app scheduleLocalNotification:notification];
+                    
+                    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * 60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                            
+                            if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+                                [self Dbaojing];
+                            }
+                        });
+                    }
                 }
+
             }
 
             NSLog(@"温度低于低温报警温度  开始报警");
@@ -977,8 +1003,12 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
     
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     secondDetailViewController = nil;
-    //开启屏幕周围可点功能
-    self.view.userInteractionEnabled = YES;
+
+    [_GbaojingTimer invalidate];
+    _GbaojingTimer = nil;
+    [_DbaojingTimer invalidate];
+    _DbaojingTimer = nil;
+
 }
 - (void)okButtonClicked:(gaowenbaojinView *)aSecondDetailViewController
 {
@@ -1003,6 +1033,10 @@ int DectoBCD(int Dec, unsigned char *Bcd, int length)
     
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
     dwViewController = nil;
+    [_GbaojingTimer invalidate];
+    _GbaojingTimer = nil;
+    [_DbaojingTimer invalidate];
+    _DbaojingTimer = nil;
     
     //开启屏幕周围可点功能
     self.view.userInteractionEnabled = YES;

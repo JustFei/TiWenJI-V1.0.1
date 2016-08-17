@@ -67,5 +67,8 @@
 //完成按钮
 "Complete" = "Complete";
 
-//
-"PerhipheralDisconnect" = "Has been disconnected, please try to reconnect.";
+//设备已经断开连接
+"PerhipheralDisconnect" = "Has been disconnected, please try to reconnect";
+
+//选择了没有历史数据的日期
+"WorngDatePick" = "The day without historical data, please choose again";

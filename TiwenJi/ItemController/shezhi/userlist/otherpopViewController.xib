@@ -26,26 +26,30 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ia3-7b-nvX">
                     <rect key="frame" x="0.0" y="201" width="239" height="40"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TjA-jh-R2m">
-                            <rect key="frame" x="8" y="0.0" width="46" height="30"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="30" id="bKi-Kt-gcv"/>
-                                <constraint firstAttribute="width" constant="46" id="om8-xY-w93"/>
-                            </constraints>
-                            <state key="normal" title="确定"/>
-                            <connections>
-                                <action selector="ok:" destination="-1" eventType="touchUpInside" id="28r-K5-f0f"/>
-                            </connections>
-                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c7U-6e-H4V">
                             <rect key="frame" x="185" y="0.0" width="46" height="30"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="46" id="G8G-O0-cyt"/>
                                 <constraint firstAttribute="height" constant="30" id="LYU-u3-R38"/>
                             </constraints>
-                            <state key="normal" title="取消"/>
+                            <state key="normal" title="取消">
+                                <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
                             <connections>
                                 <action selector="cancle:" destination="-1" eventType="touchUpInside" id="bCT-VQ-ck7"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TjA-jh-R2m">
+                            <rect key="frame" x="8" y="0.0" width="46" height="30"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="bKi-Kt-gcv"/>
+                                <constraint firstAttribute="width" constant="46" id="om8-xY-w93"/>
+                            </constraints>
+                            <state key="normal" title="确定">
+                                <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="ok:" destination="-1" eventType="touchUpInside" id="28r-K5-f0f"/>
                             </connections>
                         </button>
                     </subviews>
@@ -58,6 +62,7 @@
                     </constraints>
                 </view>
             </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="Ia3-7b-nvX" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="2LS-tR-CCi"/>
                 <constraint firstAttribute="bottom" secondItem="Ia3-7b-nvX" secondAttribute="bottom" id="7W4-be-pYA"/>

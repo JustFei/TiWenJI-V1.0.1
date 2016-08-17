@@ -341,6 +341,7 @@ static int FIRST_WEEKDAY = 2;
 // ------------------------------------------------------- //
 // -------------------- User Events ---------------------- //
 
+//点击按钮
 - (void)dateDayTapped:(THDateDay *)dateDay{
     if(![self dateInCurrentMonth:dateDay.date]){
         double direction = [dateDay.date timeIntervalSinceDate:self.firstOfCurrentMonth];
