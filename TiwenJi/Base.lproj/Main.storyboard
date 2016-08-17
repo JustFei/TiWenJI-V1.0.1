@@ -45,7 +45,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Efy-Kz-hTb" kind="modal" id="Qj7-b7-reb"/>
+                                    <action selector="connectPer:" destination="ero-vS-po2" eventType="touchUpInside" id="USU-1m-dPQ"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="当前温度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9k7-U4-fiD">
@@ -2440,7 +2440,7 @@
         <!--Lanyalianjie View Controller-->
         <scene sceneID="GhN-j6-vlO">
             <objects>
-                <viewController id="Efy-Kz-hTb" customClass="lanyalianjieViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="lanyalianjieViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Efy-Kz-hTb" customClass="lanyalianjieViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Pti-v5-ix4"/>
                         <viewControllerLayoutGuide type="bottom" id="fzg-lL-x5c"/>
@@ -2818,7 +2818,4 @@
         <image name="weibo" width="220" height="220"/>
         <image name="weixin" width="220" height="220"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="Qj7-b7-reb"/>
-    </inferredMetricsTieBreakers>
 </document>

@@ -19,7 +19,7 @@
     NSMutableArray *peripheralsAD;
     NSTimer*layerTimer;
 
-    LanYaLianJieWaitingForDataCallBack _lanYaLianJieWaitingForDataCallBack;
+//    LanYaLianJieWaitingForDataCallBack _lanYaLianJieWaitingForDataCallBack;
 }
 
 @property (nonatomic, weak) PulsingHaloLayer *halo;
@@ -54,6 +54,13 @@
     
     [self huoqudianliang];
 
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    if (self.block) {
+        self.block();
+    }
 }
 - (void)viewDidLayoutSubviews
 {
@@ -106,10 +113,10 @@
     
 }
 
-- (void)setLanYaLianJieWaitingForDataCallBack:(LanYaLianJieWaitingForDataCallBack)callback
-{
-    _lanYaLianJieWaitingForDataCallBack = callback;
-}
+//- (void)setLanYaLianJieWaitingForDataCallBack:(LanYaLianJieWaitingForDataCallBack)callback
+//{
+//    _lanYaLianJieWaitingForDataCallBack = callback;
+//}
 
 #pragma mark - 蓝牙连接委托
 -(void)babyDelegate{
@@ -144,6 +151,9 @@
         [[NSUserDefaults standardUserDefaults]setValue:[peripheral.identifier UUIDString] forKey:@"identifier" ];
         
         
+        
+        //weakSelf.block();
+        
         weakSelf.label.text=[string stringByAppendingString:peripheral.name];
         weakSelf.beaconView.image=[UIImage imageNamed:@"blue_connect.png"];
         weakSelf.duankaiSwitch.enabled=YES;
@@ -168,18 +178,22 @@
         NSLog(@"zhu已断开");
         weakSelf.label.text=@"未连接设备";
         
+        weakSelf.disconnetCallBack();
+        
         weakSelf.beaconView.image=[UIImage imageNamed:@"unconnet"];
        
         weakSelf.duankaiSwitch.enabled=NO;
         [weakSelf.duankaiSwitch setOn:NO];
         
         //手动断开
-        if ([weakSelf.duankaiSwitch isOn]) {
+        if (![weakSelf.duankaiSwitch isOn]) {
             //断开连接后，在连接条件回复后，可连接
             if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
-//                [weakBaby.centralManager connectPeripheral:peripheral options:nil];
+                [weakBaby.centralManager connectPeripheral:peripheral options:nil];
                 //            [weakSelf reloadDataBluetooth];
             }
+        }else {
+            
         }
     }];
     
@@ -465,7 +479,8 @@ int DectoBCD1(int Dec, unsigned char *Bcd, int length)
 
 - (void)reloadDataBluetooth
 {
-    baby.having(self.bluetoothPeripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+//    baby.having(self.bluetoothPeripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+    baby.having(self.bluetoothPeripheral).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
 
