@@ -210,7 +210,7 @@
             [weakSelf.disconnectView dismissWithClickedButtonIndex:0 animated:NO];
         }
         //延时60秒提交运行报警控制器的block
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [weakSelf time];
         });
 
@@ -1186,6 +1186,7 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
 - (IBAction)connectPer:(UIButton *)sender {
     
     lanyalianjieViewController *vc =[[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"lanyalianjieViewController"];
+    __weak typeof(vc) weakVC = vc;
     
     vc.block = ^void()
     {
@@ -1207,6 +1208,15 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
         _GbaojingTimer = nil;
         
         [self reconnectMethod:peripheral];
+
+        //设置了没啥用
+//        [[NSUserDefaults standardUserDefaults]setValue:[peripheral.identifier UUIDString] forKey:@"identifier" ];
+//        
+//        NSString*string=@"已连接";
+//        weakVC.label.text=[string stringByAppendingString:peripheral.name];
+//        weakVC.beaconView.image=[UIImage imageNamed:@"blue_connect.png"];
+//        weakVC.duankaiSwitch.enabled=YES;
+//        [weakVC.duankaiSwitch setOn:YES];
     };
     [self presentViewController:vc animated:YES completion:nil];
     

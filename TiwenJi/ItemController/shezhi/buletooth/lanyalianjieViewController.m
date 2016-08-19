@@ -174,7 +174,10 @@
         NSLog(@"zhu已断开");
         weakSelf.label.text=@"未连接设备";
         
-        weakSelf.disconnetCallBack(peripheral);
+        //如果触发就执行回调
+//        if (weakSelf.disconnetCallBack) {
+//            weakSelf.disconnetCallBack(peripheral);
+//        }
         
         weakSelf.beaconView.image=[UIImage imageNamed:@"unconnet"];
        
@@ -185,7 +188,7 @@
             //断开连接后，在连接条件回复后，可连接
             NSLog(@"条件1");
             if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
-                //[weakBaby.centralManager connectPeripheral:peripheral options:nil];
+                [weakBaby.centralManager connectPeripheral:peripheral options:nil];
 //                [weakSelf reloadDataBluetooth];
         }else {
             NSLog(@"条件2");
@@ -487,7 +490,7 @@ int DectoBCD1(int Dec, unsigned char *Bcd, int length)
 #pragma 手动断开
 - (IBAction)duankai:(id)sender {
     if ([self.duankaiSwitch isOn]) {
-        
+        baby.scanForPeripherals().begin();
     }
     else{
         //[baby cancelNotify:self.bluetoothPeripheral characteristic:self.bluetoothviewCharacteristic];
