@@ -150,10 +150,6 @@
         
         [[NSUserDefaults standardUserDefaults]setValue:[peripheral.identifier UUIDString] forKey:@"identifier" ];
         
-        
-        
-        //weakSelf.block();
-        
         weakSelf.label.text=[string stringByAppendingString:peripheral.name];
         weakSelf.beaconView.image=[UIImage imageNamed:@"blue_connect.png"];
         weakSelf.duankaiSwitch.enabled=YES;
@@ -178,23 +174,27 @@
         NSLog(@"zhu已断开");
         weakSelf.label.text=@"未连接设备";
         
-        weakSelf.disconnetCallBack();
+        weakSelf.disconnetCallBack(peripheral);
         
         weakSelf.beaconView.image=[UIImage imageNamed:@"unconnet"];
        
-        weakSelf.duankaiSwitch.enabled=NO;
-        [weakSelf.duankaiSwitch setOn:NO];
+        
         
         //手动断开
-        if (![weakSelf.duankaiSwitch isOn]) {
+        if ([weakSelf.duankaiSwitch isOn]) {
             //断开连接后，在连接条件回复后，可连接
+            NSLog(@"条件1");
             if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
-                [weakBaby.centralManager connectPeripheral:peripheral options:nil];
-                //            [weakSelf reloadDataBluetooth];
-            }
+                //[weakBaby.centralManager connectPeripheral:peripheral options:nil];
+//                [weakSelf reloadDataBluetooth];
         }else {
+            NSLog(@"条件2");
             
+            }
         }
+        
+        weakSelf.duankaiSwitch.enabled=NO;
+        [weakSelf.duankaiSwitch setOn:NO];
     }];
     
 }
@@ -481,8 +481,8 @@ int DectoBCD1(int Dec, unsigned char *Bcd, int length)
 {
 //    baby.having(self.bluetoothPeripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     baby.having(self.bluetoothPeripheral).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+    
 }
-
 
 #pragma 手动断开
 - (IBAction)duankai:(id)sender {

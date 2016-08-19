@@ -92,32 +92,35 @@
     _user=[NSUserDefaults standardUserDefaults];
     _wendu=@"19.00";
     
-    [self time];
+
 }
 
 #pragma mark - 高低温报警
 -(void)time{
     NSLog(@"%ld",(long)self.Peripheral.state);
-//    if (self.Peripheral.state!=0) {
+        
+    _Gbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Gswitch"]?YES:NO;
+    _Dbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Dswitch"]?YES:NO;
     
-        
-        
-        _Gbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Gswitch"]?YES:NO;
-        _Dbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Dswitch"]?YES:NO;
-        
-        
-        if (![self.GbaojingTimer isValid]) {
-            self.GbaojingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(Gbaojing) userInfo:nil repeats:YES];
-            _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
+    if (self.Peripheral.state != 0) {
+        if (_Gbiao) {
+            if (![self.GbaojingTimer isValid]) {
+                self.GbaojingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(Gbaojing) userInfo:nil repeats:YES];
+                
+                _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
+            }
         }
         
-        if (![self.DbaojingTimer isValid]) {
-            self.DbaojingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(Dbaojing) userInfo:nil repeats:YES];
-            _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
+        if (_Dbiao) {
+            if (![self.DbaojingTimer isValid]) {
+                self.DbaojingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(Dbaojing) userInfo:nil repeats:YES];
+                
+                _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
+            }
         }
-//    }
+        
+    }
 }
-
 
 -(void)viewWillAppear:(BOOL)animated{
     NSLog(@"oneviewWillAppear");
@@ -125,36 +128,11 @@
     NSLog(@"%ld",(long)self.Peripheral.state);
     if (self.Peripheral.state == 0) {
         [self lianjie];
-    }
-//    }else {
-//        [self lianjie2];
-//    }
-    
-    
-}
-
--(void)viewDidAppear:(BOOL)animated{
-    
-    
-    NSLog(@"oneviewDidAppear");
-    NSLog(@"%ld",(long)self.Peripheral.state);
-    if (self.Peripheral.state!=0) {
-        
-        
-        
+    }else {
         _Gbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Gswitch"]?YES:NO;
         _Dbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Dswitch"]?YES:NO;
-        
-        
-        
     }
-   
 }
-
--(void)viewWillDisappear:(BOOL)animated{
-    NSLog(@"oneviewWillDisappear");
-}
-
 
 -(void)lianjie{
     NSArray*arry=[babycao findConnectedPeripherals];
@@ -207,9 +185,6 @@
         });
         
     });
-    
-    //在第一个页面打开的时候，重新查找服务特征写入等步骤
-    //babycao.having(self.Peripheral).and.channel(channelOnPeropheralView).then.discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
 #pragma mark - 蓝牙连接代理模块
@@ -234,7 +209,11 @@
         if (weakSelf.disconnectView) {
             [weakSelf.disconnectView dismissWithClickedButtonIndex:0 animated:NO];
         }
-        
+        //延时60秒提交运行报警控制器的block
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [weakSelf time];
+        });
+
         //连接成功后，取消扫描
         [weakbaby cancelScan];
     
@@ -269,13 +248,12 @@
         NSLog(@"设备断开，当前设备状态 == %ld",(long)weakSelf.Peripheral.state);
         
         weakSelf.disconnectView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Hint", nil) message:NSLocalizedString(@"PerhipheralDisconnect", nil) delegate:weakSelf cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil];
-        [weakSelf.disconnectView show];
         
         //断开时停掉所有的计时器（除了重连时的计时器）
-            [weakSelf.Gdaoji invalidate];
-            weakSelf.Gdaoji=nil;
-            [weakSelf.Ddaoji invalidate];
-            weakSelf.Ddaoji=nil;
+        [weakSelf.Gdaoji invalidate];
+        weakSelf.Gdaoji=nil;
+        [weakSelf.Ddaoji invalidate];
+        weakSelf.Ddaoji=nil;
         [weakSelf.reconnectTimer invalidate];
         weakSelf.reconnectTimer = nil;
         [weakSelf.GbaojingTimer invalidate];
@@ -287,27 +265,17 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             if (weakSelf.Peripheral.state == 1) {
                 NSLog(@"更改title");
-                
+                [weakSelf.disconnectView show];
                 [weakSelf.wenbutton setTitle:NSLocalizedString(@"ScanDevice", nil) forState:0];
             }
         });
-        
-        //关闭掉获取温度的定时器
-//        [weakSelf.reconnectTimer15 invalidate];
-//        weakSelf.reconnectTimer15 = nil;
-        
-        NSLog(@"重连设备名称 == %@", peripheral.name);
         
         //还没有连接上，就会被执行，所以获取不到历史数据
         //断开连接后，在连接条件回复后，可连接
         NSString *historyID = [[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"];
         NSLog(@"上次连接的设备id == %@",historyID);
-        if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
-            [weakbaby.centralManager connectPeripheral:peripheral options:nil];
-            
-            //在完成历史数据加载后，再重新加载数据
-            [weakSelf reloaddataforbulettoh];
-        }
+        //重连方法
+        [weakSelf reconnectMethod:peripheral];
     }];
     
     //特征写入状态回调
@@ -337,7 +305,15 @@
         }
     }];
 }
-
+- (void)reconnectMethod:(CBPeripheral *)peripheral
+{
+    if ([[peripheral.identifier UUIDString]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"identifier"]]) {
+        [babycao.centralManager connectPeripheral:peripheral options:nil];
+        
+        //在完成历史数据加载后，再重新加载数据
+        [self reloaddataforbulettoh];
+    }
+}
 
 #pragma mark 已连接的CBCharacteristic和设置通知
 
@@ -783,23 +759,18 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
                     
                     notification.userInfo = info;
                     
-                    //添加推送到UIApplication
+                    //后台添加推送到UIApplication
                     UIApplication *app = [UIApplication sharedApplication];
-                    
-                    [app scheduleLocalNotification:notification];
-                    
-                    int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
-                    
                     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * 60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                            
-                            if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                                [self Gbaojing];
-                            }
-                        });
+                        [app scheduleLocalNotification:notification];
                     }
-
                     
+                    //关闭之前的计时器，重新计时
+                    [_Gdaoji invalidate];
+                    _Gdaoji = nil;
+                    int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
+                    _Gdaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
+
                 }
                 
                     NSLog(@"温度高于报警温度  开始报警");
@@ -892,32 +863,15 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
                 
                 //添加推送到UIApplication
                 UIApplication *app = [UIApplication sharedApplication];
-                
-                int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
-                
-                if (_Dbiao) {
-                    
+                if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
                     [app scheduleLocalNotification:notification];
-                    //如果
-                    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * 60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                            
-                            if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                                
-                                if (_Ddaoji && [_Ddaoji isValid]) {
-                                    NSLog(@"%d",[_Ddaoji isValid]);
-                                    
-                                }else {
-                                    [self Dbaojing];
-                                }
-                                
-                                //18:14:29.185 开始报警
-                                //18:14:48.790 开始计时
-                                //18:16:55.965 再次报警（无计时）
-                            }
-                        });
-                    }
                 }
+                
+                //关闭之前的计时器，重新计时
+                [_Ddaoji invalidate];
+                _Ddaoji = nil;
+                int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
+                _Ddaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
 
             }
 
@@ -952,33 +906,33 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
 
 
 
--(void)pandanViod{
-    _Gdaojishi--;
-    
-    if (self.Peripheral.state == 2) {
-        if (_Gdaojishi==0) {
-            [_GbaojingTimer setFireDate:[NSDate distantPast]];
-            [_Gdaoji invalidate];
-            _Gdaoji=nil;
-            _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-        }
-    }
-    NSLog(@"------------高温倒计时判断-----------%d",_Gdaojishi);
-}
--(void)DpandanViod{
-    _Ddaojishi--;
-    
-    if (self.Peripheral.state == 2) {
-        if (_Ddaojishi==0) {
-            [_DbaojingTimer setFireDate:[NSDate distantPast]];
-            [_Ddaoji invalidate];
-            _Ddaoji=nil;
-            _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-        }
-    }
-    
-    NSLog(@"------------低温倒计时判断-----------%d",_Ddaojishi);
-}
+//-(void)pandanViod{
+//    _Gdaojishi--;
+//    
+//    if (self.Peripheral.state == 2) {
+//        if (_Gdaojishi==0) {
+//            [_GbaojingTimer setFireDate:[NSDate distantPast]];
+//            [_Gdaoji invalidate];
+//            _Gdaoji=nil;
+//            _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
+//        }
+//    }
+//    NSLog(@"------------高温倒计时判断-----------%d",_Gdaojishi);
+//}
+//-(void)DpandanViod{
+//    _Ddaojishi--;
+//    
+//    if (self.Peripheral.state == 2) {
+//        if (_Ddaojishi==0) {
+//            [_DbaojingTimer setFireDate:[NSDate distantPast]];
+//            [_Ddaoji invalidate];
+//            _Ddaoji=nil;
+//            _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
+//        }
+//    }
+//    
+//    NSLog(@"------------低温倒计时判断-----------%d",_Ddaojishi);
+//}
 - (void)cancelButtonClicked:(gaowenbaojinView *)aSecondDetailViewController
 {
     NSLog(@"高温报警View  不再提醒");
@@ -1008,7 +962,8 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
     [_Gdaoji invalidate];
     _Gdaoji = nil;
     
-     _Gdaoji=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(pandanViod) userInfo:nil repeats:YES];
+    int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
+    _Ddaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
 }
 -(void)dwcancelButtonClicked:(ViewController *)secondDetailViewController{
     NSLog(@"低温报警View  不再提醒");
@@ -1036,7 +991,8 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
     [_Ddaoji invalidate];
     _Ddaoji = nil;
     
-     _Ddaoji=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(DpandanViod) userInfo:nil repeats:YES];
+    int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
+    _Ddaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
 }
 
 
@@ -1234,24 +1190,23 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
     vc.block = ^void()
     {
         [self lianjie];
-        if (![self.GbaojingTimer isValid]) {
-            self.GbaojingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(Gbaojing) userInfo:nil repeats:YES];
-            _Gdaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-        }
-        
-        if (![self.DbaojingTimer isValid]) {
-            self.DbaojingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(Dbaojing) userInfo:nil repeats:YES];
-            _Ddaojishi=[[_user stringForKey:@"baojingjiege"] intValue]*60 ;
-        }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(60 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self time];
+        });
     };
     
-    vc.disconnetCallBack = ^void()
+    vc.disconnetCallBack = ^void(CBPeripheral * peripheral)
     {
         [_Ddaoji invalidate];
         _Ddaoji = nil;
         [_Gdaoji invalidate];
         _Gdaoji = nil;
+        [_DbaojingTimer invalidate];
+        _DbaojingTimer = nil;
+        [_GbaojingTimer invalidate];
+        _GbaojingTimer = nil;
         
+        [self reconnectMethod:peripheral];
     };
     [self presentViewController:vc animated:YES completion:nil];
     

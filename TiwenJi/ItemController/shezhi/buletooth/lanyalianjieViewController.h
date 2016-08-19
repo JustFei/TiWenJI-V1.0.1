@@ -14,7 +14,7 @@
 typedef void(^LanYaLianJieWaitingForDataCallBack)(void);
 
 //回调到oneViewController的时候，当前断开连接的时候，暂停定时器
-typedef void(^DisconnectCallBack)(void);
+typedef void(^DisconnectCallBack)(CBPeripheral *);
 
 @interface lanyalianjieViewController : ViewController
 @property (weak, nonatomic) IBOutlet UIImageView *beaconView;

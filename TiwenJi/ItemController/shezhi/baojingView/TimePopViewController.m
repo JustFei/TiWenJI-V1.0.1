@@ -29,7 +29,7 @@
     self.cancelButton.layer.borderColor = [UIColor whiteColor].CGColor;
     self.suerButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    for(int i=2;i<30;i++)
+    for(int i=1;i<60;i++)
     {
         NSString *stringInt = [NSString stringWithFormat:@"%d",i];
         
