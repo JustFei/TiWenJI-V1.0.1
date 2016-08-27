@@ -484,7 +484,6 @@ int DectoBCD1(int Dec, unsigned char *Bcd, int length)
 {
 //    baby.having(self.bluetoothPeripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     baby.having(self.bluetoothPeripheral).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
-    
 }
 
 #pragma 手动断开

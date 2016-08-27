@@ -102,7 +102,7 @@
     _Gbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Gswitch"]?YES:NO;
     _Dbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Dswitch"]?YES:NO;
     
-    if (self.Peripheral.state != 0) {
+    if (self.Peripheral.state == 2) {
         if (_Gbiao) {
             if (![self.GbaojingTimer isValid]) {
                 self.GbaojingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(Gbaojing) userInfo:nil repeats:YES];
@@ -131,6 +131,7 @@
     }else {
         _Gbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Gswitch"]?YES:NO;
         _Dbiao = [[NSUserDefaults standardUserDefaults] boolForKey:@"Dswitch"]?YES:NO;
+        
     }
 }
 
@@ -222,25 +223,25 @@
     //查找到特征值的时候的回调
     [babycao setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
         NSLog(@"查找到特征值 特征值为== %@", service.characteristics[0]);
-        
-        [weakSelf insertRowToTableView:service];
-        
-        //获取设备上保存的数据
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
+        if (service.characteristics[0]) {
+            [weakSelf insertRowToTableView:service];
+            
+            //获取设备上保存的数据
+            //        static dispatch_once_t onceToken;
+            //        dispatch_once(&onceToken, ^{
             [weakSelf getDataAtDisconnect];
-        });
-        
-        if (![weakSelf.reconnectTimer isValid]) {
-            //前30秒，每三秒钟获取一次数据
-
-            //经过测试得出的结论，如果定时器的时间超过5秒，进入后台后很快就会停止
-            weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+            //        });
+            
+            if (![weakSelf.reconnectTimer isValid]) {
+                //前30秒，每三秒钟获取一次数据
+                
+                //经过测试得出的结论，如果定时器的时间超过5秒，进入后台后很快就会停止
+                weakSelf.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:weakSelf selector:@selector(huoquwendu) userInfo:nil repeats:YES];
+            }
+            
+            [weakSelf.chongliangTimer invalidate];
+            weakSelf.chongliangTimer=nil;
         }
-        
-        [weakSelf.chongliangTimer invalidate];
-        weakSelf.chongliangTimer=nil;
-        
     }];
     
     //断开连接时候的回调
@@ -962,8 +963,10 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
     [_Gdaoji invalidate];
     _Gdaoji = nil;
     
-    int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
-    _Ddaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
+    if (self.Peripheral.state == 2) {
+        int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
+        _Ddaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
+    }
 }
 -(void)dwcancelButtonClicked:(ViewController *)secondDetailViewController{
     NSLog(@"低温报警View  不再提醒");
@@ -990,9 +993,11 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
     //关闭之前的计时器，重新计时
     [_Ddaoji invalidate];
     _Ddaoji = nil;
+    if (self.Peripheral.state == 2) {
+        int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
+        _Ddaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
+    }
     
-    int time = [[NSUserDefaults standardUserDefaults] stringForKey:@"baojingjiege"].intValue;
-    _Ddaoji = [NSTimer scheduledTimerWithTimeInterval:time * 60 target:self selector:@selector(Dbaojing) userInfo:nil repeats:NO];
 }
 
 

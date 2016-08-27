@@ -173,47 +173,41 @@
 }
 
 -(void)coredatachaozao{
-//    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
-//    NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
-//    [fetchRequest setEntity:entity];
-//    NSSortDescriptor*sort=[[NSSortDescriptor alloc]initWithKey:@"shijian" ascending:YES];
-////    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-//    NSArray *sortDescriptors = [[NSArray alloc]
-//                                initWithObjects:sort, nil];
-//    [fetchRequest setSortDescriptors:sortDescriptors];
-//    NSError * requestError = nil;
-//    NSArray * shuzu = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
-//    //NSLog(@"shuzu=%@",shuzu);
+
+    NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"suername"];
     
-    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
-    //实体描述，即表明为Test，
-    NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
-    //给这个命令指定一个表：Test
-    [fetchRequest setEntity:entity];
-    //谓词
-    NSPredicate * agePre = [NSPredicate predicateWithFormat:@"name like[cd] %@",[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]];
-    //给命令具体执行内容，内容为查找，查找 name为沙盒中存储的suername
-    [fetchRequest setPredicate:agePre];
-    NSError * requestError = nil;
-    //执行这个命令，获得结果persons
-    NSArray * persons = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
-    
-    //判断日期是否和shijian中的前八个是否存在于today中，如果不存在，就添加该日期
-    for (Test*pp in persons) {
-        NSLog( @"pp.shijian=%@",pp.shijian);
-        //如果是当前用户名的话
-        if ([pp.name isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]]) {
-            if (![_today containsObject:[pp.shijian substringToIndex:8]]) {
-                [_today addObject:[pp.shijian substringToIndex:8]];
+    if (username) {
+        
+        NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+        //实体描述，即表明为Test，
+        NSEntityDescription * entity = [NSEntityDescription entityForName:@"Test" inManagedObjectContext:self.myappdelegate.managedObjectContext];
+        //给这个命令指定一个表：Test
+        [fetchRequest setEntity:entity];
+        //谓词
+        
+        NSPredicate * agePre = [NSPredicate predicateWithFormat:@"name like[cd] %@",username];
+        //给命令具体执行内容，内容为查找，查找 name为沙盒中存储的suername
+        [fetchRequest setPredicate:agePre];
+        NSError * requestError = nil;
+        //执行这个命令，获得结果persons
+        NSArray * persons = [self.myappdelegate.managedObjectContext executeFetchRequest:fetchRequest error:&requestError];
+        
+        //判断日期是否和shijian中的前八个是否存在于today中，如果不存在，就添加该日期
+        for (Test*pp in persons) {
+            NSLog( @"pp.shijian=%@",pp.shijian);
+            //如果是当前用户名的话
+            if ([pp.name isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"suername"]]) {
+                if (![_today containsObject:[pp.shijian substringToIndex:8]]) {
+                    [_today addObject:[pp.shijian substringToIndex:8]];
+                }
             }
+            
+            
         }
+        NSLog(@"_today=%@",_today);
         
-        
+        _zhongjian=_today.count -1;
     }
-    NSLog(@"_today=%@",_today);
-    
-    _zhongjian=_today.count -1;
-    
 }
 
 //在折线图视图的行数
