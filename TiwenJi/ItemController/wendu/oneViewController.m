@@ -389,6 +389,7 @@
             NSString *hh = [NSString stringWithFormat:@"%02x", hexBytesLight[10]];
             NSString *mm = [NSString stringWithFormat:@"%02x", hexBytesLight[11]];
             NSString *ss = [NSString stringWithFormat:@"%02x", hexBytesLight[12]];
+            NSLog(@"%@-%@-%@ %@:%@:%@",YY,MM,DD,hh,mm,ss);
 
             NSTimeInterval tiwenjiTimeInterval = [self stringByYYYY:YY MM:MM DD:DD hh:hh mm:mm ss:ss];
             //换了温度计上的时间后，已经替换
@@ -689,10 +690,11 @@ int DectoBCD2(int Dec, unsigned char *Bcd, int length)
 {
     //@"2016-08-09 02:24:10 +0000"
     NSString *string = [NSString stringWithFormat:@"20%@-%@-%@ %@:%@:%@",YYYY ,MM ,DD ,hh ,mm ,ss] ;
+    NSLog(@"%@",string);
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSDate *date = [[NSDate alloc] init];
     // voila!
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Shanghai"]];
